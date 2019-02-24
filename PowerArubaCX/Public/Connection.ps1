@@ -61,7 +61,7 @@ function Connect-ArubaCX {
             $Credentials = New-Object System.Management.Automation.PSCredential($Username, $Password)
         }
         #Not Credentials (and no password)
-        if ($Credentials -eq $null) {
+        if ($null -eq $Credentials) {
             $Credentials = Get-Credential -Message 'Please enter administrative credentials for your ArubaCX Switch'
         }
 
