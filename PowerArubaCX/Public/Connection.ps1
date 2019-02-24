@@ -92,3 +92,61 @@ function Connect-ArubaCX {
     End {
     }
 }
+
+function Disconnect-ArubaCX {
+
+    <#
+        .SYNOPSIS
+        Disconnect to a ArubaCX Switches
+
+        .DESCRIPTION
+        Disconnect the connection on ArubaCX Switchs
+
+        .EXAMPLE
+        Disconnect-ArubaCX
+
+        Disconnect the connection
+
+        .EXAMPLE
+        Disconnect-ArubaCX -noconfirm
+
+        Disconnect the connection with no confirmation
+
+    #>
+
+    Param(
+        [Parameter(Mandatory = $false)]
+        [switch]$noconfirm
+    )
+
+    Begin {
+    }
+
+    Process {
+
+        $url = "rest/v1/logout"
+
+        if ( -not ( $Noconfirm )) {
+            $message  = "Remove ArubaCX Switch connection."
+            $question = "Proceed with removal of ArubaCX Switch connection ?"
+            $choices = New-Object Collections.ObjectModel.Collection[Management.Automation.Host.ChoiceDescription]
+            $choices.Add((New-Object Management.Automation.Host.ChoiceDescription -ArgumentList '&Yes'))
+            $choices.Add((New-Object Management.Automation.Host.ChoiceDescription -ArgumentList '&No'))
+
+            $decision = $Host.UI.PromptForChoice($message, $question, $choices, 1)
+        }
+        else { $decision = 0 }
+        if ($decision -eq 0) {
+            Write-Progress -activity "Remove ArubaCX SW connection"
+            $null = invoke-ArubaCXWebRequest -method "POST" -url $url
+            write-progress -activity "Remove ArubaCX SW connection" -completed
+            if (Get-Variable -Name DefaultArubaCXConnection -scope global ) {
+                Remove-Variable -name DefaultArubaCXConnection -scope global
+            }
+        }
+
+    }
+
+    End {
+    }
+}
