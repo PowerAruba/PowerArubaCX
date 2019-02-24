@@ -79,7 +79,6 @@ function Connect-ArubaCX {
             $_
             throw "Unable to connect"
         }
-        $response.headers
 
         $connection.server = $server
         $connection.cookie = $cookie
@@ -87,6 +86,7 @@ function Connect-ArubaCX {
 
         set-variable -name DefaultArubaCXConnection -value $connection -scope Global
 
+        $connection
     }
 
     End {
