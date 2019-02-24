@@ -24,13 +24,13 @@ function Connect-ArubaCX {
 
       .EXAMPLE
       $cred = get-credential
-      Connect-ArubaCX -Server 192.0.2.1 -credential $cred
+      PS C:\>Connect-ArubaCX -Server 192.0.2.1 -credential $cred
 
       Connect to a ArubaCX Switch with IP 192.0.2.1 and passing (Get-)credential
 
       .EXAMPLE
       $mysecpassword = ConvertTo-SecureString aruba -AsPlainText -Force
-      Connect-ArubaCX -Server 192.0.2.1 -Username admin -Password $mysecpassword
+      PS C:\>Connect-ArubaCX -Server 192.0.2.1 -Username admin -Password $mysecpassword
 
       Connect to a ArubaCX Switch with IP 192.0.2.1 using Username and Password
   #>
