@@ -1,5 +1,5 @@
 #
-# Copyright 2018, Alexis La Goutte <alexis.lagoutte at gmail dot com>
+# Copyright 2018, Alexis La Goutte <alexis dot lagoutte at gmail dot com>
 #
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -127,7 +127,7 @@ function Disconnect-ArubaCX {
         $url = "rest/v1/logout"
 
         if ( -not ( $Noconfirm )) {
-            $message  = "Remove ArubaCX Switch connection."
+            $message = "Remove ArubaCX Switch connection."
             $question = "Proceed with removal of ArubaCX Switch connection ?"
             $choices = New-Object Collections.ObjectModel.Collection[Management.Automation.Host.ChoiceDescription]
             $choices.Add((New-Object Management.Automation.Host.ChoiceDescription -ArgumentList '&Yes'))
