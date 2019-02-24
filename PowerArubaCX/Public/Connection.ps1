@@ -6,7 +6,7 @@
 
 function Connect-ArubaCX {
 
-  <#
+    <#
       .SYNOPSIS
       Connect to a ArubaCX Switches
 
@@ -16,6 +16,11 @@ function Connect-ArubaCX {
       Connect-ArubaCX -Server 192.0.2.1
 
       Connect to a ArubaCX Switch with IP 192.0.2.1 using (Get-)credential
+
+      .EXAMPLE
+      Connect-ArubaCX -Server 192.0.2.1 -SkipCertificateCheck
+
+      Connect to an ArubaCX Switch using HTTPS (without check certificate validation) with IP 192.0.2.1 using (Get-)credential
 
       .EXAMPLE
       $cred = get-credential
@@ -31,7 +36,7 @@ function Connect-ArubaCX {
   #>
 
     Param(
-        [Parameter(Mandatory = $true, position=1)]
+        [Parameter(Mandatory = $true, position = 1)]
         [String]$Server,
         [Parameter(Mandatory = $false)]
         [String]$Username,
@@ -40,7 +45,7 @@ function Connect-ArubaCX {
         [Parameter(Mandatory = $false)]
         [PSCredential]$Credentials,
         [Parameter(Mandatory = $false)]
-        [switch]$SkipCertificateCheck=$false
+        [switch]$SkipCertificateCheck = $false
     )
 
     Begin {
@@ -49,15 +54,14 @@ function Connect-ArubaCX {
     Process {
 
 
-        $connection = @{server="";session="";cookie=""}
+        $connection = @{server = ""; session = ""; cookie = ""}
 
         #If there is a password (and a user), create a credentials
         if ($Password) {
             $Credentials = New-Object System.Management.Automation.PSCredential($Username, $Password)
         }
         #Not Credentials (and no password)
-        if ($Credentials -eq $null)
-        {
+        if ($Credentials -eq $null) {
             $Credentials = Get-Credential -Message 'Please enter administrative credentials for your ArubaCX Switch'
         }
 
@@ -66,7 +70,7 @@ function Connect-ArubaCX {
         if ( $SkipCertificateCheck ) {
             Set-ArubaCXuntrustedSSL
         }
-        $postParams = @{username=$Credentials.username;password=$Credentials.GetNetworkCredential().Password}
+        $postParams = @{username = $Credentials.username; password = $Credentials.GetNetworkCredential().Password}
         $url = "https://${Server}/rest/v1/login"
         try {
             $response = Invoke-WebRequest $url -Method POST -Body $postParams -SessionVariable arubacx
