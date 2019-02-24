@@ -69,7 +69,7 @@ function Connect-ArubaCX {
             $response = Invoke-WebRequest $url -Method POST -Body $postParams -SessionVariable arubacx
         }
         catch {
-            $_
+            Show-ArubaCXException $_
             throw "Unable to connect"
         }
         $response.headers
