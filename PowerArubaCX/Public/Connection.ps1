@@ -73,7 +73,7 @@ function Connect-ArubaCX {
         $postParams = @{username = $Credentials.username; password = $Credentials.GetNetworkCredential().Password}
         $url = "https://${Server}/rest/v1/login"
         try {
-            $response = Invoke-WebRequest $url -Method POST -Body $postParams -SessionVariable arubacx
+            $response = Invoke-RestMethod $url -Method POST -Body $postParams -SessionVariable arubacx
         }
         catch {
             $_
@@ -138,7 +138,7 @@ function Disconnect-ArubaCX {
         else { $decision = 0 }
         if ($decision -eq 0) {
             Write-Progress -activity "Remove ArubaCX SW connection"
-            $null = invoke-ArubaCXWebRequest -method "POST" -url $url
+            $null = invoke-ArubaCXRestMethod -method "POST" -url $url
             write-progress -activity "Remove ArubaCX SW connection" -completed
             if (Get-Variable -Name DefaultArubaCXConnection -scope global ) {
                 Remove-Variable -name DefaultArubaCXConnection -scope global
