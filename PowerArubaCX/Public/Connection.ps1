@@ -38,7 +38,9 @@ function Connect-ArubaCX {
         [Parameter(Mandatory = $false)]
         [SecureString]$Password,
         [Parameter(Mandatory = $false)]
-        [PSCredential]$Credentials
+        [PSCredential]$Credentials,
+        [Parameter(Mandatory = $false)]
+        [switch]$SkipCertificateCheck=$false
     )
 
     Begin {
@@ -60,9 +62,10 @@ function Connect-ArubaCX {
         }
 
         #Allow untrusted SSL certificat and enable TLS 1.2 (needed by ArubaCX)
-        Set-ArubaCXuntrustedSSL
         Set-ArubaCXCipherSSL
-
+        if ( $SkipCertificateCheck ) {
+            Set-ArubaCXuntrustedSSL
+        }
         $postParams = @{username=$Credentials.username;password=$Credentials.GetNetworkCredential().Password}
         $url = "https://${Server}/rest/v1/login"
         try {
