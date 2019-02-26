@@ -9,9 +9,9 @@ function Invoke-ArubaCXRestMethod {
     Param(
         [Parameter(Mandatory = $true, position = 1)]
         [String]$uri,
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $false)]
         [ValidateSet("GET", "PUT", "POST", "DELETE")]
-        [String]$method,
+        [String]$method = "get",
         [Parameter(Mandatory = $false)]
         [psobject]$body
     )
