@@ -54,7 +54,7 @@ function Connect-ArubaCX {
     Process {
 
 
-        $connection = @{server = ""; session = ""; cookie = ""}
+        $connection = @{server = ""; session = ""}
 
         #If there is a password (and a user), create a credentials
         if ($Password) {
@@ -81,7 +81,6 @@ function Connect-ArubaCX {
         }
 
         $connection.server = $server
-        $connection.cookie = $cookie
         $connection.session = $arubacx
 
         set-variable -name DefaultArubaCXConnection -value $connection -scope Global
