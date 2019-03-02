@@ -95,10 +95,10 @@ PrivateData = @{
          Tags = @('Aruba', 'HPE', 'Switch', 'CX')
 
         # A URL to the license for this module.
-         LicenseUri = 'https://github.com/alagoutte/PowerArubaCX/blob/master/LICENSE'
+         LicenseUri = 'https://github.com/PowerAruba/PowerArubaCX/blob/master/LICENSE'
 
         # A URL to the main website for this project.
-         ProjectUri = 'https://github.com/alagoutte/PowerArubaCX'
+         ProjectUri = 'https://github.com/PowerAruba/PowerArubaCX'
 
         # A URL to an icon representing this module.
         # IconUri = ''
