@@ -97,10 +97,10 @@ for example to get ClearPass version
 [...]
 ```
 to get API uri, go to ClearPass Swagger (https://ArubaCX-IP/api)
-![](./Medias/CPPM_API_Docs.PNG)
+![](./Medias/ArubaCX_API.png)
 
 And choice a service (for example System)
-![](./Medias/CPPM_API_Docs_platform.PNG)
+![](./Medias/ArubaCX_API_system.png)
 
 ### Disconnecting
 
