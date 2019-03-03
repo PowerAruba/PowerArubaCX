@@ -54,7 +54,8 @@ function Connect-ArubaCX {
     Process {
 
 
-        $connection = @{server = ""; session = ""}
+        $connection = @{server = ""; session = ""; invokeParams = ""}
+        $invokeParams = @{DisableKeepAlive = $false; UseBasicParsing = $true; SkipCertificateCheck = $SkipCertificateCheck}
 
         #If there is a password (and a user), create a credentials
         if ($Password) {
@@ -65,15 +66,28 @@ function Connect-ArubaCX {
             $Credentials = Get-Credential -Message 'Please enter administrative credentials for your ArubaCX Switch'
         }
 
-        #Allow untrusted SSL certificat and enable TLS 1.2 (needed by ArubaCX)
-        Set-ArubaCXCipherSSL
-        if ( $SkipCertificateCheck ) {
-            Set-ArubaCXuntrustedSSL
+        if ("Desktop" -eq $PSVersionTable.PsEdition) {
+            #Remove -SkipCertificateCheck from Invoke Parameter (not supported <= PS 5)
+            $invokeParams.remove("SkipCertificateCheck")
+        } else { #Core Edition
+            #Remove -UseBasicParsing (Enable by default with PowerShell 6/Core)
+            $invokeParams.remove("UseBasicParsing")
         }
+
+        #for PowerShell (<=) 5 (Desktop), Enable TLS 1.1, 1.2 and Disable SSL chain trust (needed/recommanded by ArubaCX)
+        if ("Desktop" -eq $PSVersionTable.PsEdition) {
+            #Enable TLS 1.1 and 1.2
+            Set-ArubaCXCipherSSL
+            if ($SkipCertificateCheck) {
+                #Disable SSL chain trust...
+                Set-ArubaCXuntrustedSSL
+            }
+        }
+
         $postParams = @{username = $Credentials.username; password = $Credentials.GetNetworkCredential().Password}
         $url = "https://${Server}/rest/v1/login"
         try {
-            Invoke-RestMethod $url -Method POST -Body $postParams -SessionVariable arubacx | Out-Null
+            Invoke-RestMethod $url -Method POST -Body $postParams -SessionVariable arubacx @invokeParams | Out-Null
         }
         catch {
             Show-ArubaCXException $_
@@ -82,6 +96,7 @@ function Connect-ArubaCX {
 
         $connection.server = $server
         $connection.session = $arubacx
+        $connection.invokeParams = $invokeParams
 
         set-variable -name DefaultArubaCXConnection -value $connection -scope Global
 
