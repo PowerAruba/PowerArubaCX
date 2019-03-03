@@ -92,7 +92,27 @@ for example to get ClearPass version
 # get Aruba CX System Configuration using API
     Invoke-ArubaCXRestMethod -method "get" -uri "rest/v1/system?selector=configuration"
 
-    app_major_version   : 6
+aaa                                : @{fail_through=False; login_lockout_time=300; radius_auth=pap; radius_retries=1;
+                                     radius_timeout=5; ssh_passkeyauthentication_enable=True;
+                                     ssh_publickeyauthentication_enable=True; tacacs_auth=pap; tacacs_timeout=5}
+all_user_copp_policies             : {}
+arp_config                         : @{gc_threshold=131072; timeout=30}
+bfd_detect_multiplier              : 5
+bfd_echo_disable                   : False
+bfd_enable                         : False
+bfd_min_echo_rx_interval           : 500
+bfd_min_rx_interval                : 3000
+bfd_min_tx_interval                : 3000
+checkpoint_post_config             : @{disable=False; timeout=300}
+dhcp_config                        :
+dlog_destination                   :
+dns_servers                        : {}
+ecmp_config                        :
+hostname                           : PowerArubaCX-SW1
+hpe_rda_enable                     : False
+icmp_redirect_disable              : False
+icmp_unreachable_disable           : False
+icmp_unreachable_ratelimit         : 1000
 
 [...]
 ```
