@@ -137,9 +137,9 @@ function Disconnect-ArubaCX {
         else { $decision = 0 }
         if ($decision -eq 0) {
             Write-Progress -activity "Remove ArubaCX SW connection"
-            $null = invoke-ArubaCXRestMethod -method "POST" -uri $url
-            write-progress -activity "Remove ArubaCX SW connection" -completed
-            if (Get-Variable -Name DefaultArubaCXConnection -scope global ) {
+            $null = Invoke-ArubaCXRestMethod -method "POST" -uri $url
+            Write-Progress -activity "Remove ArubaCX SW connection" -completed
+            if (Get-Variable -Name DefaultArubaCXConnection -scope global) {
                 Remove-Variable -name DefaultArubaCXConnection -scope global
             }
         }
