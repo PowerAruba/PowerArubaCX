@@ -46,6 +46,7 @@ function Invoke-ArubaCXRestMethod {
 
         $Server = ${DefaultArubaCXConnection}.Server
         $headers = ${DefaultArubaCXConnection}.headers
+        $invokeParams = ${DefaultArubaCXConnection}.invokeParams
 
         $fullurl = "https://${Server}/${uri}"
 
@@ -53,10 +54,10 @@ function Invoke-ArubaCXRestMethod {
 
         try {
             if ($body) {
-                $response = Invoke-RestMethod $fullurl -Method $method -body ($body | ConvertTo-Json) -Headers $headers -WebSession $sessionvariable
+                $response = Invoke-RestMethod $fullurl -Method $method -body ($body | ConvertTo-Json) -Headers $headers -WebSession $sessionvariable @invokeParams
             }
             else {
-                $response = Invoke-RestMethod $fullurl -Method $method -Headers $headers -WebSession $sessionvariable
+                $response = Invoke-RestMethod $fullurl -Method $method -Headers $headers -WebSession $sessionvariable @invokeParams
             }
         }
 
