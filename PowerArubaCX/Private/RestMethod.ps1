@@ -26,7 +26,7 @@ function Invoke-ArubaCXRestMethod {
       .EXAMPLE
       Invoke-ArubaCXRestMethod -method "post" -uri "rest/v1/system" -body $body
 
-      Invoke-RestMethod with ArubaCX connection for post api/v2/cmdb/firewall/address uri with $body payload
+      Invoke-RestMethod with ArubaCX connection for post rest/v1/system uri with $body payload
     #>
 
     Param(
