@@ -31,7 +31,12 @@ function Invoke-ArubaCXRestMethod {
       .EXAMPLE
       Invoke-ArubaCXRestMethod -method "get" -uri "rest/v1/system" -depth 1 -selector configuration
 
-      Invoke-RestMethod with ArubaCX connection for get rest/v1/system
+      Invoke-RestMethod with ArubaCX connection for get rest/v1/system with depth 1 and select only configuration
+
+      .EXAMPLE
+      Invoke-ArubaCXRestMethod -method "get" -uri "rest/v1/system" -attributes hostname, dns_servers
+
+      Invoke-RestMethod with ArubaCX connection for get rest/v1/system with display only attributes hostname and dns_servers
     #>
 
     Param(
@@ -47,7 +52,9 @@ function Invoke-ArubaCXRestMethod {
         [Int]$depth,
         [Parameter(Mandatory = $false)]
         [ValidateSet("configuration", "status", "statistics")]
-        [String]$selector
+        [String]$selector,
+        [Parameter(Mandatory = $false)]
+        [String[]]$attributes
     )
 
     Begin {
@@ -66,6 +73,10 @@ function Invoke-ArubaCXRestMethod {
         }
         if ( $PsBoundParameters.ContainsKey('selector') ) {
             $fullurl += "&selector=$selector"
+        }
+        if ( $PsBoundParameters.ContainsKey('attributes') ) {
+            $attributes = $attributes -Join ','
+            $fullurl += "&attributes=$attributes"
         }
 
         $sessionvariable = $DefaultArubaCXConnection.session
