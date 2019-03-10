@@ -39,6 +39,7 @@ function Invoke-ArubaCXRestMethod {
       Invoke-RestMethod with ArubaCX connection for get rest/v1/system with display only attributes hostname and dns_servers
     #>
 
+    [CmdletBinding(DefaultParametersetname="default")]
     Param(
         [Parameter(Mandatory = $true, position = 1)]
         [String]$uri,
@@ -50,10 +51,10 @@ function Invoke-ArubaCXRestMethod {
         [Parameter(Mandatory = $false)]
         [ValidateRange(0, 3)]
         [Int]$depth,
-        [Parameter(Mandatory = $false)]
+        [Parameter(Mandatory = $false, ParameterSetName = "selector")]
         [ValidateSet("configuration", "status", "statistics")]
         [String]$selector,
-        [Parameter(Mandatory = $false)]
+        [Parameter(Mandatory = $false, ParameterSetName = "attributes")]
         [String[]]$attributes
     )
 
