@@ -86,7 +86,7 @@ You can create a new Vlan `Add-ArubaSWVlans`, retrieve its information `Get-Arub
 ```
 -->
 ### Invoke API
-for example to get ClearPass version
+for example to get ArubaCX System Configuration
 
 ```powershell
 # get Aruba CX System Configuration using API
@@ -116,7 +116,7 @@ icmp_unreachable_ratelimit         : 1000
 
 [...]
 ```
-to get API uri, go to ClearPass Swagger (https://ArubaCX-IP/api)
+to get API uri, go to ArubaCX Swagger (https://ArubaCX-IP/api)
 ![](./Medias/ArubaCX_API.png)
 
 And choice a service (for example System)
