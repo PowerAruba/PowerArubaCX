@@ -8,7 +8,7 @@ With this module (version 0.1) you can manage:
 
 More functionality will be added later.
 
-Tested with ArubaCX 8400 and 8320 (using 10.x firmware)
+Tested with ArubaCX 8400 and 8320 (using 10.x firmware) on Windows/Linux/macOS
 
 # Usage
 
@@ -23,13 +23,13 @@ For example, you can manage Vlans with the following commands:
 
 # Requirements
 
-- Powershell 5 (If possible get the latest version)
+- Powershell 6 (Core) or 5 (If possible get the latest version)
 - An ArubaCX Switch (with firmware 10.x) and REST API enable
 
 # Instructions
 ### Install the module
 ```powershell
-# Automated installation (Powershell 5):
+# Automated installation (Powershell 5 and later):
     Install-Module PowerArubaCX
 
 # Import the module
@@ -86,11 +86,11 @@ You can create a new Vlan `Add-ArubaSWVlans`, retrieve its information `Get-Arub
 ```
 -->
 ### Invoke API
-for example to get ClearPass version
+for example to get ArubaCX System Configuration
 
 ```powershell
-# get Aruba CX System Configuration using API
-    Invoke-ArubaCXRestMethod -method "get" -uri "rest/v1/system?selector=configuration"
+# get Aruba CX System configuration using API
+    Invoke-ArubaCXRestMethod -method "get" -uri "rest/v1/system" -selector configuration
 
 aaa                                : @{fail_through=False; login_lockout_time=300; radius_auth=pap; radius_retries=1;
                                      radius_timeout=5; ssh_passkeyauthentication_enable=True;
@@ -115,8 +115,30 @@ icmp_unreachable_disable           : False
 icmp_unreachable_ratelimit         : 1000
 
 [...]
+# get only Aruba CX System hostname and dns servers
+    Invoke-ArubaCXRestMethod -method "get" -uri "rest/v1/system" -attributes hostname, dns_servers
+
+dns_servers hostname
+----------- --------
+{}          PowerArubaCX-SW1
+
+# get only Aruba CX Ports with depth 1 and attributes name...
+    Invoke-ArubaCXRestMethod -method "get" -uri "rest/v1/system/ports" -depth 1 -attributes name, status
+
+name          status
+----          ------
+bridge_normal @{error=up}
+1/1/1         @{error=up}
+vlan55        @{error=up}
+1/1/3         @{error=up}
+1/1/2         @{error=up}
+lag1          @{error=up}
+lag2          @{error=up}
+lag5          @{error=up}
+1/1/6         @{error=up}
+
 ```
-to get API uri, go to ClearPass Swagger (https://ArubaCX-IP/api)
+to get API uri, go to ArubaCX Swagger (https://ArubaCX-IP/api)
 ![](./Medias/ArubaCX_API.png)
 
 And choice a service (for example System)
