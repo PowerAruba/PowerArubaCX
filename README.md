@@ -8,7 +8,7 @@ With this module (version 0.1) you can manage:
 
 More functionality will be added later.
 
-Tested with ArubaCX 8400 and 8320 (using 10.x firmware)
+Tested with ArubaCX 8400 and 8320 (using 10.x firmware) on Windows/Linux/macOS
 
 # Usage
 
@@ -23,13 +23,13 @@ For example, you can manage Vlans with the following commands:
 
 # Requirements
 
-- Powershell 5 (If possible get the latest version)
+- Powershell 6 (Core) or 5 (If possible get the latest version)
 - An ArubaCX Switch (with firmware 10.x) and REST API enable
 
 # Instructions
 ### Install the module
 ```powershell
-# Automated installation (Powershell 5):
+# Automated installation (Powershell 5 and later):
     Install-Module PowerArubaCX
 
 # Import the module
