@@ -26,9 +26,20 @@ function Invoke-ArubaCXRestMethod {
       .EXAMPLE
       Invoke-ArubaCXRestMethod -method "post" -uri "rest/v1/system" -body $body
 
-      Invoke-RestMethod with ArubaCX connection for post api/v2/cmdb/firewall/address uri with $body payload
+      Invoke-RestMethod with ArubaCX connection for post rest/v1/system uri with $body payload
+
+      .EXAMPLE
+      Invoke-ArubaCXRestMethod -method "get" -uri "rest/v1/system" -depth 1 -selector configuration
+
+      Invoke-RestMethod with ArubaCX connection for get rest/v1/system with depth 1 and select only configuration
+
+      .EXAMPLE
+      Invoke-ArubaCXRestMethod -method "get" -uri "rest/v1/system" -attributes hostname, dns_servers
+
+      Invoke-RestMethod with ArubaCX connection for get rest/v1/system with display only attributes hostname and dns_servers
     #>
 
+    [CmdletBinding(DefaultParametersetname="default")]
     Param(
         [Parameter(Mandatory = $true, position = 1)]
         [String]$uri,
@@ -36,7 +47,15 @@ function Invoke-ArubaCXRestMethod {
         [ValidateSet("GET", "PUT", "POST", "DELETE")]
         [String]$method = "get",
         [Parameter(Mandatory = $false)]
-        [psobject]$body
+        [psobject]$body,
+        [Parameter(Mandatory = $false)]
+        [ValidateRange(0, 3)]
+        [Int]$depth,
+        [Parameter(Mandatory = $false, ParameterSetName = "selector")]
+        [ValidateSet("configuration", "status", "statistics")]
+        [String]$selector,
+        [Parameter(Mandatory = $false, ParameterSetName = "attributes")]
+        [String[]]$attributes
     )
 
     Begin {
@@ -48,7 +67,18 @@ function Invoke-ArubaCXRestMethod {
         $headers = ${DefaultArubaCXConnection}.headers
         $invokeParams = ${DefaultArubaCXConnection}.invokeParams
 
-        $fullurl = "https://${Server}/${uri}"
+        $fullurl = "https://${Server}/${uri}?"
+
+        if ( $PsBoundParameters.ContainsKey('depth') ) {
+            $fullurl += "&depth=$depth"
+        }
+        if ( $PsBoundParameters.ContainsKey('selector') ) {
+            $fullurl += "&selector=$selector"
+        }
+        if ( $PsBoundParameters.ContainsKey('attributes') ) {
+            $attributes = $attributes -Join ','
+            $fullurl += "&attributes=$attributes"
+        }
 
         $sessionvariable = $DefaultArubaCXConnection.session
 
