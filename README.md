@@ -2,7 +2,7 @@
 
 This is a Powershell module for configure a ArubaOS Switch.
 
-With this module (version 0.1) you can manage:
+With this module (version 0.2) you can manage:
 
 - Invoke API using Invoke-ArubaCXRestMethod
 
