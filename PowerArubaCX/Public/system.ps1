@@ -63,3 +63,51 @@ function Get-ArubaCXSystem {
     End {
     }
 }
+
+function Set-ArubaCXSystem {
+
+    <#
+        .SYNOPSIS
+        Configure Vlan info on ArubaOS Switch (Provision)
+
+        .DESCRIPTION
+        Configure vlan info (Id, Name, Voice, Snooping...)
+
+        .EXAMPLE
+        $vlan = Get-ArubaSWVlans -id 85
+        PS C:\>$vlan | Set-ArubaSWVlans -Name PowerArubaSW -is_voice_enabled -is_jumbo_enabled:$false
+
+        Configure vlan id 85 with name PowerArubaSW and enable voice vlan and disable jumbo
+        .EXAMPLE
+        Set-ArubaSWVlans -id 85 -Name PowerArubaSW2 -is_voice_enabled -is_dsnoop_enabled:$false
+
+        Configure vlan id 85 with name PowerArubaSW2 and enable voice vlan and disable dsnoop
+
+    #>
+
+    Param(
+        [Parameter (Mandatory = $false)]
+        [string]$hostname
+    )
+
+    Begin {
+    }
+
+    Process {
+
+        $uri = "rest/v1/system"
+
+        $_system = new-Object -TypeName PSObject
+
+
+        if ( $PsBoundParameters.ContainsKey('hostname') ) {
+            $_system | add-member -name "hostname" -membertype NoteProperty -Value $name
+        }
+
+        $response = invoke-ArubaCXRestMethod -method "PUT" -body $_system -uri $uri
+        $response
+    }
+
+    End {
+    }
+}
