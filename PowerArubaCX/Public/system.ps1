@@ -19,15 +19,36 @@ function Get-ArubaCXSystem {
         Get system info on the switch
 
     #>
+    Param(
+        [Parameter(Mandatory = $false)]
+        [ValidateRange(0, 3)]
+        [Int]$depth,
+        [Parameter(Mandatory = $false)]
+        [ValidateSet("configuration", "status", "statistics")]
+        [String]$selector,
+        [Parameter(Mandatory = $false)]
+        [String[]]$attributes
+    )
 
     Begin {
     }
 
     Process {
 
+        $invokeParams = @{ }
+        if ( $PsBoundParameters.ContainsKey('depth') ) {
+            $invokeParams.add( 'depth', $depth )
+        }
+        if ( $PsBoundParameters.ContainsKey('selector') ) {
+            $invokeParams.add( 'selector', $selector )
+        }
+        if ( $PsBoundParameters.ContainsKey('attributes') ) {
+            $invokeParams.add( 'attributes', $attributes )
+        }
+
         $uri = "rest/v1/system"
 
-        $response = invoke-ArubaCXRestMethod -method "GET" -uri $uri
+        $response = invoke-ArubaCXRestMethod -method "GET" -uri $uri @invokeParams
         $response
     }
 
