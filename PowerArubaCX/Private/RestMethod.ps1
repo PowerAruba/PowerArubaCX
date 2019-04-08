@@ -67,7 +67,10 @@ function Invoke-ArubaCXRestMethod {
         $headers = ${DefaultArubaCXConnection}.headers
         $invokeParams = ${DefaultArubaCXConnection}.invokeParams
 
-        $fullurl = "https://${Server}/${uri}?"
+        $fullurl = "https://${Server}/${uri}"
+        if($fullurl -NotMatch "\?"){
+            $fullurl += "?"
+        }
 
         if ( $PsBoundParameters.ContainsKey('depth') ) {
             $fullurl += "&depth=$depth"
@@ -81,7 +84,6 @@ function Invoke-ArubaCXRestMethod {
         }
 
         $sessionvariable = $DefaultArubaCXConnection.session
-
         try {
             if ($body) {
                 $response = Invoke-RestMethod $fullurl -Method $method -body ($body | ConvertTo-Json) -Headers $headers -WebSession $sessionvariable @invokeParams
