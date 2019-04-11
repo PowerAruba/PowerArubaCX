@@ -45,7 +45,9 @@ function Get-ArubaCXPorts {
             $invokeParams.add( 'attributes', $attributes )
         }
 
-        $response = Invoke-ArubaCXRestMethod -uri 'rest/v1/system/ports' -method 'GET' @invokeParams
+        $uri = "rest/v1/system/ports"
+
+        $response = Invoke-ArubaCXRestMethod -uri $uri -method 'GET' @invokeParams
         $response
     }
 
