@@ -2,9 +2,13 @@
 
 This is a Powershell module for configure a ArubaOS Switch.
 
-With this module (version 0.2) you can manage:
+With this module (version 0.3) you can manage:
 
 - Invoke API using Invoke-ArubaCXRestMethod
+- System (Get)
+- Interfaces (Get)
+- Ports (Get)
+- LLDP Neighbor (Get)
 
 More functionality will be added later.
 
