@@ -17,8 +17,14 @@ function Get-ArubaCXPorts {
 
       Get list of all ports
 
+      .EXAMPLE
+      Get-ArubaCXPorts -port 1/1/1 -selector statistics
+
+      Get port 1/1/1 statitics information
     #>
     Param(
+        [Parameter(Mandatory = $false, position = 1)]
+        [String]$port,
         [Parameter(Mandatory = $false)]
         [ValidateRange(0, 3)]
         [Int]$depth,
@@ -46,6 +52,11 @@ function Get-ArubaCXPorts {
         }
 
         $uri = "rest/v1/system/ports"
+
+        if ( $PsBoundParameters.ContainsKey('port') ) {
+          $port = $port -replace '/', '%2F'
+          $uri += "/$port"
+        }
 
         $response = Invoke-ArubaCXRestMethod -uri $uri -method 'GET' @invokeParams
         $response
