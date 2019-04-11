@@ -23,7 +23,10 @@ function Get-ArubaCXinterfaces {
     }
 
     Process {
-        $response = Invoke-ArubaCXRestMethod -uri 'rest/v1/system/interfaces' -method 'GET'
+
+        $uri = "rest/v1/system/interfaces"
+
+        $response = Invoke-ArubaCXRestMethod -uri $uri -method 'GET'
         $response
     }
 
