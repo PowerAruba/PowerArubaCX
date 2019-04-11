@@ -19,7 +19,15 @@ function Get-ArubaCXPorts {
 
     #>
 
+    Begin {
+    }
 
-    $response = Invoke-ArubaCXRestMethod -uri 'rest/v1/system/ports' -method 'GET'
-    $response
+    Process {
+
+        $response = Invoke-ArubaCXRestMethod -uri 'rest/v1/system/ports' -method 'GET'
+        $response
+    }
+
+    End {
+    }
 }
