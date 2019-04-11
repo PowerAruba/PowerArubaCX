@@ -18,13 +18,34 @@ function Get-ArubaCXPorts {
       Get list of all ports
 
     #>
+    Param(
+        [Parameter(Mandatory = $false)]
+        [ValidateRange(0, 3)]
+        [Int]$depth,
+        [Parameter(Mandatory = $false)]
+        [ValidateSet("configuration", "status", "statistics")]
+        [String]$selector,
+        [Parameter(Mandatory = $false)]
+        [String[]]$attributes
+    )
 
     Begin {
     }
 
     Process {
 
-        $response = Invoke-ArubaCXRestMethod -uri 'rest/v1/system/ports' -method 'GET'
+        $invokeParams = @{ }
+        if ( $PsBoundParameters.ContainsKey('depth') ) {
+            $invokeParams.add( 'depth', $depth )
+        }
+        if ( $PsBoundParameters.ContainsKey('selector') ) {
+            $invokeParams.add( 'selector', $selector )
+        }
+        if ( $PsBoundParameters.ContainsKey('attributes') ) {
+            $invokeParams.add( 'attributes', $attributes )
+        }
+
+        $response = Invoke-ArubaCXRestMethod -uri 'rest/v1/system/ports' -method 'GET' @invokeParams
         $response
     }
 
