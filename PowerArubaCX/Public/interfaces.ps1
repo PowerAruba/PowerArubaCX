@@ -18,15 +18,36 @@ function Get-ArubaCXinterfaces {
       Get list of all interface (lag/port/vlan)
 
     #>
+    Param(
+        [Parameter(Mandatory = $false)]
+        [ValidateRange(0, 3)]
+        [Int]$depth,
+        [Parameter(Mandatory = $false)]
+        [ValidateSet("configuration", "status", "statistics")]
+        [String]$selector,
+        [Parameter(Mandatory = $false)]
+        [String[]]$attributes
+    )
 
     Begin {
     }
 
     Process {
 
+        $invokeParams = @{ }
+        if ( $PsBoundParameters.ContainsKey('depth') ) {
+            $invokeParams.add( 'depth', $depth )
+        }
+        if ( $PsBoundParameters.ContainsKey('selector') ) {
+            $invokeParams.add( 'selector', $selector )
+        }
+        if ( $PsBoundParameters.ContainsKey('attributes') ) {
+            $invokeParams.add( 'attributes', $attributes )
+        }
+
         $uri = "rest/v1/system/interfaces"
 
-        $response = Invoke-ArubaCXRestMethod -uri $uri -method 'GET'
+        $response = Invoke-ArubaCXRestMethod -uri $uri -method 'GET' @invokeParams
         $response
     }
 
