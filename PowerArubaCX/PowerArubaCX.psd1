@@ -12,7 +12,7 @@
 RootModule = 'PowerArubaCX.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.3.0-dev'
+ModuleVersion = '0.3.0'
 
 # ID used to uniquely identify this module
 GUID = '44c73bcd-17c0-5d37-c0bd-16b5b41d621a'
@@ -90,6 +90,8 @@ AliasesToExport = '*'
 PrivateData = @{
 
     PSData = @{
+
+        Prerelease = '-dev'
 
         # Tags applied to this module. These help with module discovery in online galleries.
          Tags = @('Aruba', 'HPE', 'Switch', 'CX')
