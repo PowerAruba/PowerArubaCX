@@ -2,9 +2,13 @@
 
 This is a Powershell module for configure a ArubaOS Switch.
 
-With this module (version 0.2) you can manage:
+With this module (version 0.3) you can manage:
 
 - Invoke API using Invoke-ArubaCXRestMethod
+- System (Get)
+- Interfaces (Get)
+- Ports (Get)
+- LLDP Neighbor (Get)
 
 More functionality will be added later.
 
@@ -143,6 +147,43 @@ to get API uri, go to ArubaCX Swagger (https://ArubaCX-IP/api)
 
 And choice a service (for example System)
 ![](./Medias/ArubaCX_API_system.png)
+
+### Interface
+for example to get ArubaCX Interface
+
+```powershell
+
+#Get interface configuration
+    Get-ArubaCXinterfaces -depth 1 -selector configuration | Format-Table
+
+options other_config              udld_arubaos_compatibility_mode udld_compatibility udld_enable udld_interval udld_retries udld_rfc5171_compat
+                                                                                                                            ibility_mode
+------- ------------              ------------------------------- ------------------ ----------- ------------- ------------ -------------------
+                                  forward_then_verify             aruba_os                 False          7000            4 normal
+                                  forward_then_verify             aruba_os                 False          7000            4 normal
+                                  forward_then_verify             aruba_os                 False          7000            4 normal
+                                  forward_then_verify             aruba_os                 False          7000            4 normal
+                                  forward_then_verify             aruba_os                 False          7000            4 normal
+        @{lacp-aggregation-key=1} forward_then_verify             aruba_os                 False          7000            4 normal
+        @{lacp-aggregation-key=1} forward_then_verify             aruba_os                 False          7000            4 normal
+                                  forward_then_verify             aruba_os                 False          7000            4 normal
+
+
+#Get name, admin state and link state of interface
+
+    Get-ArubaCXinterfaces -depth 1 -attributes name, admin_state, link_state
+
+admin_state link_state name
+----------- ---------- ----
+up          up         bridge_normal
+up          up         1/1/1
+down        down       1/1/4
+down        down       1/1/3
+down        down       1/1/2
+up          up         1/1/5
+up          up         1/1/6
+up          up         vlan55
+```
 
 ### Disconnecting
 
