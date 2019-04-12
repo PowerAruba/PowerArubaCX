@@ -91,7 +91,7 @@ PrivateData = @{
 
     PSData = @{
 
-        Prerelease = '-dev'
+        #Prerelease = '-dev'
 
         # Tags applied to this module. These help with module discovery in online galleries.
          Tags = @('Aruba', 'HPE', 'Switch', 'CX')
