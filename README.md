@@ -1,6 +1,6 @@
 # PowerArubaCX
 
-This is a Powershell module for configure a ArubaOS Switch.
+This is a Powershell module for configure a ArubaCX Switch.
 
 With this module (version 0.3) you can manage:
 
