@@ -192,6 +192,19 @@ up          up         vlan55
     Disconnect-ArubaCX
 ```
 
+# List of available command
+```powershell
+Connect-ArubaCX
+Disconnect-ArubaCX
+Get-ArubaCXinterfaces
+Get-ArubaCXLLDPNeighbor
+Get-ArubaCXPorts
+Get-ArubaCXSystem
+Invoke-ArubaCXRestMethod
+Set-ArubaCXCipherSSL
+Set-ArubaCXuntrustedSSL
+Show-ArubaCXException
+```
 
 # Author
 
