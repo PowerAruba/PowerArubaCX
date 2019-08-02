@@ -1,8 +1,8 @@
 # PowerArubaCX
 
-This is a Powershell module for configure a ArubaOS Switch.
+This is a Powershell module for configure a ArubaCX Switch.
 
-With this module (version 0.3) you can manage:
+With this module (version 0.3.0) you can manage:
 
 - Invoke API using Invoke-ArubaCXRestMethod
 - System (Get)
@@ -192,6 +192,19 @@ up          up         vlan55
     Disconnect-ArubaCX
 ```
 
+# List of available command
+```powershell
+Connect-ArubaCX
+Disconnect-ArubaCX
+Get-ArubaCXinterfaces
+Get-ArubaCXLLDPNeighbor
+Get-ArubaCXPorts
+Get-ArubaCXSystem
+Invoke-ArubaCXRestMethod
+Set-ArubaCXCipherSSL
+Set-ArubaCXuntrustedSSL
+Show-ArubaCXException
+```
 
 # Author
 
