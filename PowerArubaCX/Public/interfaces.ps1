@@ -3,7 +3,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 #
-function Get-ArubaCXinterfaces {
+function Get-ArubaCXInterfaces {
 
     <#
       .SYNOPSIS
