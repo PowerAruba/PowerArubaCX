@@ -196,7 +196,7 @@ up          up         vlan55
 ```powershell
 Connect-ArubaCX
 Disconnect-ArubaCX
-Get-ArubaCXinterfaces
+Get-ArubaCXInterfaces
 Get-ArubaCXLLDPNeighbor
 Get-ArubaCXPorts
 Get-ArubaCXSystem
