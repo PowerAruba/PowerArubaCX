@@ -85,7 +85,7 @@ function Connect-ArubaCX {
         }
 
         $postParams = @{username = $Credentials.username; password = $Credentials.GetNetworkCredential().Password}
-        $url = "https://${Server}/rest/v1/login"
+        $url = "https://${Server}/rest/v10.04/login"
         try {
             Invoke-RestMethod $url -Method POST -Body $postParams -SessionVariable arubacx @invokeParams | Out-Null
         }
@@ -138,7 +138,7 @@ function Disconnect-ArubaCX {
 
     Process {
 
-        $url = "rest/v1/logout"
+        $url = "rest/v10.04/logout"
 
         if ( -not ( $Noconfirm )) {
             $message = "Remove ArubaCX Switch connection."
