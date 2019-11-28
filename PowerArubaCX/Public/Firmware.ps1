@@ -25,7 +25,7 @@
 
     Process {
 
-        $uri = "rest/v10.04/firmware"
+        $uri = "rest/$Script:Api/firmware"
 
 
         $response = Invoke-ArubaCXRestMethod -uri $uri -method 'GET'

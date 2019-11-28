@@ -22,7 +22,7 @@
 
     Process {
 
-        $uri = "rest/v10.04/system/users"
+        $uri = "rest/$Script:Api/system/users"
 
 
         $response = Invoke-ArubaCXRestMethod -uri $uri -method 'GET'

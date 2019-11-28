@@ -46,7 +46,7 @@ function Get-ArubaCXSystem {
             $invokeParams.add( 'attributes', $attributes )
         }
 
-        $uri = "rest/v10.04/system"
+        $uri = "rest/$Script:Api/system"
 
         $response = invoke-ArubaCXRestMethod -method "GET" -uri $uri @invokeParams
         $response

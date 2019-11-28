@@ -51,7 +51,7 @@ function Get-ArubaCXPorts {
             $invokeParams.add( 'attributes', $attributes )
         }
 
-        $uri = "rest/v10.04/system/ports"
+        $uri = "rest/$Script:Api/system/ports"
 
         if ( $PsBoundParameters.ContainsKey('port') ) {
           $port = $port -replace '/', '%2F'

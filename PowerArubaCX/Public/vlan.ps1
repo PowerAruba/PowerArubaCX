@@ -44,7 +44,7 @@
             $invokeParams.add( 'attributes', $attributes )
         }
 
-        $uri = "rest/v10.04/system/vlans"
+        $uri = "rest/$Script:Api/system/vlans"
 
 
         $response = Invoke-ArubaCXRestMethod -uri $uri -method 'GET' @invokeParams

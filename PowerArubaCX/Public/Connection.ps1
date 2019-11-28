@@ -38,6 +38,9 @@ function Connect-ArubaCX {
     Param(
         [Parameter(Mandatory = $true, position = 1)]
         [String]$Server,
+        [Parameter(Mandatory = $true, position = 2)]
+        [ValidateSet("v1", "v10.04")]
+        [String]$Api,
         [Parameter(Mandatory = $false)]
         [String]$Username,
         [Parameter(Mandatory = $false)]
@@ -85,7 +88,7 @@ function Connect-ArubaCX {
         }
 
         $postParams = @{username = $Credentials.username; password = $Credentials.GetNetworkCredential().Password}
-        $url = "https://${Server}/rest/v10.04/login"
+        $url = "https://${Server}/rest/$Api/login"
         try {
             Invoke-RestMethod $url -Method POST -Body $postParams -SessionVariable arubacx @invokeParams | Out-Null
         }
@@ -103,7 +106,9 @@ function Connect-ArubaCX {
         $connection
     }
 
-    End {
+    End 
+    {
+        $Script:Api = $Api
     }
 }
 
@@ -138,7 +143,7 @@ function Disconnect-ArubaCX {
 
     Process {
 
-        $url = "rest/v10.04/logout"
+        $url = "rest/$Script:Api/logout"
 
         if ( -not ( $Noconfirm )) {
             $message = "Remove ArubaCX Switch connection."
