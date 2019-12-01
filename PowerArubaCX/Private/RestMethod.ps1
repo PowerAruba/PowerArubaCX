@@ -55,7 +55,9 @@ function Invoke-ArubaCXRestMethod {
         [ValidateSet("configuration", "status", "statistics")]
         [String]$selector,
         [Parameter(Mandatory = $false, ParameterSetName = "attributes")]
-        [String[]]$attributes
+        [String[]]$attributes,
+        [Parameter(Mandatory = $false)]
+        [switch]$vsx_peer
     )
 
     Begin {
@@ -67,7 +69,13 @@ function Invoke-ArubaCXRestMethod {
         $headers = ${DefaultArubaCXConnection}.headers
         $invokeParams = ${DefaultArubaCXConnection}.invokeParams
 
-        $fullurl = "https://${Server}/${uri}"
+        if ( $PsBoundParameters.ContainsKey('vsx_peer') ) {
+            #Add /vsx-peer/ before uri
+            $fullurl = "https://${Server}/vsx-peer/${uri}"
+        } else {
+            $fullurl = "https://${Server}/${uri}"
+        }
+
         if($fullurl -NotMatch "\?"){
             $fullurl += "?"
         }
