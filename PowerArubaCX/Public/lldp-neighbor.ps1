@@ -48,7 +48,7 @@ function Get-ArubaCXLLDPNeighbor {
         }
 
         $neighbor = $neighbor -replace '/', '%2F'
-        $uri = "rest/$Script:Api/system/interfaces/$neighbor/lldp_neighbors"
+        $uri = "system/interfaces/$neighbor/lldp_neighbors"
 
         $response = Invoke-ArubaCXRestMethod -uri $uri -method 'GET' @invokeParams
         $response

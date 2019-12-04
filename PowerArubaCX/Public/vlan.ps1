@@ -9,12 +9,8 @@
 
       .EXAMPLE
       Get-ArubaCXvlan
-
-        1                           20
-        -                           --
-        /rest/v10.04/system/vlans/1 /rest/v10.04/system/vlans/20
       
-        Get list of all vlan 
+        Get list of all vlan, lag,with name IP and more
 
     #>
     Param(
@@ -44,7 +40,7 @@
             $invokeParams.add( 'attributes', $attributes )
         }
 
-        $uri = "rest/$Script:Api/system/vlans"
+        $uri = "system/vlans"
 
 
         $response = Invoke-ArubaCXRestMethod -uri $uri -method 'GET' @invokeParams

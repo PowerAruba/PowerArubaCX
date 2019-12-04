@@ -10,9 +10,8 @@
       .EXAMPLE
       Get-ArubaCXusers
 
-        admin
-        -----
-        /rest/v10.04/system/users/admin
+      List all users in ArubaCX
+
     #>
     Param(
     )
@@ -22,7 +21,7 @@
 
     Process {
 
-        $uri = "rest/$Script:Api/system/users"
+        $uri = "system/users"
 
 
         $response = Invoke-ArubaCXRestMethod -uri $uri -method 'GET'

@@ -108,7 +108,7 @@ function Connect-ArubaCX {
 
     End 
     {
-        $Script:Api = $Api
+        $Global:Api = $Api
     }
 }
 
@@ -143,7 +143,7 @@ function Disconnect-ArubaCX {
 
     Process {
 
-        $url = "rest/$Script:Api/logout"
+        $url = "rest/$Global:Api/logout"
 
         if ( -not ( $Noconfirm )) {
             $message = "Remove ArubaCX Switch connection."

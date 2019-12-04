@@ -10,12 +10,7 @@
       .EXAMPLE
       Get-ArubaCXfirmware
 
-        current_version   : Virtual.10.04.0001
-        primary_version   :
-        secondary_version :
-        default_image     :
-        booted_image      :
-
+            Get all informations about Aruba CX firmware, first image an secondary image
     #>
     Param(
     )
@@ -25,7 +20,7 @@
 
     Process {
 
-        $uri = "rest/$Script:Api/firmware"
+        $uri = "firmware"
 
 
         $response = Invoke-ArubaCXRestMethod -uri $uri -method 'GET'
