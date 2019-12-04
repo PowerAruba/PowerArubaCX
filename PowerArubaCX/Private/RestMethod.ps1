@@ -68,9 +68,9 @@ function Invoke-ArubaCXRestMethod {
         $invokeParams = ${DefaultArubaCXConnection}.invokeParams
 
         $fullurl = "https://${Server}/rest/$Global:Api/${uri}"
-       # if($fullurl -NotMatch "\?"){
-        #    $fullurl += "?"
-        #}
+       if($fullurl -NotMatch "\?"){
+          $fullurl += "?"
+       }
 
         if ( $PsBoundParameters.ContainsKey('depth') ) {
             $fullurl += "&depth=$depth"
