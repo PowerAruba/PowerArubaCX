@@ -21,7 +21,7 @@ function Get-ArubaCXSystem {
     #>
     Param(
         [Parameter(Mandatory = $false)]
-        [ValidateRange(0, 3)]
+        [ValidateRange(1, 4)]
         [Int]$depth,
         [Parameter(Mandatory = $false)]
         [ValidateSet("configuration", "status", "statistics", "writable")]

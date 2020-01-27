@@ -22,7 +22,7 @@ function Get-ArubaCXinterfaces {
         [Parameter(Mandatory = $false, position = 1)]
         [String]$interface,
         [Parameter(Mandatory = $false)]
-        [ValidateRange(0, 3)]
+        [ValidateRange(1, 4)]
         [Int]$depth,
         [Parameter(Mandatory = $false)]
         [ValidateSet("configuration", "status", "statistics", "writable")]
