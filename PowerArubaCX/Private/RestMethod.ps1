@@ -58,7 +58,7 @@ function Invoke-ArubaCXRestMethod {
         [ValidateRange(0, 3)]
         [Int]$depth,
         [Parameter(Mandatory = $false, ParameterSetName = "selector")]
-        [ValidateSet("configuration", "status", "statistics")]
+        [ValidateSet("configuration", "status", "statistics", "writable")]
         [String]$selector,
         [Parameter(Mandatory = $false, ParameterSetName = "attributes")]
         [String[]]$attributes,

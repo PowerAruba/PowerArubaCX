@@ -29,7 +29,7 @@ function Get-ArubaCXPorts {
         [ValidateRange(0, 3)]
         [Int]$depth,
         [Parameter(Mandatory = $false)]
-        [ValidateSet("configuration", "status", "statistics")]
+        [ValidateSet("configuration", "status", "statistics", "writable")]
         [String]$selector,
         [Parameter(Mandatory = $false)]
         [String[]]$attributes,
