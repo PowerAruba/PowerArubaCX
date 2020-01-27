@@ -12,31 +12,37 @@ function Invoke-ArubaCXRestMethod {
 
       .DESCRIPTION
        Invoke RestMethod with ArubaCX connection variable (token, csrf..)
+       rest/vX is automatically add to uri, use -noapiversion for remove
 
       .EXAMPLE
-      Invoke-ArubaCXRestMethod -method "get" -uri "rest/v1/system"
+      Invoke-ArubaCXRestMethod -method "get" -uri "system"
 
-      Invoke-RestMethod with ArubaCX connection for get rest/v1/system
-
-      .EXAMPLE
-      Invoke-ArubaCXRestMethod "rest/v1/system"
-
-      Invoke-RestMethod with ArubaCX connection for get rest/v1/system uri with default GET method parameter
+      Invoke-RestMethod with ArubaCX connection for get rest/vX/system
 
       .EXAMPLE
-      Invoke-ArubaCXRestMethod -method "post" -uri "rest/v1/system" -body $body
+      Invoke-ArubaCXRestMethod "system"
 
-      Invoke-RestMethod with ArubaCX connection for post rest/v1/system uri with $body payload
-
-      .EXAMPLE
-      Invoke-ArubaCXRestMethod -method "get" -uri "rest/v1/system" -depth 1 -selector configuration
-
-      Invoke-RestMethod with ArubaCX connection for get rest/v1/system with depth 1 and select only configuration
+      Invoke-RestMethod with ArubaCX connection for get rest/vX/system uri with default GET method parameter
 
       .EXAMPLE
-      Invoke-ArubaCXRestMethod -method "get" -uri "rest/v1/system" -attributes hostname, dns_servers
+      Invoke-ArubaCXRestMethod -method "post" -uri "system" -body $body
 
-      Invoke-RestMethod with ArubaCX connection for get rest/v1/system with display only attributes hostname and dns_servers
+      Invoke-RestMethod with ArubaCX connection for post rest/vX/system uri with $body payload
+
+      .EXAMPLE
+      Invoke-ArubaCXRestMethod -method "get" -uri "system" -depth 1 -selector configuration
+
+      Invoke-RestMethod with ArubaCX connection for get rest/vX/system with depth 1 and select only configuration
+
+      .EXAMPLE
+      Invoke-ArubaCXRestMethod -method "get" -uri "system" -attributes hostname, dns_servers
+
+      Invoke-RestMethod with ArubaCX connection for get rest/vX/system with display only attributes hostname and dns_servers
+
+      .EXAMPLE
+      Invoke-ArubaCXRestMethod -method "get" -uri "rest/v10.04/system" -noapiversion
+
+      Invoke-RestMethod with ArubaCX connection for get rest/v10.04/system (need to specify full uri with rest/vX)
     #>
 
     [CmdletBinding(DefaultParametersetname = "default")]
