@@ -7,7 +7,6 @@ With this module (version 0.3.0) you can manage:
 - Invoke API using Invoke-ArubaCXRestMethod
 - System (Get)
 - Interfaces (Get)
-- Ports (Get)
 - LLDP Neighbor (Get)
 
 More functionality will be added later.
@@ -126,10 +125,10 @@ dns_servers hostname
 ----------- --------
 {}          PowerArubaCX-SW1
 
-# get only Aruba CX Ports with depth 1 and attributes name...
-    Invoke-ArubaCXRestMethod -method "get" -uri "rest/v1/system/ports" -depth 1 -attributes name, status
+# get only Aruba CX Interfaces with depth 21 and attributes name...
+    Invoke-ArubaCXRestMethod -method "get" -uri "system/interfaces" -depth 2 -attributes name, admin
 
-name          status
+name          admin
 ----          ------
 bridge_normal @{error=up}
 1/1/1         @{error=up}
@@ -198,7 +197,6 @@ Connect-ArubaCX
 Disconnect-ArubaCX
 Get-ArubaCXInterfaces
 Get-ArubaCXLLDPNeighbor
-Get-ArubaCXPorts
 Get-ArubaCXSystem
 Invoke-ArubaCXRestMethod
 Set-ArubaCXCipherSSL
