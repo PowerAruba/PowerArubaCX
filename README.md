@@ -141,7 +141,7 @@ lag5          @{error=up}
 1/1/6         @{error=up}
 
 ```
-to get API uri, go to ArubaCX Swagger (https://ArubaCX-IP/api)
+to get API uri, go to ArubaCX Swagger (https://ArubaCX-IP/api/v10.04/)
 ![](./Medias/ArubaCX_API.png)
 
 And choice a service (for example System)
