@@ -57,7 +57,9 @@ function Invoke-ArubaCXRestMethod {
         [Parameter(Mandatory = $false, ParameterSetName = "attributes")]
         [String[]]$attributes,
         [Parameter(Mandatory = $false)]
-        [switch]$vsx_peer
+        [switch]$vsx_peer,
+        [Parameter(Mandatory = $false)]
+        [psobject]$connection
     )
 
     Begin {
@@ -65,16 +67,25 @@ function Invoke-ArubaCXRestMethod {
 
     Process {
 
-        $Server = ${DefaultArubaCXConnection}.Server
-        $headers = ${DefaultArubaCXConnection}.headers
-        $invokeParams = ${DefaultArubaCXConnection}.invokeParams
+        if ($null -eq $connection) {
+            if ($null -eq $DefaultArubaCXConnection) {
+                Throw "Not Connected. Connect to the Switch with Connect-ArubaCX"
+            }
+            $connection = $DefaultArubaCXConnection
+        }
+
+        $Server = $connection.Server
+        $port = $connection.port
+        $headers = $connection.headers
+        $invokeParams = $connection.invokeParams
+        $sessionvariable = $connection.session
 
         if ( $PsBoundParameters.ContainsKey('vsx_peer') ) {
             #Add /vsx-peer/ before uri
-            $fullurl = "https://${Server}/vsx-peer/${uri}"
+            $fullurl = "https://${Server}:${port}/vsx-peer/${uri}"
         }
         else {
-            $fullurl = "https://${Server}/${uri}"
+            $fullurl = "https://${Server}:${port}/${uri}"
         }
 
         if ($fullurl -NotMatch "\?") {
@@ -92,7 +103,6 @@ function Invoke-ArubaCXRestMethod {
             $fullurl += "&attributes=$attributes"
         }
 
-        $sessionvariable = $DefaultArubaCXConnection.session
         try {
             if ($body) {
                 $response = Invoke-RestMethod $fullurl -Method $method -body ($body | ConvertTo-Json) -Headers $headers -WebSession $sessionvariable @invokeParams

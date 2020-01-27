@@ -34,7 +34,10 @@ function Get-ArubaCXPorts {
         [Parameter(Mandatory = $false)]
         [String[]]$attributes,
         [Parameter(Mandatory = $false)]
-        [switch]$vsx_peer
+        [switch]$vsx_peer,
+        [Parameter (Mandatory = $False)]
+        [ValidateNotNullOrEmpty()]
+        [PSObject]$connection = $DefaultArubaSWConnection
     )
 
     Begin {
@@ -63,7 +66,7 @@ function Get-ArubaCXPorts {
             $uri += "/$port"
         }
 
-        $response = Invoke-ArubaCXRestMethod -uri $uri -method 'GET' @invokeParams
+        $response = Invoke-ArubaCXRestMethod -uri $uri -method 'GET' -connection $connection  @invokeParams
         $response
     }
 

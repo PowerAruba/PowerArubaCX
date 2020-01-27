@@ -45,7 +45,12 @@ function Connect-ArubaCX {
         [Parameter(Mandatory = $false)]
         [PSCredential]$Credentials,
         [Parameter(Mandatory = $false)]
-        [switch]$SkipCertificateCheck = $false
+        [switch]$SkipCertificateCheck = $false,
+        [Parameter(Mandatory = $false)]
+        [ValidateRange(1, 65535)]
+        [int]$port = 443,
+        [Parameter(Mandatory = $false)]
+        [boolean]$DefaultConnection = $true
     )
 
     Begin {
@@ -54,7 +59,7 @@ function Connect-ArubaCX {
     Process {
 
 
-        $connection = @{server = ""; session = ""; invokeParams = "" }
+        $connection = @{server = ""; session = ""; invokeParams = ""; port = $port }
         $invokeParams = @{DisableKeepAlive = $false; UseBasicParsing = $true; SkipCertificateCheck = $SkipCertificateCheck }
 
         #If there is a password (and a user), create a credentials
@@ -87,7 +92,7 @@ function Connect-ArubaCX {
         }
 
         $postParams = @{username = $Credentials.username; password = $Credentials.GetNetworkCredential().Password }
-        $url = "https://${Server}/rest/v1/login"
+        $url = "https://${Server}:${Port}/rest/v1/login"
         try {
             Invoke-RestMethod $url -Method POST -Body $postParams -SessionVariable arubacx @invokeParams | Out-Null
         }
@@ -100,7 +105,9 @@ function Connect-ArubaCX {
         $connection.session = $arubacx
         $connection.invokeParams = $invokeParams
 
-        set-variable -name DefaultArubaCXConnection -value $connection -scope Global
+        if ( $DefaultConnection ) {
+            set-variable -name DefaultArubaCXConnection -value $connection -scope Global
+        }
 
         $connection
     }
@@ -132,7 +139,10 @@ function Disconnect-ArubaCX {
 
     Param(
         [Parameter(Mandatory = $false)]
-        [switch]$noconfirm
+        [switch]$noconfirm,
+        [Parameter (Mandatory = $False)]
+        [ValidateNotNullOrEmpty()]
+        [PSObject]$connection = $DefaultArubaSWConnection
     )
 
     Begin {
@@ -154,9 +164,9 @@ function Disconnect-ArubaCX {
         else { $decision = 0 }
         if ($decision -eq 0) {
             Write-Progress -activity "Remove ArubaCX SW connection"
-            Invoke-ArubaCXRestMethod -method "POST" -uri $url | Out-Null
+            Invoke-ArubaCXRestMethod -method "POST" -uri $url -connection $connection | Out-Null
             Write-Progress -activity "Remove ArubaCX SW connection" -completed
-            if (Get-Variable -Name DefaultArubaCXConnection -scope global) {
+            if (Test-Path variable:global:DefaultArubaCXConnection) {
                 Remove-Variable -name DefaultArubaCXConnection -scope global
             }
         }
