@@ -28,3 +28,38 @@ Describe  "Connect to a switch (using HTTPS)" {
         { Connect-ArubaCX $ipaddress -Username $login -password $mysecpassword } | Should throw "Unable to connect (certificate)"
     }
 }
+
+Describe  "Connect to a switch (using multi connection)" {
+    It "Connect to a switch (using HTTPS and store on cx variable)" {
+        $script:cx = Connect-ArubaCX $ipaddress -Username $login -password $mysecpassword -SkipCertificate -DefaultConnection:$false
+        $DefaultArubaSWConnection | Should -BeNullOrEmpty
+        $cx.server | Should -Be $ipaddress
+        $cx.port | Should -Be "443"
+        $cx.session | Should -Not -BeNullOrEmpty
+    }
+
+    It "Throw when try to use Invoke-ArubaCPRestMethod and not connected" {
+        { Invoke-ArubaCXRestMethod -uri "rest/v1/system" } | Should throw "Not Connected. Connect to the Switch with Connect-ArubaCX"
+    }
+
+    Context "Use Multi connection for call some (Get) cmdlet (Vlan, System...)" {
+        It "Use Multi connection for call Get interfaces" {
+            { Get-ArubaCXinterfaces -connection $cx } | Should Not throw
+        }
+        It "Use Multi connection for call Get LLDP Neighbor" {
+            { Get-ArubaCXLLDPNeighbor 1/1/1 -connection $cx } | Should Not throw
+        }
+        It "Use Multi connection for call Get Ports " {
+            { Get-ArubaCXPorts -connection $cx } | Should Not throw
+        }
+        It "Use Multi connection for call Get System" {
+            { Get-ArubaCXSystem -connection $cx } | Should Not throw
+        }
+    }
+
+    It "Disconnect to a switch (Multi connection)" {
+        Disconnect-ArubaCX -connection $cx -noconfirm
+        $DefaultArubaCXConnection | Should be $null
+    }
+
+}
