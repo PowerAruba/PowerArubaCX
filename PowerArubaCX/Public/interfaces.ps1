@@ -69,3 +69,76 @@ function Get-ArubaCXInterfaces {
     End {
     }
 }
+
+
+function Set-ArubaCXInterfaces {
+
+    <#
+      .SYNOPSIS
+      Confgure Aruba CX Interfacess
+
+      .DESCRIPTION
+      Configure Aruba CX Interfaces (port, lag, vlan... with name, IP Address, description)
+
+      .EXAMPLE
+      Set-ArubaCXInterfaces -interface 1/1/1 -description "Changed by PowerArubaCX"
+
+      Set the description of Interface 1/1/1
+
+    #>
+    Param(
+        [Parameter(Mandatory = $true, position = 1)]
+        [String]$interface,
+        [Parameter(Mandatory = $false)]
+        [ValidateSet('up', 'down')]
+        [string]$admin,
+        [Parameter(Mandatory = $false)]
+        [string]$description,
+        [Parameter(Mandatory = $false)]
+        [switch]$routing,
+        [Parameter (Mandatory = $False)]
+        [ValidateNotNullOrEmpty()]
+        [PSObject]$connection = $DefaultArubaSWConnection
+    )
+
+    Begin {
+    }
+
+    Process {
+
+        $uri = "system/interfaces"
+        #Add interface to $uri
+        $interface = $interface -replace '/', '%2F'
+        $uri += "/$interface"
+
+        $_interface = New-Object -TypeName PSObject
+        $user_config = New-Object -TypeName PSObject
+
+        if ( $PsBoundParameters.ContainsKey('description') ) {
+            $_interface | Add-member -name "description" -membertype NoteProperty -Value $description
+        }
+
+        if ( $PsBoundParameters.ContainsKey('admin') ) {
+            $user_config | Add-member -name "admin" -membertype NoteProperty -Value $admin
+        }
+
+        $_interface | Add-member -name "user_config" -membertype NoteProperty -Value $user_config
+
+        if ( $PsBoundParameters.ContainsKey('routing') ) {
+            if ($routing) {
+                $_interface | Add-member -name "routing" -membertype NoteProperty -Value $true
+            }
+            else {
+                $_interface | Add-member -name "routing" -membertype NoteProperty -Value $false
+            }
+
+        }
+
+        $response = Invoke-ArubaCXRestMethod -uri $uri -method 'PUT' -body $_interface -connection $connection
+        $response
+        Get-ArubaCXInterfaces $interface
+    }
+
+    End {
+    }
+}
