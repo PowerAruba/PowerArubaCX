@@ -55,8 +55,8 @@ function Get-ArubaCXinterfaces {
         $uri = "rest/v1/system/interfaces"
 
         if ( $PsBoundParameters.ContainsKey('interface') ) {
-          $interface = $interface -replace '/', '%2F'
-          $uri += "/$interface"
+            $interface = $interface -replace '/', '%2F'
+            $uri += "/$interface"
         }
 
         $response = Invoke-ArubaCXRestMethod -uri $uri -method 'GET' @invokeParams
