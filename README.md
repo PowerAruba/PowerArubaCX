@@ -93,7 +93,7 @@ for example to get ArubaCX System Configuration
 
 ```powershell
 # get Aruba CX System configuration using API
-    Invoke-ArubaCXRestMethod -method "get" -uri "rest/v1/system" -selector configuration
+    Invoke-ArubaCXRestMethod -method "get" -uri "system" -selector configuration
 
 aaa                                : @{fail_through=False; login_lockout_time=300; radius_auth=pap; radius_retries=1;
                                      radius_timeout=5; ssh_passkeyauthentication_enable=True;
@@ -119,7 +119,7 @@ icmp_unreachable_ratelimit         : 1000
 
 [...]
 # get only Aruba CX System hostname and dns servers
-    Invoke-ArubaCXRestMethod -method "get" -uri "rest/v1/system" -attributes hostname, dns_servers
+    Invoke-ArubaCXRestMethod -method "get" -uri "system" -attributes hostname, dns_servers
 
 dns_servers hostname
 ----------- --------
