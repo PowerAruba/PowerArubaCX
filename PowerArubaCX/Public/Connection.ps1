@@ -139,7 +139,10 @@ function Disconnect-ArubaCX {
 
     Param(
         [Parameter(Mandatory = $false)]
-        [switch]$noconfirm
+        [switch]$noconfirm,
+        [Parameter (Mandatory = $False)]
+        [ValidateNotNullOrEmpty()]
+        [PSObject]$connection = $DefaultArubaSWConnection
     )
 
     Begin {
@@ -161,7 +164,7 @@ function Disconnect-ArubaCX {
         else { $decision = 0 }
         if ($decision -eq 0) {
             Write-Progress -activity "Remove ArubaCX SW connection"
-            Invoke-ArubaCXRestMethod -method "POST" -uri $url | Out-Null
+            Invoke-ArubaCXRestMethod -method "POST" -uri $url -connection $connection | Out-Null
             Write-Progress -activity "Remove ArubaCX SW connection" -completed
             if (Test-Path variable:global:DefaultArubaCXConnection) {
                 Remove-Variable -name DefaultArubaCXConnection -scope global
