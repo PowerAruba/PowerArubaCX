@@ -59,7 +59,7 @@ function Connect-ArubaCX {
     Process {
 
 
-        $connection = @{server = ""; session = ""; invokeParams = ""; port = $port }
+        $connection = @{server = ""; session = ""; invokeParams = ""; port = $port; version = "" }
         $invokeParams = @{DisableKeepAlive = $false; UseBasicParsing = $true; SkipCertificateCheck = $SkipCertificateCheck }
 
         #If there is a password (and a user), create a credentials
@@ -101,9 +101,18 @@ function Connect-ArubaCX {
             throw "Unable to connect"
         }
 
+        $url = "https://${Server}:${Port}/rest"
+        try {
+            $rest = Invoke-RestMethod $url -Method "get" -SessionVariable arubacx @invokeParams
+        }
+        catch {
+            throw "Unsupported release Need to use ArubaCX >= 10.04"
+        }
+
         $connection.server = $server
         $connection.session = $arubacx
         $connection.invokeParams = $invokeParams
+        $connection.version = $rest.latest.version
 
         if ( $DefaultConnection ) {
             set-variable -name DefaultArubaCXConnection -value $connection -scope Global
