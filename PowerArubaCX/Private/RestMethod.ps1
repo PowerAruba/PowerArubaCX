@@ -75,16 +75,17 @@ function Invoke-ArubaCXRestMethod {
         }
 
         $Server = $connection.Server
+        $port = $connection.port
         $headers = $connection.headers
         $invokeParams = $connection.invokeParams
         $sessionvariable = $connection.session
 
         if ( $PsBoundParameters.ContainsKey('vsx_peer') ) {
             #Add /vsx-peer/ before uri
-            $fullurl = "https://${Server}/vsx-peer/${uri}"
+            $fullurl = "https://${Server}:${port}/vsx-peer/${uri}"
         }
         else {
-            $fullurl = "https://${Server}/${uri}"
+            $fullurl = "https://${Server}:${port}/${uri}"
         }
 
         if ($fullurl -NotMatch "\?") {
