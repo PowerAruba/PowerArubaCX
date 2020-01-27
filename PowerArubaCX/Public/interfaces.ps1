@@ -85,6 +85,15 @@ function Set-ArubaCXInterfaces {
 
       Set the description for the Interface 1/1/1
 
+      .EXAMPLE
+      Set-ArubaCXInterfaces -interface 1/1/1 -admin up
+
+      Set the admin status to up for the Interface 1/1/1
+
+      .EXAMPLE
+      Set-ArubaCXInterfaces -interface 1/1/1 -routing:$false
+
+      Set the routing to disable for the Interface 1/1/1
     #>
     Param(
         [Parameter(Mandatory = $true, position = 1)]
