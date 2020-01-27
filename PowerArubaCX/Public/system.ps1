@@ -21,10 +21,10 @@ function Get-ArubaCXSystem {
     #>
     Param(
         [Parameter(Mandatory = $false)]
-        [ValidateRange(0, 3)]
+        [ValidateRange(1, 4)]
         [Int]$depth,
         [Parameter(Mandatory = $false)]
-        [ValidateSet("configuration", "status", "statistics")]
+        [ValidateSet("configuration", "status", "statistics", "writable")]
         [String]$selector,
         [Parameter(Mandatory = $false)]
         [String[]]$attributes,
@@ -54,7 +54,7 @@ function Get-ArubaCXSystem {
             $invokeParams.add( 'vsx_peer', $true )
         }
 
-        $uri = "rest/v1/system"
+        $uri = "system"
 
         $response = invoke-ArubaCXRestMethod -method "GET" -uri $uri -connection $connection @invokeParams
         $response

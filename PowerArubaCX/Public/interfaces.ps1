@@ -22,10 +22,10 @@ function Get-ArubaCXInterfaces {
         [Parameter(Mandatory = $false, position = 1)]
         [String]$interface,
         [Parameter(Mandatory = $false)]
-        [ValidateRange(0, 3)]
+        [ValidateRange(1, 4)]
         [Int]$depth,
         [Parameter(Mandatory = $false)]
-        [ValidateSet("configuration", "status", "statistics")]
+        [ValidateSet("configuration", "status", "statistics", "writable")]
         [String]$selector,
         [Parameter(Mandatory = $false)]
         [String[]]$attributes,
@@ -55,7 +55,7 @@ function Get-ArubaCXInterfaces {
             $invokeParams.add( 'vsx_peer', $true )
         }
 
-        $uri = "rest/v1/system/interfaces"
+        $uri = "system/interfaces"
 
         if ( $PsBoundParameters.ContainsKey('interface') ) {
             $interface = $interface -replace '/', '%2F'

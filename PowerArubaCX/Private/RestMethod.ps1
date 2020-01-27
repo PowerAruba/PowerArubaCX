@@ -12,31 +12,37 @@ function Invoke-ArubaCXRestMethod {
 
       .DESCRIPTION
        Invoke RestMethod with ArubaCX connection variable (token, csrf..)
+       rest/vX is automatically add to uri, use -noapiversion for remove
 
       .EXAMPLE
-      Invoke-ArubaCXRestMethod -method "get" -uri "rest/v1/system"
+      Invoke-ArubaCXRestMethod -method "get" -uri "system"
 
-      Invoke-RestMethod with ArubaCX connection for get rest/v1/system
-
-      .EXAMPLE
-      Invoke-ArubaCXRestMethod "rest/v1/system"
-
-      Invoke-RestMethod with ArubaCX connection for get rest/v1/system uri with default GET method parameter
+      Invoke-RestMethod with ArubaCX connection for get rest/vX/system
 
       .EXAMPLE
-      Invoke-ArubaCXRestMethod -method "post" -uri "rest/v1/system" -body $body
+      Invoke-ArubaCXRestMethod "system"
 
-      Invoke-RestMethod with ArubaCX connection for post rest/v1/system uri with $body payload
-
-      .EXAMPLE
-      Invoke-ArubaCXRestMethod -method "get" -uri "rest/v1/system" -depth 1 -selector configuration
-
-      Invoke-RestMethod with ArubaCX connection for get rest/v1/system with depth 1 and select only configuration
+      Invoke-RestMethod with ArubaCX connection for get rest/vX/system uri with default GET method parameter
 
       .EXAMPLE
-      Invoke-ArubaCXRestMethod -method "get" -uri "rest/v1/system" -attributes hostname, dns_servers
+      Invoke-ArubaCXRestMethod -method "post" -uri "system" -body $body
 
-      Invoke-RestMethod with ArubaCX connection for get rest/v1/system with display only attributes hostname and dns_servers
+      Invoke-RestMethod with ArubaCX connection for post rest/vX/system uri with $body payload
+
+      .EXAMPLE
+      Invoke-ArubaCXRestMethod -method "get" -uri "system" -depth 1 -selector configuration
+
+      Invoke-RestMethod with ArubaCX connection for get rest/vX/system with depth 1 and select only configuration
+
+      .EXAMPLE
+      Invoke-ArubaCXRestMethod -method "get" -uri "system" -attributes hostname, dns_servers
+
+      Invoke-RestMethod with ArubaCX connection for get rest/vX/system with display only attributes hostname and dns_servers
+
+      .EXAMPLE
+      Invoke-ArubaCXRestMethod -method "get" -uri "rest/v10.04/system" -noapiversion
+
+      Invoke-RestMethod with ArubaCX connection for get rest/v10.04/system (need to specify full uri with rest/vX)
     #>
 
     [CmdletBinding(DefaultParametersetname = "default")]
@@ -49,15 +55,17 @@ function Invoke-ArubaCXRestMethod {
         [Parameter(Mandatory = $false)]
         [psobject]$body,
         [Parameter(Mandatory = $false)]
-        [ValidateRange(0, 3)]
+        [ValidateRange(1, 4)]
         [Int]$depth,
         [Parameter(Mandatory = $false, ParameterSetName = "selector")]
-        [ValidateSet("configuration", "status", "statistics")]
+        [ValidateSet("configuration", "status", "statistics", "writable")]
         [String]$selector,
         [Parameter(Mandatory = $false, ParameterSetName = "attributes")]
         [String[]]$attributes,
         [Parameter(Mandatory = $false)]
         [switch]$vsx_peer,
+        [Parameter(Mandatory = $false)]
+        [switch]$noapiversion,
         [Parameter(Mandatory = $false)]
         [psobject]$connection
     )
@@ -79,13 +87,19 @@ function Invoke-ArubaCXRestMethod {
         $headers = $connection.headers
         $invokeParams = $connection.invokeParams
         $sessionvariable = $connection.session
+        $rest = 'rest/' + $connection.version + '/'
+
+        #Remove rest/version on uri
+        if ($noapiversion) {
+            $rest = ""
+        }
 
         if ( $PsBoundParameters.ContainsKey('vsx_peer') ) {
             #Add /vsx-peer/ before uri
-            $fullurl = "https://${Server}:${port}/vsx-peer/${uri}"
+            $fullurl = "https://${Server}:${port}/vsx-peer/${rest}${uri}"
         }
         else {
-            $fullurl = "https://${Server}:${port}/${uri}"
+            $fullurl = "https://${Server}:${port}/${rest}${uri}"
         }
 
         if ($fullurl -NotMatch "\?") {

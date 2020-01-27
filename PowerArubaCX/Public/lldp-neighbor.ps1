@@ -22,10 +22,10 @@ function Get-ArubaCXLLDPNeighbor {
         [Parameter(Mandatory = $true, position = 1)]
         [String]$neighbor,
         [Parameter(Mandatory = $false)]
-        [ValidateRange(0, 3)]
+        [ValidateRange(1, 4)]
         [Int]$depth,
         [Parameter(Mandatory = $false)]
-        [ValidateSet("configuration", "status", "statistics")]
+        [ValidateSet("configuration", "status", "statistics", "writable")]
         [String]$selector,
         [Parameter(Mandatory = $false)]
         [String[]]$attributes,
@@ -56,7 +56,7 @@ function Get-ArubaCXLLDPNeighbor {
         }
 
         $neighbor = $neighbor -replace '/', '%2F'
-        $uri = "rest/v1/system/interfaces/$neighbor/lldp_neighbors"
+        $uri = "system/interfaces/$neighbor/lldp_neighbors"
 
         $response = Invoke-ArubaCXRestMethod -uri $uri -method 'GET' -connection $connection  @invokeParams
         $response
