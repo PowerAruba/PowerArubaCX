@@ -29,7 +29,10 @@ function Get-ArubaCXSystem {
         [Parameter(Mandatory = $false)]
         [String[]]$attributes,
         [Parameter(Mandatory = $false)]
-        [switch]$vsx_peer
+        [switch]$vsx_peer,
+        [Parameter (Mandatory = $False)]
+        [ValidateNotNullOrEmpty()]
+        [PSObject]$connection = $DefaultArubaSWConnection
     )
 
     Begin {
@@ -53,7 +56,7 @@ function Get-ArubaCXSystem {
 
         $uri = "rest/v1/system"
 
-        $response = invoke-ArubaCXRestMethod -method "GET" -uri $uri @invokeParams
+        $response = invoke-ArubaCXRestMethod -method "GET" -uri $uri -connection $connection @invokeParams
         $response
     }
 

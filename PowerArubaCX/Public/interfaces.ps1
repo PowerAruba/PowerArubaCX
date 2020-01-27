@@ -30,7 +30,10 @@ function Get-ArubaCXinterfaces {
         [Parameter(Mandatory = $false)]
         [String[]]$attributes,
         [Parameter(Mandatory = $false)]
-        [switch]$vsx_peer
+        [switch]$vsx_peer,
+        [Parameter (Mandatory = $False)]
+        [ValidateNotNullOrEmpty()]
+        [PSObject]$connection = $DefaultArubaSWConnection
     )
 
     Begin {
@@ -59,7 +62,7 @@ function Get-ArubaCXinterfaces {
             $uri += "/$interface"
         }
 
-        $response = Invoke-ArubaCXRestMethod -uri $uri -method 'GET' @invokeParams
+        $response = Invoke-ArubaCXRestMethod -uri $uri -method 'GET' -connection $connection @invokeParams
         $response
     }
 
