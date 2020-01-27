@@ -59,6 +59,8 @@ function Invoke-ArubaCXRestMethod {
         [Parameter(Mandatory = $false)]
         [switch]$vsx_peer,
         [Parameter(Mandatory = $false)]
+        [switch]$noapiversion,
+        [Parameter(Mandatory = $false)]
         [psobject]$connection
     )
 
@@ -79,13 +81,19 @@ function Invoke-ArubaCXRestMethod {
         $headers = $connection.headers
         $invokeParams = $connection.invokeParams
         $sessionvariable = $connection.session
+        $rest = 'rest/' + $connection.version + '/'
+
+        #Remove rest/version on uri
+        if ($noapiversion) {
+            $rest = ""
+        }
 
         if ( $PsBoundParameters.ContainsKey('vsx_peer') ) {
             #Add /vsx-peer/ before uri
-            $fullurl = "https://${Server}:${port}/vsx-peer/${uri}"
+            $fullurl = "https://${Server}:${port}/vsx-peer/${rest}${uri}"
         }
         else {
-            $fullurl = "https://${Server}:${port}/${uri}"
+            $fullurl = "https://${Server}:${port}/${rest}${uri}"
         }
 
         if ($fullurl -NotMatch "\?") {

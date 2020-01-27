@@ -103,7 +103,7 @@ function Connect-ArubaCX {
 
         $url = "https://${Server}:${Port}/rest"
         try {
-            $rest = Invoke-RestMethod $url -Method "get" -SessionVariable arubacx @invokeParams
+            $rest = Invoke-RestMethod $url -Method "get" -WebSession $arubacx @invokeParams
         }
         catch {
             throw "Unsupported release Need to use ArubaCX >= 10.04"
