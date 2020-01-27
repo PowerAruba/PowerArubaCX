@@ -75,7 +75,7 @@ function Set-ArubaCXInterfaces {
 
     <#
       .SYNOPSIS
-      Confgure Aruba CX Interfacess
+      Confgure Aruba CX Interfaces
 
       .DESCRIPTION
       Configure Aruba CX Interfaces (port, lag, vlan... with name, IP Address, description)
@@ -83,7 +83,7 @@ function Set-ArubaCXInterfaces {
       .EXAMPLE
       Set-ArubaCXInterfaces -interface 1/1/1 -description "Changed by PowerArubaCX"
 
-      Set the description of Interface 1/1/1
+      Set the description for the Interface 1/1/1
 
     #>
     Param(
@@ -111,27 +111,23 @@ function Set-ArubaCXInterfaces {
         $interface = $interface -replace '/', '%2F'
         $uri += "/$interface"
 
-        $_interface = New-Object -TypeName PSObject
-        $user_config = New-Object -TypeName PSObject
+        $_interface = Get-ArubaCXInterfaces $interface -selector writable
 
         if ( $PsBoundParameters.ContainsKey('description') ) {
-            $_interface | Add-member -name "description" -membertype NoteProperty -Value $description
+            $_interface.description = $description
         }
 
         if ( $PsBoundParameters.ContainsKey('admin') ) {
-            $user_config | Add-member -name "admin" -membertype NoteProperty -Value $admin
+            $_interface.user_config.admin = $admin
         }
-
-        $_interface | Add-member -name "user_config" -membertype NoteProperty -Value $user_config
 
         if ( $PsBoundParameters.ContainsKey('routing') ) {
             if ($routing) {
-                $_interface | Add-member -name "routing" -membertype NoteProperty -Value $true
+                $_interface.routing = $true
             }
             else {
-                $_interface | Add-member -name "routing" -membertype NoteProperty -Value $false
+                $_interface.routing = $false
             }
-
         }
 
         $response = Invoke-ArubaCXRestMethod -uri $uri -method 'PUT' -body $_interface -connection $connection
