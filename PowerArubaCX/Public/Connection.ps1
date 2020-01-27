@@ -159,7 +159,7 @@ function Disconnect-ArubaCX {
 
     Process {
 
-        $url = "rest/v1/logout"
+        $url = "logout"
 
         if ( -not ( $Noconfirm )) {
             $message = "Remove ArubaCX Switch connection."
