@@ -57,7 +57,9 @@ function Invoke-ArubaCXRestMethod {
         [Parameter(Mandatory = $false, ParameterSetName = "attributes")]
         [String[]]$attributes,
         [Parameter(Mandatory = $false)]
-        [switch]$vsx_peer
+        [switch]$vsx_peer,
+        [Parameter(Mandatory = $false)]
+        [psobject]$connection
     )
 
     Begin {
@@ -65,9 +67,14 @@ function Invoke-ArubaCXRestMethod {
 
     Process {
 
-        $Server = ${DefaultArubaCXConnection}.Server
-        $headers = ${DefaultArubaCXConnection}.headers
-        $invokeParams = ${DefaultArubaCXConnection}.invokeParams
+        if ($null -eq $connection ) {
+            $connection = $DefaultArubaCXConnection
+        }
+
+        $Server = $connection.Server
+        $headers = $connection.headers
+        $invokeParams = $connection.invokeParams
+        $sessionvariable = $connection.session
 
         if ( $PsBoundParameters.ContainsKey('vsx_peer') ) {
             #Add /vsx-peer/ before uri
@@ -92,7 +99,6 @@ function Invoke-ArubaCXRestMethod {
             $fullurl += "&attributes=$attributes"
         }
 
-        $sessionvariable = $DefaultArubaCXConnection.session
         try {
             if ($body) {
                 $response = Invoke-RestMethod $fullurl -Method $method -body ($body | ConvertTo-Json) -Headers $headers -WebSession $sessionvariable @invokeParams

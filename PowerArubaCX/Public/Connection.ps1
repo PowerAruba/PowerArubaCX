@@ -45,7 +45,9 @@ function Connect-ArubaCX {
         [Parameter(Mandatory = $false)]
         [PSCredential]$Credentials,
         [Parameter(Mandatory = $false)]
-        [switch]$SkipCertificateCheck = $false
+        [switch]$SkipCertificateCheck = $false,
+        [Parameter(Mandatory = $false)]
+        [boolean]$DefaultConnection = $true
     )
 
     Begin {
@@ -100,7 +102,9 @@ function Connect-ArubaCX {
         $connection.session = $arubacx
         $connection.invokeParams = $invokeParams
 
-        set-variable -name DefaultArubaCXConnection -value $connection -scope Global
+        if ( $DefaultConnection ) {
+            set-variable -name DefaultArubaCXConnection -value $connection -scope Global
+        }
 
         $connection
     }
@@ -156,7 +160,7 @@ function Disconnect-ArubaCX {
             Write-Progress -activity "Remove ArubaCX SW connection"
             Invoke-ArubaCXRestMethod -method "POST" -uri $url | Out-Null
             Write-Progress -activity "Remove ArubaCX SW connection" -completed
-            if (Get-Variable -Name DefaultArubaCXConnection -scope global) {
+            if (Test-Path variable:global:DefaultArubaCXConnection) {
                 Remove-Variable -name DefaultArubaCXConnection -scope global
             }
         }
