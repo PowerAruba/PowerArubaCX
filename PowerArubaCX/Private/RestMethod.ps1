@@ -67,7 +67,10 @@ function Invoke-ArubaCXRestMethod {
 
     Process {
 
-        if ($null -eq $connection ) {
+        if ($null -eq $connection) {
+            if ($null -eq $DefaultArubaCXConnection) {
+                Throw "Not Connected. Connect to the Switch with Connect-ArubaCX"
+            }
             $connection = $DefaultArubaCXConnection
         }
 
