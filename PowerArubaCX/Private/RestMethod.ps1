@@ -39,7 +39,7 @@ function Invoke-ArubaCXRestMethod {
       Invoke-RestMethod with ArubaCX connection for get rest/v1/system with display only attributes hostname and dns_servers
     #>
 
-    [CmdletBinding(DefaultParametersetname="default")]
+    [CmdletBinding(DefaultParametersetname = "default")]
     Param(
         [Parameter(Mandatory = $true, position = 1)]
         [String]$uri,
@@ -72,11 +72,12 @@ function Invoke-ArubaCXRestMethod {
         if ( $PsBoundParameters.ContainsKey('vsx_peer') ) {
             #Add /vsx-peer/ before uri
             $fullurl = "https://${Server}/vsx-peer/${uri}"
-        } else {
+        }
+        else {
             $fullurl = "https://${Server}/${uri}"
         }
 
-        if($fullurl -NotMatch "\?"){
+        if ($fullurl -NotMatch "\?") {
             $fullurl += "?"
         }
 

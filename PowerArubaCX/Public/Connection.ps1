@@ -54,8 +54,8 @@ function Connect-ArubaCX {
     Process {
 
 
-        $connection = @{server = ""; session = ""; invokeParams = ""}
-        $invokeParams = @{DisableKeepAlive = $false; UseBasicParsing = $true; SkipCertificateCheck = $SkipCertificateCheck}
+        $connection = @{server = ""; session = ""; invokeParams = "" }
+        $invokeParams = @{DisableKeepAlive = $false; UseBasicParsing = $true; SkipCertificateCheck = $SkipCertificateCheck }
 
         #If there is a password (and a user), create a credentials
         if ($Password) {
@@ -69,7 +69,9 @@ function Connect-ArubaCX {
         if ("Desktop" -eq $PSVersionTable.PsEdition) {
             #Remove -SkipCertificateCheck from Invoke Parameter (not supported <= PS 5)
             $invokeParams.remove("SkipCertificateCheck")
-        } else { #Core Edition
+        }
+        else {
+            #Core Edition
             #Remove -UseBasicParsing (Enable by default with PowerShell 6/Core)
             $invokeParams.remove("UseBasicParsing")
         }
@@ -84,7 +86,7 @@ function Connect-ArubaCX {
             }
         }
 
-        $postParams = @{username = $Credentials.username; password = $Credentials.GetNetworkCredential().Password}
+        $postParams = @{username = $Credentials.username; password = $Credentials.GetNetworkCredential().Password }
         $url = "https://${Server}/rest/v1/login"
         try {
             Invoke-RestMethod $url -Method POST -Body $postParams -SessionVariable arubacx @invokeParams | Out-Null
