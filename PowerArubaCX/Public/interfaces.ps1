@@ -55,7 +55,7 @@ function Get-ArubaCXinterfaces {
             $invokeParams.add( 'vsx_peer', $true )
         }
 
-        $uri = "rest/v1/system/interfaces"
+        $uri = "system/interfaces"
 
         if ( $PsBoundParameters.ContainsKey('interface') ) {
             $interface = $interface -replace '/', '%2F'

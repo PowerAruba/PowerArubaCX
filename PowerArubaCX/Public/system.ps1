@@ -54,7 +54,7 @@ function Get-ArubaCXSystem {
             $invokeParams.add( 'vsx_peer', $true )
         }
 
-        $uri = "rest/v1/system"
+        $uri = "system"
 
         $response = invoke-ArubaCXRestMethod -method "GET" -uri $uri -connection $connection @invokeParams
         $response

@@ -59,7 +59,7 @@ function Get-ArubaCXPorts {
             $invokeParams.add( 'vsx_peer', $true )
         }
 
-        $uri = "rest/v1/system/ports"
+        $uri = "system/ports"
 
         if ( $PsBoundParameters.ContainsKey('port') ) {
             $port = $port -replace '/', '%2F'
