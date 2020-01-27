@@ -15,7 +15,7 @@ Describe  "Connect to a switch (using HTTPS)" {
         Connect-ArubaCX $ipaddress -Username $login -password $mysecpassword -SkipCertificateCheck
         $DefaultArubaCXConnection | Should Not BeNullOrEmpty
         $DefaultArubaCXConnection.server | Should be $ipaddress
-        $DefaultArubaCXConnection.httpOnly | Should be $false
+        $DefaultArubaCXConnection.port | Should be "443"
         $DefaultArubaCXConnection.session | Should not BeNullOrEmpty
     }
     It "Disconnect to a switch (using HTTPS) and check global variable" {
