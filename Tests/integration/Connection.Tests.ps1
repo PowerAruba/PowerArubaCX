@@ -49,9 +49,6 @@ Describe  "Connect to a switch (using multi connection)" {
         It "Use Multi connection for call Get LLDP Neighbor" {
             { Get-ArubaCXLLDPNeighbor 1/1/1 -connection $cx } | Should Not throw
         }
-        It "Use Multi connection for call Get Ports " {
-            { Get-ArubaCXPorts -connection $cx } | Should Not throw
-        }
         It "Use Multi connection for call Get System" {
             { Get-ArubaCXSystem -connection $cx } | Should Not throw
         }
