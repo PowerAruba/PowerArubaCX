@@ -105,6 +105,12 @@ function Set-ArubaCXInterfaces {
         [string]$description,
         [Parameter(Mandatory = $false)]
         [switch]$routing,
+        [Parameter(Mandatory = $false)]
+        [ValidateSet('access', 'native-untagged')]
+        [string]$vlan_mode,
+        [Parameter(Mandatory = $false)]
+        [ValidateRange(1, 4096)]
+        [int]$vlan_tag,
         [Parameter (Mandatory = $False)]
         [ValidateNotNullOrEmpty()]
         [PSObject]$connection = $DefaultArubaSWConnection
@@ -140,6 +146,16 @@ function Set-ArubaCXInterfaces {
             else {
                 $_interface.routing = $false
             }
+        }
+
+        if ( $PsBoundParameters.ContainsKey('vlan_mode') ) {
+            $_interface.vlan_mode = $vlan_mode
+        }
+
+        if ( $PsBoundParameters.ContainsKey('vlan_tag') ) {
+            $_vlan_tag = New-Object -TypeName PSObject
+            $_vlan_tag | Add-member -name $vlan_tag -membertype NoteProperty -Value "/rest/" + $($connection.version) + "/system/vlans/" + $vlan_tag
+            $_interface.vlan_tag = $_vlan_tag
         }
 
         $response = Invoke-ArubaCXRestMethod -uri $uri -method 'PUT' -body $_interface -connection $connection
