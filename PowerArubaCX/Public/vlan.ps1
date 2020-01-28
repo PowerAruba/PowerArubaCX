@@ -146,11 +146,11 @@ function Remove-ArubaCXVlan {
         Remove vlan named NAD-PowerArubaCP
 
         .EXAMPLE
-        Remove-ArubaCXVlan -id 23 -confirm:$true
+        Remove-ArubaCXVlan -id 23 -confirm:$false
 
         Remove Vlan id 23 with no confirmation
     #>
-    [CmdletBinding(SupportsShouldProcess)]
+    [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High')]
     Param(
         [Parameter (Mandatory = $true, ParameterSetName = "id")]
         [int]$id,
@@ -174,7 +174,7 @@ function Remove-ArubaCXVlan {
 
         $uri = "system/vlans/${id}"
 
-        if ($PSCmdlet.ShouldProcess("Vlans", "Remove Vlan ${id}")) {
+        if ($PSCmdlet.ShouldProcess("Vlan", "Remove Vlan ${id}")) {
             Invoke-ArubaCXRestMethod -method "DELETE" -uri $uri -connection $connection
         }
     }
