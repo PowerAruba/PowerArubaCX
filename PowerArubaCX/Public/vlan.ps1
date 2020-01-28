@@ -1,4 +1,4 @@
-﻿function Get-ArubaCXvlan {
+function Get-ArubaCXvlan {
 
     <#
       .SYNOPSIS
@@ -9,7 +9,7 @@
 
       .EXAMPLE
       Get-ArubaCXvlan
-      
+
         Get list of all vlan, lag,with name IP and more
 
     #>
