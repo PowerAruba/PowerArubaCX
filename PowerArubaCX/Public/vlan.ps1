@@ -28,8 +28,7 @@ function Add-ArubaCXVlan {
         [Parameter (Mandatory = $false)]
         [string]$description,
         [Parameter (Mandatory = $false)]
-        [string]$type,
-        [Parameter (Mandatory = $false)]
+        [ValidateSet('up', 'down')]
         [string]$admin,
         [Parameter (Mandatory = $False)]
         [ValidateNotNullOrEmpty()]
@@ -51,10 +50,6 @@ function Add-ArubaCXVlan {
 
         if ( $PsBoundParameters.ContainsKey('description') ) {
             $_vlan | add-member -name "description" -membertype NoteProperty -Value $description
-        }
-
-        if ( $PsBoundParameters.ContainsKey('type') ) {
-            $_vlan | add-member -name "type" -membertype NoteProperty -Value $type
         }
 
         if ( $PsBoundParameters.ContainsKey('admin') ) {
