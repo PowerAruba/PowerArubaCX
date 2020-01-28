@@ -23,7 +23,7 @@ function Add-ArubaCXVlan {
         [Parameter (Mandatory = $true)]
         [ValidateRange(1, 4096)]
         [int]$id,
-        [Parameter (Mandatory = $false)]
+        [Parameter (Mandatory = $true)]
         [string]$name,
         [Parameter (Mandatory = $false)]
         [string]$description,
@@ -47,9 +47,7 @@ function Add-ArubaCXVlan {
 
         $_vlan | add-member -name "id" -membertype NoteProperty -Value $id
 
-        if ( $PsBoundParameters.ContainsKey('name') ) {
-            $_vlan | add-member -name "name" -membertype NoteProperty -Value $name
-        }
+        $_vlan | add-member -name "name" -membertype NoteProperty -Value $name
 
         if ( $PsBoundParameters.ContainsKey('description') ) {
             $_vlan | add-member -name "description" -membertype NoteProperty -Value $description
