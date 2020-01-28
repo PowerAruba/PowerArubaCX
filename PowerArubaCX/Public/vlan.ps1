@@ -1,27 +1,31 @@
-function Get-ArubaCXvlan {
+function Get-ArubaCXVlan {
 
     <#
-      .SYNOPSIS
-      Get list of all Aruba CX Vlan
+        .SYNOPSIS
+        Get list of all Aruba CX Vlan
 
-      .DESCRIPTION
-      Get list of all Aruba CX Vlan (port, lag, vlan... with name, IP Address, description)
+        .DESCRIPTION
+        Get list of all Aruba CX Vlan (name, description, vsx_sync...)
 
-      .EXAMPLE
-      Get-ArubaCXvlan
+        .EXAMPLE
+        Get-ArubaCXVlan
 
-        Get list of all vlan, lag,with name IP and more
-
+        Get list of all vlan (name, description, vsx_sync...)
     #>
     Param(
         [Parameter(Mandatory = $false)]
         [ValidateRange(0, 3)]
         [Int]$depth,
         [Parameter(Mandatory = $false)]
-        [ValidateSet("configuration", "status", "statistics")]
+        [ValidateSet("configuration", "status", "statistics", "writable")]
         [String]$selector,
         [Parameter(Mandatory = $false)]
-        [String[]]$attributes
+        [String[]]$attributes,
+        [Parameter(Mandatory = $false)]
+        [switch]$vsx_peer,
+        [Parameter (Mandatory = $False)]
+        [ValidateNotNullOrEmpty()]
+        [PSObject]$connection = $DefaultArubaSWConnection
     )
 
     Begin {
@@ -39,11 +43,14 @@ function Get-ArubaCXvlan {
         if ( $PsBoundParameters.ContainsKey('attributes') ) {
             $invokeParams.add( 'attributes', $attributes )
         }
+        if ( $PsBoundParameters.ContainsKey('vsx_peer') ) {
+            $invokeParams.add( 'vsx_peer', $true )
+        }
 
         $uri = "system/vlans"
 
 
-        $response = Invoke-ArubaCXRestMethod -uri $uri -method 'GET' @invokeParams
+        $response = Invoke-ArubaCXRestMethod -uri $uri -method 'GET' -connection $connection @invokeParams
         $response
     }
 
