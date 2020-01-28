@@ -113,7 +113,7 @@ function Set-ArubaCXInterfaces {
         [int]$vlan_tag,
         [Parameter (Mandatory = $False)]
         [ValidateNotNullOrEmpty()]
-        [PSObject]$connection = $DefaultArubaSWConnection
+        [PSObject]$connection = $DefaultArubaCXConnection
     )
 
     Begin {
