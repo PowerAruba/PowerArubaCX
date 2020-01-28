@@ -130,3 +130,56 @@ function Get-ArubaCXVlan {
     End {
     }
 }
+
+function Remove-ArubaCXVlan {
+
+    <#
+        .SYNOPSIS
+        Remove a vlan on Aruba CX Switch
+
+        .DESCRIPTION
+        Remove a vlan on Aruba CX Switchs
+
+        .EXAMPLE
+        $vlan = Get-ArubaCXVlan -name NAD-PowerArubaCP
+        PS C:\>$vlan | Remove-ArubaCXVlan
+
+        Remove vlan named NAD-PowerArubaCP
+
+        .EXAMPLE
+        Remove-ArubaCXVlan -id 23 -confirm:$true
+
+        Remove Vlan id 23 with no confirmation
+    #>
+    [CmdletBinding(SupportsShouldProcess)]
+    Param(
+        [Parameter (Mandatory = $true, ParameterSetName = "id")]
+        [int]$id,
+        [Parameter (Mandatory = $true, ValueFromPipeline = $true, Position = 1, ParameterSetName = "vlan")]
+        #[ValidateScript( { Confirm-ArubaCXVlans $_ })]
+        [psobject]$vlan,
+        [Parameter (Mandatory = $False)]
+        [ValidateNotNullOrEmpty()]
+        [PSObject]$connection = $DefaultArubaCXConnection
+    )
+
+    Begin {
+    }
+
+    Process {
+
+        #get vlan id from vlan ps object
+        if ($vlan) {
+            $id = $vlan.id
+        }
+
+        $uri = "system/vlans/${id}"
+
+        if ($PSCmdlet.ShouldProcess("Vlans", "Remove Vlan ${id}")) {
+            Invoke-ArubaCXRestMethod -method "DELETE" -uri $uri -connection $connection
+        }
+    }
+
+    End {
+    }
+}
