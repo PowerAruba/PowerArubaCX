@@ -102,12 +102,13 @@ function Get-ArubaCXVlan {
 
         Get list of all vlan (name, description, vsx_sync...)
     #>
+
     Param(
         [Parameter (Mandatory = $false)]
         [ValidateRange(1, 4096)]
         [int]$id,
         [Parameter(Mandatory = $false)]
-        [ValidateRange(0, 3)]
+        [ValidateRange(1, 4)]
         [Int]$depth,
         [Parameter(Mandatory = $false)]
         [ValidateSet("configuration", "status", "statistics", "writable")]
