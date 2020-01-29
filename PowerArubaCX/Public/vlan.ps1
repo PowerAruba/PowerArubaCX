@@ -18,6 +18,16 @@ function Add-ArubaCXVlan {
         Add-ArubaCXVlan -name Vlan 2 -id 2
 
         Add Vlan id 2 named Vlan 2
+
+        .EXAMPLE
+        Add-ArubaCXVlan -name Vlan 2 -id 2 -description "Add via PowerArubaCX" -voice
+
+        Add Vlan with a description and enable voice
+
+        .EXAMPLE
+        Add-ArubaCXVlan -name Vlan 2 -id 2 -admin down -vsx_sync
+
+        Add Vlan with a VSX Sync and admin down
     #>
     Param(
         [Parameter (Mandatory = $true)]
