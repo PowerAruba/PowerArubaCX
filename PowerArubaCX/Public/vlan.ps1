@@ -101,6 +101,16 @@ function Get-ArubaCXVlan {
         Get-ArubaCXVlan
 
         Get list of all vlan (name, description, vsx_sync...)
+
+        .EXAMPLE
+        Get-ArubaCXVlan -id 23
+
+        Get vlan with id 23
+
+        .EXAMPLE
+        Get-ArubaCXVlan -name MyVlan
+
+        Get vlan named MyVlan
     #>
 
     [CmdletBinding(DefaultParametersetname = "Default")]
@@ -184,10 +194,10 @@ function Remove-ArubaCXVlan {
         Remove a vlan on Aruba CX Switch
 
         .EXAMPLE
-        $vlan = Get-ArubaCXVlan -id 23
+        $vlan = Get-ArubaCXVlan -name MyVlan
         PS C:\>$vlan | Remove-ArubaCXVlan
 
-        Remove vlan with id 23
+        Remove vlan named MyVlan
 
         .EXAMPLE
         Remove-ArubaCXVlan -id 23 -confirm:$false
