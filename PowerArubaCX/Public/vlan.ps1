@@ -103,10 +103,13 @@ function Get-ArubaCXVlan {
         Get list of all vlan (name, description, vsx_sync...)
     #>
 
+    [CmdletBinding(DefaultParametersetname = "Default")]
     Param(
-        [Parameter (Mandatory = $false)]
+        [Parameter (Mandatory = $false, ParameterSetName = "id")]
         [ValidateRange(1, 4096)]
         [int]$id,
+        [Parameter (Mandatory = $false, ParameterSetName = "name")]
+        [string]$name,
         [Parameter(Mandatory = $false)]
         [ValidateRange(1, 4)]
         [Int]$depth,
@@ -127,6 +130,7 @@ function Get-ArubaCXVlan {
 
     Process {
 
+
         $invokeParams = @{ }
         if ( $PsBoundParameters.ContainsKey('depth') ) {
             $invokeParams.add( 'depth', $depth )
@@ -140,15 +144,30 @@ function Get-ArubaCXVlan {
         if ( $PsBoundParameters.ContainsKey('vsx_peer') ) {
             $invokeParams.add( 'vsx_peer', $true )
         }
+        $depth.gettype()
+        #if filter by name always set depth to 2
+        if ($PsBoundParameters.ContainsKey('name') -and ($depth -eq "")) {
+            $invokeParams.add( 'depth', 2 )
+        }
 
         $uri = "system/vlans"
 
+        # you can directly filter by id
         if ( $PsBoundParameters.ContainsKey('id') ) {
             $uri += "/$id"
         }
 
         $response = Invoke-ArubaCXRestMethod -uri $uri -method 'GET' -connection $connection @invokeParams
-        $response
+
+        switch ( $PSCmdlet.ParameterSetName ) {
+            "name" {
+                #Need to make own filter for name (and use a depth >= 2)
+                $response.psobject.Properties.Value | Where-Object { $_.name -eq $name }
+            }
+            default {
+                $response
+            }
+        }
     }
 
     End {
