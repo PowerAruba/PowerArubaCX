@@ -164,7 +164,7 @@ function Get-ArubaCXVlan {
         if ( $PsBoundParameters.ContainsKey('vsx_peer') ) {
             $invokeParams.add( 'vsx_peer', $true )
         }
-        $depth.gettype()
+
         #if filter by name always set depth to 2
         if ($PsBoundParameters.ContainsKey('name') -and ($depth -eq "")) {
             $invokeParams.add( 'depth', 2 )
