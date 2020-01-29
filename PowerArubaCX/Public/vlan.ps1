@@ -161,18 +161,18 @@ function Remove-ArubaCXVlan {
         Remove a vlan on Aruba CX Switch
 
         .DESCRIPTION
-        Remove a vlan on Aruba CX Switchs
+        Remove a vlan on Aruba CX Switch
 
         .EXAMPLE
-        $vlan = Get-ArubaCXVlan -name NAD-PowerArubaCP
+        $vlan = Get-ArubaCXVlan -id 23
         PS C:\>$vlan | Remove-ArubaCXVlan
 
-        Remove vlan named NAD-PowerArubaCP
+        Remove vlan with id 23
 
         .EXAMPLE
         Remove-ArubaCXVlan -id 23 -confirm:$false
 
-        Remove Vlan id 23 with no confirmation
+        Remove Vlan with id 23 with no confirmation
     #>
     [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High')]
     Param(
