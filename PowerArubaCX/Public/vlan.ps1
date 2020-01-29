@@ -30,6 +30,10 @@ function Add-ArubaCXVlan {
         [Parameter (Mandatory = $false)]
         [ValidateSet('up', 'down')]
         [string]$admin,
+        [Parameter (Mandatory = $false)]
+        [switch]$voice,
+        [Parameter (Mandatory = $false)]
+        [switch]$vsx_sync,
         [Parameter (Mandatory = $False)]
         [ValidateNotNullOrEmpty()]
         [PSObject]$connection = $DefaultArubaSWConnection
@@ -56,8 +60,28 @@ function Add-ArubaCXVlan {
             $_vlan | add-member -name "admin" -membertype NoteProperty -Value $admin
         }
 
+        if ( $PsBoundParameters.ContainsKey('voice') ) {
+            if ($voice) {
+                $_vlan | add-member -name "voice" -membertype NoteProperty -Value $true
+            }
+            else {
+                $_vlan | add-member -name "voice" -membertype NoteProperty -Value $false
+            }
+        }
+
+        if ( $PsBoundParameters.ContainsKey('vsx_sync') ) {
+            if ($vsx_sync) {
+                $_vlan | add-member -name "vsx_sync" -membertype NoteProperty -Value @("all_attributes_and_dependents")
+            }
+            else {
+                $_vlan | add-member -name "vsx_sync" -membertype NoteProperty -Value ""
+            }
+        }
+
         $response = Invoke-ArubaCXRestMethod -uri $uri -method 'POST' -body $_vlan -connection $connection
         $response
+
+        Get-ArubaCXVlan -id $id
     }
 
     End {
