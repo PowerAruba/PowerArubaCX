@@ -199,7 +199,9 @@ function Remove-ArubaCXVlan {
         $uri = "system/vlans/${id}"
 
         if ($PSCmdlet.ShouldProcess("Vlan", "Remove Vlan ${id}")) {
+            Write-Progress -activity "Remove Vlan"
             Invoke-ArubaCXRestMethod -method "DELETE" -uri $uri -connection $connection
+            Write-Progress -activity "Remove Vlan" -completed
         }
     }
 
