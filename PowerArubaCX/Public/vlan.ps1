@@ -201,22 +201,22 @@ function Set-ArubaCXVlan {
         Configure Aruba CX Vlan
 
         .DESCRIPTION
-        Confogure Vlan (name, description, vsx_sync...)
+        Configure Vlan (name, description, vsx_sync...)
 
         .EXAMPLE
-        Set-ArubaCXVlan -name Vlan 2 -id 2
+        Get-ArubaCXVlan -id 44 | Set-ArubaCXVlan -name "My New Vlan Name" -description "My Description change by PowerArubaCX"
 
-        Configure Vlan id 2 named Vlan 2
-
-        .EXAMPLE
-        Set-ArubaCXVlan -name Vlan 2 -id 2 -description "Add via PowerArubaCX" -voice
-
-        Configure Vlan with a description and enable voice
+        Change the name and description of vlan id 44
 
         .EXAMPLE
-        Set-ArubaCXVlan -name Vlan 2 -id 2 -admin down -vsx_sync
+        Get-ArubaCXVlan -id 44 | Set-ArubaCXVlan -voice -admin up
 
-        Configure Vlan with a VSX Sync and admin down
+        Configure Vlan 44 with voice vlan and set admin to up
+
+        .EXAMPLE
+        Get-ArubaCXVlan -id 44 | Set-ArubaCXVlan -vsx_sync -voice -admin down
+
+        Configure Vlan 44 with enable VSX sync and set admin to status
     #>
     Param(
         [Parameter (Mandatory = $true, ParameterSetName = "id")]
