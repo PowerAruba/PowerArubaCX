@@ -194,6 +194,106 @@ function Get-ArubaCXVlan {
     }
 }
 
+function Set-ArubaCXVlan {
+
+    <#
+        .SYNOPSIS
+        Configure Aruba CX Vlan
+
+        .DESCRIPTION
+        Confogure Vlan (name, description, vsx_sync...)
+
+        .EXAMPLE
+        Set-ArubaCXVlan -name Vlan 2 -id 2
+
+        Configure Vlan id 2 named Vlan 2
+
+        .EXAMPLE
+        Set-ArubaCXVlan -name Vlan 2 -id 2 -description "Add via PowerArubaCX" -voice
+
+        Configure Vlan with a description and enable voice
+
+        .EXAMPLE
+        Set-ArubaCXVlan -name Vlan 2 -id 2 -admin down -vsx_sync
+
+        Configure Vlan with a VSX Sync and admin down
+    #>
+    Param(
+        [Parameter (Mandatory = $true, ParameterSetName = "id")]
+        [ValidateRange(1, 4096)]
+        [int]$id,
+        [Parameter (Mandatory = $true, ValueFromPipeline = $true, Position = 1, ParameterSetName = "vlan")]
+        [ValidateScript( { Confirm-ArubaCXVlan $_ })]
+        [psobject]$vlan,
+        [Parameter (Mandatory = $false)]
+        [string]$name,
+        [Parameter (Mandatory = $false)]
+        [string]$description,
+        [Parameter (Mandatory = $false)]
+        [ValidateSet('up', 'down')]
+        [string]$admin,
+        [Parameter (Mandatory = $false)]
+        [switch]$voice,
+        [Parameter (Mandatory = $false)]
+        [switch]$vsx_sync,
+        [Parameter (Mandatory = $False)]
+        [ValidateNotNullOrEmpty()]
+        [PSObject]$connection = $DefaultArubaCXConnection
+    )
+
+    Begin {
+    }
+
+    Process {
+
+        #get vlan id from vlan ps object
+        if ($vlan) {
+            $id = $vlan.id
+        }
+
+        $uri = "system/vlans/${id}"
+
+        $_vlan = Get-ArubaCXVlan -id $id -selector writable
+
+        if ( $PsBoundParameters.ContainsKey('name') ) {
+            $_vlan.name = $name
+        }
+        if ( $PsBoundParameters.ContainsKey('description') ) {
+            $_vlan.description = $description
+        }
+
+        if ( $PsBoundParameters.ContainsKey('admin') ) {
+            $_vlan.admin = $admin
+        }
+
+        if ( $PsBoundParameters.ContainsKey('voice') ) {
+            if ($voice) {
+                $_vlan.voice = $true
+            }
+            else {
+                $_vlan.voice = $false
+            }
+        }
+
+        if ( $PsBoundParameters.ContainsKey('vsx_sync') ) {
+            if ($vsx_sync) {
+                $_vlan.vsx_sync = @("all_attributes_and_dependents")
+            }
+            else {
+                $_vlan.vsx_sync = $null
+            }
+        }
+
+        $response = Invoke-ArubaCXRestMethod -uri $uri -method 'PUT' -body $_vlan -connection $connection
+        $response
+
+        Get-ArubaCXVlan -id $id
+    }
+
+    End {
+    }
+}
+
 function Remove-ArubaCXVlan {
 
     <#
