@@ -214,12 +214,13 @@ function Remove-ArubaCXVlan {
 
         Remove Vlan with id 23 with no confirmation
     #>
-    [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High')]
+
+    [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'high')]
     Param(
         [Parameter (Mandatory = $true, ParameterSetName = "id")]
         [int]$id,
         [Parameter (Mandatory = $true, ValueFromPipeline = $true, Position = 1, ParameterSetName = "vlan")]
-        #[ValidateScript( { Confirm-ArubaCXVlans $_ })]
+        [ValidateScript( { Confirm-ArubaCXVlan $_ })]
         [psobject]$vlan,
         [Parameter (Mandatory = $False)]
         [ValidateNotNullOrEmpty()]
