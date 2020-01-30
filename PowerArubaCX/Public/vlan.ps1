@@ -217,6 +217,13 @@ function Set-ArubaCXVlan {
         Get-ArubaCXVlan -id 44 | Set-ArubaCXVlan -vsx_sync -voice -admin down
 
         Configure Vlan 44 with enable VSX sync and set admin to status
+
+        .EXAMPLE
+        $vlan = Get-ArubaCXVlan -id 44 -selector writable
+        PS> $vlan.name = "My Vlan"
+        PS> $vlan | Set-ArubaCXVlan -use_pipeline
+
+        Configure Vlan 44 name using pipeline (can be only with selector equal writable)
     #>
     Param(
         [Parameter (Mandatory = $true, ParameterSetName = "id")]
@@ -236,6 +243,8 @@ function Set-ArubaCXVlan {
         [switch]$voice,
         [Parameter (Mandatory = $false)]
         [switch]$vsx_sync,
+        [Parameter (Mandatory = $false)]
+        [switch]$use_pipeline,
         [Parameter (Mandatory = $False)]
         [ValidateNotNullOrEmpty()]
         [PSObject]$connection = $DefaultArubaCXConnection
@@ -253,7 +262,12 @@ function Set-ArubaCXVlan {
 
         $uri = "system/vlans/${id}"
 
-        $_vlan = Get-ArubaCXVlan -id $id -selector writable
+        if ($use_pipeline) {
+            $_vlan = $vlan
+        }
+        else {
+            $_vlan = Get-ArubaCXVlan -id $id -selector writable
+        }
 
         if ( $PsBoundParameters.ContainsKey('name') ) {
             $_vlan.name = $name
