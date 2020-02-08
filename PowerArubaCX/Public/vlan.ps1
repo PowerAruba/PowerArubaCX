@@ -179,6 +179,11 @@ function Get-ArubaCXVlan {
 
         $response = Invoke-ArubaCXRestMethod -uri $uri -method 'GET' -connection $connection @invokeParams
 
+        #Add id parameter when use writable type selector
+        if ( $PsBoundParameters.ContainsKey('selector') -and $selector -eq "writable" ) {
+            $response | add-member -name "id" -membertype NoteProperty -Value $id
+        }
+
         switch ( $PSCmdlet.ParameterSetName ) {
             "name" {
                 #Need to make own filter for name (and use a depth >= 2)
@@ -263,6 +268,8 @@ function Set-ArubaCXVlan {
         $uri = "system/vlans/${id}"
 
         if ($use_pipeline) {
+            #Remove id from vlan (can not be modified)
+            $vlan.psobject.Properties.remove("id")
             $_vlan = $vlan
         }
         else {
