@@ -91,7 +91,7 @@ function Add-ArubaCXVlan {
         $response = Invoke-ArubaCXRestMethod -uri $uri -method 'POST' -body $_vlan -connection $connection
         $response
 
-        Get-ArubaCXVlan -id $id
+        Get-ArubaCXVlan -id $id -connection $connection
     }
 
     End {
@@ -308,7 +308,7 @@ function Set-ArubaCXVlan {
         $response = Invoke-ArubaCXRestMethod -uri $uri -method 'PUT' -body $_vlan -connection $connection
         $response
 
-        Get-ArubaCXVlan -id $id
+        Get-ArubaCXVlan -id $id -connection $connection
     }
 
     End {
