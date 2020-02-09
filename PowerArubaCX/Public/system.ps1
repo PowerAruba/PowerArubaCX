@@ -68,44 +68,80 @@ function Set-ArubaCXSystem {
 
     <#
         .SYNOPSIS
-        Configure Vlan info on ArubaOS Switch (Provision)
+        Configure System info on ArubaCX Switch
 
         .DESCRIPTION
-        Configure vlan info (Id, Name, Voice, Snooping...)
+        Configure System info (Hostname, Banner...)
 
         .EXAMPLE
-        $vlan = Get-ArubaSWVlans -id 85
-        PS C:\>$vlan | Set-ArubaSWVlans -Name PowerArubaSW -is_voice_enabled -is_jumbo_enabled:$false
+        Set-ArubaCXSystem -hostname "My ArubaCX Switch"
 
-        Configure vlan id 85 with name PowerArubaSW and enable voice vlan and disable jumbo
+        Configure hostname
+
         .EXAMPLE
-        Set-ArubaSWVlans -id 85 -Name PowerArubaSW2 -is_voice_enabled -is_dsnoop_enabled:$false
+        Set-ArubaCXSystem -banner "Welcome on PowerArubaCX Switch"
 
-        Configure vlan id 85 with name PowerArubaSW2 and enable voice vlan and disable dsnoop
+        Configure Banner
 
+        .EXAMPLE
+        Set-ArubaCXSystem -timezone Europe/Paris
+
+        Configure Timezone
+
+        .EXAMPLE
+        $system = Get-ArubaCXSystem -selector writable
+        PS >$system.usb_disable = $true
+        PS > $system | Set-ArubaCXSystem -use_pipeline
+
+        Configure some system variable (usb_disable) no available on parameter using pipeline (can be only with selector equal writable)
     #>
 
     Param(
+        [Parameter (Mandatory = $false, ValueFromPipeline = $true, Position = 1)]
+        #[ValidateScript( { Confirm-ArubaCXSystem $_ })]
+        [psobject]$system,
         [Parameter (Mandatory = $false)]
-        [string]$hostname
+        [string]$hostname,
+        [Parameter (Mandatory = $false)]
+        [string]$banner,
+        [Parameter (Mandatory = $false)]
+        #add Check of timezone ? very long list..
+        [string]$timezone,
+        [Parameter (Mandatory = $false)]
+        [switch]$use_pipeline,
+        [Parameter (Mandatory = $False)]
+        [ValidateNotNullOrEmpty()]
+        [PSObject]$connection = $DefaultArubaCXConnection
     )
+
 
     Begin {
     }
 
     Process {
 
-        $uri = "rest/v1/system"
+        $uri = "system"
 
-        $_system = new-Object -TypeName PSObject
-
-
-        if ( $PsBoundParameters.ContainsKey('hostname') ) {
-            $_system | add-member -name "hostname" -membertype NoteProperty -Value $name
+        if ($use_pipeline) {
+            $_system = $system
+        }
+        else {
+            $_system = Get-ArubaCXSystem -selector writable -connection $connection
         }
 
-        $response = invoke-ArubaCXRestMethod -method "PUT" -body $_system -uri $uri
-        $response
+        if ( $PsBoundParameters.ContainsKey('hostname') ) {
+            $_system.hostname = $hostname
+        }
+        if ( $PsBoundParameters.ContainsKey('banner') ) {
+            $_system.other_config.banner = $banner
+        }
+        if ( $PsBoundParameters.ContainsKey('timezone') ) {
+            $_system.timezone = $timezone
+        }
+
+        Invoke-ArubaCXRestMethod -method "PUT" -body $_system -uri $uri -connection $connection
+
+        Get-ArubaCXSystem -connection $connection
     }
 
     End {
