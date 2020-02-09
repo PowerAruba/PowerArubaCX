@@ -10,7 +10,6 @@ function Confirm-ArubaCXInterfaces {
         [Parameter (Mandatory = $true)]
         [object]$argument
     )
-
     #Check if it looks like an Interface element
 
     if ( -not ( $argument | get-member -name name -Membertype Properties)) {
@@ -31,13 +30,37 @@ function Confirm-ArubaCXInterfaces {
     $true
 
 }
-
-function Confirm-ArubaCXVlans {
+function Confirm-ArubaCXSystem {
 
     Param (
         [Parameter (Mandatory = $true)]
         [object]$argument
     )
+    #Check if it looks like an System element
+
+    if ( -not ( $argument | get-member -name hostname -Membertype Properties)) {
+        throw "Element specified does not contain a hostname property."
+    }
+    if ( -not ( $argument | get-member -name other_config -Membertype Properties)) {
+        throw "Element specified does not contain an other_config property."
+    }
+    if ( -not ( $argument | get-member -name timezone -Membertype Properties)) {
+        throw "Element specified does not contain a timezone property."
+    }
+    if ( -not ( $argument | get-member -name rest_api -Membertype Properties)) {
+        throw "Element specified does not contain a rest_api property."
+    }
+    if ( -not ( $argument | get-member -name mgmt_intf -Membertype Properties)) {
+        throw "Element specified does not contain a mgmt_intf property."
+    }
+    if ( -not ( $argument | get-member -name aaa -Membertype Properties)) {
+        throw "Element specified does not contain an aaa property."
+    }
+    $true
+
+}
+
+function Confirm-ArubaCXVlans {
 
     #Check if it looks like an Vlan element
 
@@ -60,5 +83,4 @@ function Confirm-ArubaCXVlans {
         throw "Element specified does not contain a description property."
     }
     $true
-
 }
