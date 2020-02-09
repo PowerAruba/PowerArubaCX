@@ -9,3 +9,7 @@
 $script:ipaddress = "10.44.23.213"
 $script:login = "admin"
 $script:password = "enable"
+
+#default settings use for test, can be override if needed...
+
+#$script:pester_vlan = 85
