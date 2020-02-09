@@ -5,7 +5,7 @@
 #
 
 
-function Add-ArubaCXVlan {
+function Add-ArubaCXVlans {
 
     <#
         .SYNOPSIS
@@ -15,17 +15,17 @@ function Add-ArubaCXVlan {
         Add Vlan (name, description, vsx_sync...)
 
         .EXAMPLE
-        Add-ArubaCXVlan -name Vlan 2 -id 2
+        Add-ArubaCXVlans -name Vlan 2 -id 2
 
         Add Vlan id 2 named Vlan 2
 
         .EXAMPLE
-        Add-ArubaCXVlan -name Vlan 2 -id 2 -description "Add via PowerArubaCX" -voice
+        Add-ArubaCXVlans -name Vlan 2 -id 2 -description "Add via PowerArubaCX" -voice
 
         Add Vlan with a description and enable voice
 
         .EXAMPLE
-        Add-ArubaCXVlan -name Vlan 2 -id 2 -admin down -vsx_sync
+        Add-ArubaCXVlans -name Vlan 2 -id 2 -admin down -vsx_sync
 
         Add Vlan with a VSX Sync and admin down
     #>
@@ -91,14 +91,14 @@ function Add-ArubaCXVlan {
         $response = Invoke-ArubaCXRestMethod -uri $uri -method 'POST' -body $_vlan -connection $connection
         $response
 
-        Get-ArubaCXVlan -id $id -connection $connection
+        Get-ArubaCXVlans -id $id -connection $connection
     }
 
     End {
     }
 }
 
-function Get-ArubaCXVlan {
+function Get-ArubaCXVlans {
 
     <#
         .SYNOPSIS
@@ -108,17 +108,17 @@ function Get-ArubaCXVlan {
         Get list of all Aruba CX Vlan (name, description, vsx_sync...)
 
         .EXAMPLE
-        Get-ArubaCXVlan
+        Get-ArubaCXVlans
 
         Get list of all vlan (name, description, vsx_sync...)
 
         .EXAMPLE
-        Get-ArubaCXVlan -id 23
+        Get-ArubaCXVlans -id 23
 
         Get vlan with id 23
 
         .EXAMPLE
-        Get-ArubaCXVlan -name MyVlan
+        Get-ArubaCXVlans -name MyVlan
 
         Get vlan named MyVlan
     #>
@@ -199,7 +199,7 @@ function Get-ArubaCXVlan {
     }
 }
 
-function Set-ArubaCXVlan {
+function Set-ArubaCXVlans {
 
     <#
         .SYNOPSIS
@@ -209,24 +209,24 @@ function Set-ArubaCXVlan {
         Configure Vlan (name, description, vsx_sync...)
 
         .EXAMPLE
-        Get-ArubaCXVlan -id 44 | Set-ArubaCXVlan -name "My New Vlan Name" -description "My Description change by PowerArubaCX"
+        Get-ArubaCXVlans -id 44 | Set-ArubaCXVlans -name "My New Vlan Name" -description "My Description change by PowerArubaCX"
 
         Change the name and description of vlan id 44
 
         .EXAMPLE
-        Get-ArubaCXVlan -id 44 | Set-ArubaCXVlan -voice -admin up
+        Get-ArubaCXVlans -id 44 | Set-ArubaCXVlans -voice -admin up
 
         Configure Vlan 44 with voice vlan and set admin to up
 
         .EXAMPLE
-        Get-ArubaCXVlan -id 44 | Set-ArubaCXVlan -vsx_sync -voice -admin down
+        Get-ArubaCXVlans -id 44 | Set-ArubaCXVlans -vsx_sync -voice -admin down
 
         Configure Vlan 44 with enable VSX sync and set admin to status
 
         .EXAMPLE
-        $vlan = Get-ArubaCXVlan -id 44 -selector writable
+        $vlan = Get-ArubaCXVlans -id 44 -selector writable
         PS> $vlan.name = "My Vlan"
-        PS> $vlan | Set-ArubaCXVlan -use_pipeline
+        PS> $vlan | Set-ArubaCXVlans -use_pipeline
 
         Configure Vlan 44 name using pipeline (can be only with selector equal writable)
     #>
@@ -235,7 +235,7 @@ function Set-ArubaCXVlan {
         [ValidateRange(1, 4096)]
         [int]$id,
         [Parameter (Mandatory = $true, ValueFromPipeline = $true, Position = 1, ParameterSetName = "vlan")]
-        [ValidateScript( { Confirm-ArubaCXVlan $_ })]
+        [ValidateScript( { Confirm-ArubaCXVlans $_ })]
         [psobject]$vlan,
         [Parameter (Mandatory = $false)]
         [string]$name,
@@ -271,7 +271,7 @@ function Set-ArubaCXVlan {
             $_vlan = $vlan
         }
         else {
-            $_vlan = Get-ArubaCXVlan -id $id -selector writable
+            $_vlan = Get-ArubaCXVlans -id $id -selector writable
         }
 
         #Remove id from vlan (can not be modified)
@@ -309,14 +309,14 @@ function Set-ArubaCXVlan {
         $response = Invoke-ArubaCXRestMethod -uri $uri -method 'PUT' -body $_vlan -connection $connection
         $response
 
-        Get-ArubaCXVlan -id $id -connection $connection
+        Get-ArubaCXVlans -id $id -connection $connection
     }
 
     End {
     }
 }
 
-function Remove-ArubaCXVlan {
+function Remove-ArubaCXVlans {
 
     <#
         .SYNOPSIS
@@ -326,13 +326,13 @@ function Remove-ArubaCXVlan {
         Remove a vlan on Aruba CX Switch
 
         .EXAMPLE
-        $vlan = Get-ArubaCXVlan -name MyVlan
-        PS C:\>$vlan | Remove-ArubaCXVlan
+        $vlan = Get-ArubaCXVlans -name MyVlan
+        PS C:\>$vlan | Remove-ArubaCXVlans
 
         Remove vlan named MyVlan
 
         .EXAMPLE
-        Remove-ArubaCXVlan -id 23 -confirm:$false
+        Remove-ArubaCXVlans -id 23 -confirm:$false
 
         Remove Vlan with id 23 with no confirmation
     #>
@@ -342,7 +342,7 @@ function Remove-ArubaCXVlan {
         [Parameter (Mandatory = $true, ParameterSetName = "id")]
         [int]$id,
         [Parameter (Mandatory = $true, ValueFromPipeline = $true, Position = 1, ParameterSetName = "vlan")]
-        [ValidateScript( { Confirm-ArubaCXVlan $_ })]
+        [ValidateScript( { Confirm-ArubaCXVlans $_ })]
         [psobject]$vlan,
         [Parameter (Mandatory = $False)]
         [ValidateNotNullOrEmpty()]

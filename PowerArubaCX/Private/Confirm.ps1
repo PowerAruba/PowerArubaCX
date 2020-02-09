@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-function Confirm-ArubaCXVlan {
+function Confirm-ArubaCXVlans {
 
     Param (
         [Parameter (Mandatory = $true)]
