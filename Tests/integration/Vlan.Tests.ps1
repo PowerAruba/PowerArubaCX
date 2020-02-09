@@ -234,4 +234,26 @@ Describe  "Configure Vlan" {
     }
 }
 
+Describe  "Remove vlan" {
+
+    BeforeEach {
+        #Always add vlan $pester_vlan...
+        Add-ArubaCXVlan -id $pester_vlan -name PowerArubaCX
+    }
+
+    It "Remove vlan $pester_vlan by id" {
+        Remove-ArubaCXVlan -id $pester_vlan -confirm:$false
+        $vlan = Get-ArubaCXVlan
+        $vlan.$pester_vlan | Should be $NULL
+    }
+
+    It "Remove vlan $pester_vlan by pipeline" {
+        $vlan = Get-ArubaCXVlan -id $pester_vlan
+        $vlan | Remove-ArubaCXVlan -confirm:$false
+        $vlan = Get-ArubaCXVlan
+        $vlan.$pester_vlan | Should be $NULL
+    }
+
+}
+
 Disconnect-ArubaCX -noconfirm
