@@ -23,13 +23,13 @@ Describe  "Get Vlan" {
 
     It "Get Vlan ($pester_vlan)" {
         $vlan = Get-ArubaCXVlan -id $pester_vlan
-        $vlan.id | Should not be $pester_vlan
+        $vlan.id | Should -Be $pester_vlan
         $vlan.name | Should -Be "pester_vlan"
     }
 
     It "Get Vlan ($pester_vlan) and confirm (via Confirm-ArubaCXVlan)" {
         $vlan = Get-ArubaCXVlan -id $pester_vlan
-        Confirm-ArubaCXVlan ($vlan.$pester_vlan) | Should be $true
+        Confirm-ArubaCXVlan ($vlan) | Should be $true
     }
 
     #Get with attribute, depth...
@@ -132,36 +132,57 @@ Describe  "Configure Vlan" {
         #Make a CheckPoint ?
     }
 
-    It "Change Vlan description" {
+    It "Change Vlan name and description" {
         Get-ArubaCXVlan -id $pester_vlan | Set-ArubaCXVlan -name pester_vlan2 -description "Modified by PowerArubaCX"
         $vlan = Get-ArubaCXVlan -id $pester_vlan
         $vlan.name | Should be "pester_vlan2"
         $vlan.description | Should be "Modified by PowerArubaCX"
     }
 
-    It "Change Vlan status (up)" {
-        Get-ArubaCXVlan -id $pester_vlan | Set-ArubaCXVlan -status up
+    It "Change Vlan description using -use_pipeline" {
+        $vlan = Get-ArubaCXVlan -id $pester_vlan -selector writable
+        $vlan.description = "Modified by PowerArubaCX using -use_pipeline"
+        $vlan | Set-ArubaCXVlan -use_pipeline
         $vlan = Get-ArubaCXVlan -id $pester_vlan
-        $vlan.user_config.admin | Should be "up"
+        $vlan.description | Should be "Modified by PowerArubaCX using -use_pipeline"
     }
 
     It "Change Vlan status (down)" {
-        Get-ArubaCXVlan -id $pester_vlan | Set-ArubaCXVlan -status down
+        Get-ArubaCXVlan -id $pester_vlan | Set-ArubaCXVlan -admin down
         $vlan = Get-ArubaCXVlan -id $pester_vlan
-        $vlan.user_config.admin | Should be "down"
+        $vlan.admin | Should be "down"
     }
 
-    It "Change Vlan routing (disable)" {
-        Get-ArubaCXVlan -id $pester_vlan | Set-ArubaCXVlan -routing:$false
+    It "Change Vlan status (up)" {
+        Get-ArubaCXVlan -id $pester_vlan | Set-ArubaCXVlan -admin up
         $vlan = Get-ArubaCXVlan -id $pester_vlan
-        $vlan.routing | Should be $false
+        $vlan.admin | Should be "up"
     }
 
-    It "Change Vlan routing (enable)" {
-        Get-ArubaCXVlan -id $pester_vlan | Set-ArubaCXVlan -routing:$true
+    It "Change Vlan voice (enable)" {
+        Get-ArubaCXVlan -id $pester_vlan | Set-ArubaCXVlan -voice:$true
         $vlan = Get-ArubaCXVlan -id $pester_vlan
-        $vlan.routing | Should be $true
+        $vlan.voice | Should be $true
     }
+
+    It "Change Vlan voice (disable)" {
+        Get-ArubaCXVlan -id $pester_vlan | Set-ArubaCXVlan -voice:$false
+        $vlan = Get-ArubaCXVlan -id $pester_vlan
+        $vlan.voice | Should be $false
+    }
+
+    It "Change Vlan vsx_sync (enable)" {
+        Get-ArubaCXVlan -id $pester_vlan | Set-ArubaCXVlan -vsx_sync:$true
+        $vlan = Get-ArubaCXVlan -id $pester_vlan
+        $vlan.vsx_sync | Should be $true
+    }
+
+    It "Change Vlan vsx_sync (disable)" {
+        Get-ArubaCXVlan -id $pester_vlan | Set-ArubaCXVlan -vsx_sync:$false
+        $vlan = Get-ArubaCXVlan -id $pester_vlan
+        $vlan.vsx_sync | Should be $null
+    }
+
 
     AfterAll {
         Get-ArubaCXVlan -id $pester_vlan | Remove-ArubaCXVlan -confirm:$false
