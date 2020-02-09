@@ -106,18 +106,20 @@ Describe  "Get Vlan" {
 
     }
 
-    It "Search Vlan by name ($pester_vlan)" {
-        $vlan = Get-ArubaCXVlan -id $pester_vlan
-        @($vlan).count | Should -be 1
-        $vlan.id | Should -Be $pester_vlan
-        $vlan.name | Should -Be "pester_vlan"
-    }
+    Context "Search" {
+        It "Search Vlan by name ($pester_vlan)" {
+            $vlan = Get-ArubaCXVlan -id $pester_vlan
+            @($vlan).count | Should -be 1
+            $vlan.id | Should -Be $pester_vlan
+            $vlan.name | Should -Be "pester_vlan"
+        }
 
-    It "Search Vlan by name (pester_vlan)" {
-        $vlan = Get-ArubaCXVlan -name pester_vlan
-        @($vlan).count | Should -be 1
-        $vlan.id | Should -Be $pester_vlan
-        $vlan.name | Should -be "pester_vlan"
+        It "Search Vlan by name (pester_vlan)" {
+            $vlan = Get-ArubaCXVlan -name pester_vlan
+            @($vlan).count | Should -be 1
+            $vlan.id | Should -Be $pester_vlan
+            $vlan.name | Should -be "pester_vlan"
+        }
     }
 
     AfterAll {
