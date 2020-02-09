@@ -268,13 +268,14 @@ function Set-ArubaCXVlan {
         $uri = "system/vlans/${id}"
 
         if ($use_pipeline) {
-            #Remove id from vlan (can not be modified)
-            $vlan.psobject.Properties.remove("id")
             $_vlan = $vlan
         }
         else {
             $_vlan = Get-ArubaCXVlan -id $id -selector writable
         }
+
+        #Remove id from vlan (can not be modified)
+        $_vlan.psobject.Properties.remove("id")
 
         if ( $PsBoundParameters.ContainsKey('name') ) {
             $_vlan.name = $name
