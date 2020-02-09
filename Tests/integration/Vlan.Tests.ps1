@@ -126,6 +126,50 @@ Describe  "Get Vlan" {
     }
 }
 
+Describe  "Add Vlan" {
+
+    AfterEach {
+        Get-ArubaCXVlan -id $pester_vlan -ErrorAction SilentlyContinue | Remove-ArubaCXVlan -confirm:$false -ErrorAction SilentlyContinue
+        #Reverse CheckPoint ?
+    }
+
+    It "Add Vlan $pester_vlan (with only a id and name PowerArubaCX)" {
+        Add-ArubaCXVlan -id $pester_vlan -name PowerArubaCX
+        $vlan = Get-ArubaCXVlan -id $pester_vlan
+        $vlan.id | Should -Be $pester_vlan
+        $vlan.name | Should -Be "PowerArubaCX"
+        $vlan.description | Should -Be $null
+        $vlan.type | Should -Be "static"
+        $vlan.voice | Should -Be $false
+        $vlan.admin | Should -Be "up"
+        $vlan.vsx_sync | Should -Be $Null
+    }
+
+    It "Add Vlan $pester_vlan (with a id, name, description and enable voice)" {
+        Add-ArubaCXVlan -id $pester_vlan -name PowerArubaCX -description "Add via PowerArubaCX" -voice
+        $vlan = Get-ArubaCXVlan -id $pester_vlan
+        $vlan.id | Should -Be $pester_vlan
+        $vlan.name | Should -Be "PowerArubaCX"
+        $vlan.description | Should -Be "Add via PowerArubaCX"
+        $vlan.type | Should -Be "static"
+        $vlan.voice | Should -Be $true
+        $vlan.admin | Should -Be "up"
+        $vlan.vsx_sync | Should -Be $Null
+    }
+
+    It "Add Vlan $pester_vlan (with only a id, name, admin stats to down and enable vsx_sync)" {
+        Add-ArubaCXVlan -id $pester_vlan -name PowerArubaCX -admin down -vsx_sync
+        $vlan = Get-ArubaCXVlan -id $pester_vlan
+        $vlan.id | Should -Be $pester_vlan
+        $vlan.name | Should -Be "PowerArubaCX"
+        $vlan.description | Should -Be $null
+        $vlan.type | Should -Be "static"
+        $vlan.voice | Should -Be $false
+        $vlan.admin | Should -Be "down"
+        $vlan.vsx_sync | Should -Be $true
+    }
+}
+
 Describe  "Configure Vlan" {
     BeforeAll {
         Add-ArubaCXVlan -id $pester_vlan -name pester_vlan
