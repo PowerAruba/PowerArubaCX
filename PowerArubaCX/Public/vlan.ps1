@@ -46,7 +46,7 @@ function Add-ArubaCXVlan {
         [switch]$vsx_sync,
         [Parameter (Mandatory = $False)]
         [ValidateNotNullOrEmpty()]
-        [PSObject]$connection = $DefaultArubaSWConnection
+        [PSObject]$connection = $DefaultArubaCXConnection
     )
 
     Begin {
@@ -142,7 +142,7 @@ function Get-ArubaCXVlan {
         [switch]$vsx_peer,
         [Parameter (Mandatory = $False)]
         [ValidateNotNullOrEmpty()]
-        [PSObject]$connection = $DefaultArubaSWConnection
+        [PSObject]$connection = $DefaultArubaCXConnection
     )
 
     Begin {
