@@ -179,7 +179,7 @@ function Set-ArubaCXInterfaces {
 
         $response = Invoke-ArubaCXRestMethod -uri $uri -method 'PUT' -body $_interface -connection $connection
         $response
-        Get-ArubaCXInterfaces $interface
+        Get-ArubaCXInterfaces $interface -connection $connection
     }
 
     End {
