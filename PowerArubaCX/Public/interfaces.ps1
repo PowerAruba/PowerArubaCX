@@ -116,7 +116,7 @@ function Set-ArubaCXInterfaces {
         [Parameter(Mandatory = $false)]
         [switch]$routing,
         [Parameter(Mandatory = $false)]
-        [ValidateSet('access', 'native-untagged')]
+        [ValidateSet('access', 'native-untagged', 'native-tagged', IgnoreCase = $false)]
         [string]$vlan_mode,
         [Parameter(Mandatory = $false)]
         [ValidateRange(1, 4096)]
