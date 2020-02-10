@@ -163,9 +163,7 @@ function Set-ArubaCXInterfaces {
         }
 
         if ( $PsBoundParameters.ContainsKey('vlan_tag') ) {
-            $_vlan_tag = New-Object -TypeName PSObject
-            $_vlan_tag | Add-member -name $vlan_tag -membertype NoteProperty -Value "/rest/" + $($connection.version) + "/system/vlans/" + $vlan_tag
-            $_interface.vlan_tag = $_vlan_tag
+            $_interface.vlan_tag = "/rest/" + $($connection.version) + "/system/vlans/" + $vlan_tag
         }
 
         $response = Invoke-ArubaCXRestMethod -uri $uri -method 'PUT' -body $_interface -connection $connection
