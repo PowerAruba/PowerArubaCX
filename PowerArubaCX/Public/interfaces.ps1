@@ -73,6 +73,12 @@ function Get-ArubaCXInterfaces {
         }
 
         $response = Invoke-ArubaCXRestMethod -uri $uri -method 'GET' -connection $connection @invokeParams
+
+        #Add bame parameter when use writable type selector
+        if ( $PsBoundParameters.ContainsKey('selector') -and $selector -eq "writable" ) {
+            $response | add-member -name "name" -membertype NoteProperty -Value $interface
+        }
+
         $response
     }
 
@@ -106,8 +112,11 @@ function Set-ArubaCXInterfaces {
       Set the routing to disable for the Interface 1/1/1
     #>
     Param(
-        [Parameter(Mandatory = $true, position = 1)]
+        [Parameter (Mandatory = $true, ParameterSetName = "interface")]
         [String]$interface,
+        [Parameter (Mandatory = $true, ValueFromPipeline = $true, Position = 1, ParameterSetName = "int")]
+        [ValidateScript( { Confirm-ArubaCXInterface $_ })]
+        [psobject]$int,
         [Parameter(Mandatory = $false)]
         [ValidateSet('up', 'down')]
         [string]$admin,
@@ -124,6 +133,8 @@ function Set-ArubaCXInterfaces {
         [Parameter(Mandatory = $false)]
         [ValidateRange(1, 4096)]
         [int[]]$vlan_trunks,
+        [Parameter (Mandatory = $false)]
+        [switch]$use_pipeline,
         [Parameter (Mandatory = $False)]
         [ValidateNotNullOrEmpty()]
         [PSObject]$connection = $DefaultArubaCXConnection
@@ -135,11 +146,25 @@ function Set-ArubaCXInterfaces {
     Process {
 
         $uri = "system/interfaces"
+
+        #get interface name from int ps object
+        if ($int) {
+            $interface = $int.name
+        }
+
         #Add interface to $uri
         $interface = $interface -replace '/', '%2F'
         $uri += "/$interface"
 
-        $_interface = Get-ArubaCXInterfaces $interface -selector writable
+        if ($use_pipeline) {
+            $_interface = $int
+        }
+        else {
+            $_interface = Get-ArubaCXInterfaces $interface -selector writable -connection $connection
+        }
+
+        #Remove name from vlan (can not be modified)
+        $_interface.psobject.Properties.remove("name")
 
         if ( $PsBoundParameters.ContainsKey('description') ) {
             $_interface.description = $description
