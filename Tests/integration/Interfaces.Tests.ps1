@@ -18,21 +18,20 @@ Describe  "Get Interfaces" {
         $int.count | Should not be $NULL
     }
 
-    It "Get Interface (1/1/1)" {
-        $int = Get-ArubaCXInterfaces | Where-Object { $_.name -eq "pester_SW1" }
-        $int.id | Should not be BeNullOrEmpty
-        $int.name | Should be "1/1/1"
+    It "Get Interface ($pester_interface) and confirm (via Confirm-ArubaCXInterface)" {
+        $int = Get-ArubaCXInterfaces -interface $pester_interface
+        Confirm-ArubaCXInterface $int | Should be $true
     }
 
-    # It "Get Interface (1/1/1) and confirm (via Confirm-ArubaCXInterface)" {
-    #     $int = Get-ArubaCXInterfaces | Where-Object { $_.name -eq "pester_SW1" }
-    #     Confirm-ArubaCXInterfaces $int | Should be $true
-    # }
-
-    It "Search Interface by name (1/1/1)" {
-        $int = Get-ArubaCXInterfaces -name 1/1/1
+    It "Search Interface by interface ($pester_interface)" {
+        $int = Get-ArubaCXInterfaces -interface $pester_interface
         @($int).count | Should be 1
-        $int.name | Should be "1/1/1"
+        $int.name | Should be "$pester_interface"
+    }
+    It "Search Interface by interface (using position) ($pester_interface)" {
+        $int = Get-ArubaCXInterfaces $pester_interface
+        @($int).count | Should be 1
+        $int.name | Should be "$pester_interface"
     }
 }
 
@@ -42,33 +41,33 @@ Describe  "Configure Interface" {
     }
 
     It "Change interface description" {
-        Set-ArubaCXInterfaces -name 1/1/1 -description "Modified by PowerArubaCX"
-        $int = Get-ArubaCXInterfaces -name 1/1/1
-        $int.name | Should be "1/1/1"
+        Set-ArubaCXInterfaces -interface $pester_interface -description "Modified by PowerArubaCX"
+        $int = Get-ArubaCXInterfaces -interface $pester_interface
+        $int.name | Should be "$pester_interface"
         $int.description | Should be "Modified by PowerArubaCX"
     }
 
     It "Change interface status (up)" {
-        Set-ArubaCXInterfaces -name 1/1/1 -status up
-        $int = Get-ArubaCXInterfaces -name 1/1/1
+        Set-ArubaCXInterfaces -interface $pester_interface -admin up
+        $int = Get-ArubaCXInterfaces -interface $pester_interface
         $int.user_config.admin | Should be "up"
     }
 
     It "Change interface status (down)" {
-        Set-ArubaCXInterfaces -name 1/1/1 -status down
-        $int = Get-ArubaCXInterfaces -name 1/1/1
+        Set-ArubaCXInterfaces -interface $pester_interface -admin down
+        $int = Get-ArubaCXInterfaces -interface $pester_interface
         $int.user_config.admin | Should be "down"
     }
 
     It "Change interface routing (disable)" {
-        Set-ArubaCXInterfaces -name 1/1/1 -routing:$false
-        $int = Get-ArubaCXInterfaces -name 1/1/1
+        Set-ArubaCXInterfaces -interface $pester_interface -routing:$false
+        $int = Get-ArubaCXInterfaces -interface $pester_interface
         $int.routing | Should be $false
     }
 
     It "Change interface routing (enable)" {
-        Set-ArubaCXInterfaces -name 1/1/1 -routing:$true
-        $int = Get-ArubaCXInterfaces -name 1/1/1
+        Set-ArubaCXInterfaces -interface $pester_interface -routing:$true
+        $int = Get-ArubaCXInterfaces -interface $pester_interface
         $int.routing | Should be $true
     }
 

@@ -13,3 +13,4 @@ $script:password = "enable"
 #default settings use for test, can be override if needed...
 
 #$script:pester_vlan = 85
+#$script:pester_interface = "1/1/1"
