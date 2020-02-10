@@ -121,6 +121,9 @@ function Set-ArubaCXInterfaces {
         [Parameter(Mandatory = $false)]
         [ValidateRange(1, 4096)]
         [int]$vlan_tag,
+        [Parameter(Mandatory = $false)]
+        [ValidateRange(1, 4096)]
+        [int[]]$vlan_trunks,
         [Parameter (Mandatory = $False)]
         [ValidateNotNullOrEmpty()]
         [PSObject]$connection = $DefaultArubaCXConnection
@@ -164,6 +167,14 @@ function Set-ArubaCXInterfaces {
 
         if ( $PsBoundParameters.ContainsKey('vlan_tag') ) {
             $_interface.vlan_tag = "/rest/" + $($connection.version) + "/system/vlans/" + $vlan_tag
+        }
+
+        if ( $PsBoundParameters.ContainsKey('vlan_trunks') ) {
+            $trunks = @()
+            foreach ($trunk in $vlan_trunks) {
+                $trunks += "/rest/" + $($connection.version) + "/system/vlans/" + $trunk
+            }
+            $_interface.vlan_trunks = $trunks
         }
 
         $response = Invoke-ArubaCXRestMethod -uri $uri -method 'PUT' -body $_interface -connection $connection
