@@ -131,7 +131,7 @@ function Set-ArubaCXInterfaces {
         [ValidateRange(1, 4096)]
         [int]$vlan_tag,
         [Parameter(Mandatory = $false)]
-        [ValidateRange(1, 4096)]
+        #[ValidateRange(1, 4096)]
         [int[]]$vlan_trunks,
         [Parameter (Mandatory = $false)]
         [switch]$use_pipeline,
