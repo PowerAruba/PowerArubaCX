@@ -112,6 +112,16 @@ function Set-ArubaCXInterfaces {
       Set the routing to disable for the Interface 1/1/1
 
       .EXAMPLE
+      Get-ArubaCXInterfaces -interface 1/1/1 | Set-ArubaCXInterfaces -vlan_mode access -vlan_tag 85
+
+      Set the interface 1/1/1 on access mode with vlan 85
+
+      .EXAMPLE
+      Get-ArubaCXInterfaces -interface 1/1/1 | Set-ArubaCXInterfaces -vlan_mode native-untagged -vlan_tag 85 -vlan_trunks 44,45
+
+      Set the interface 1/1/1 on native-untagged mode with vlan 85 and tagged vlan 45 and 45
+
+      .EXAMPLE
       $int = Get-ArubaCXInterfaces -interface 1/1/1 -selector writable
       PS> $int.description = "My Vlan"
       PS> $int | Set-ArubaCXInterfaces -use_pipeline
