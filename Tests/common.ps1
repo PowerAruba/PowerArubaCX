@@ -6,7 +6,8 @@
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingConvertToSecureStringWithPlainText", "")]
 Param()
 # default settings for test...
-$script:pester_vlan = 85 #vlan id for Vlan test (and Port Test)
+$script:pester_vlan = 85 #vlan id for Vlan test
+$script:pester_vlan2 = 86 #vlan id for Vlan test (for affect a second vlan to interface)
 $script:pester_interface = "1/1/1" #interface id for test...
 
 . ../credential.ps1
