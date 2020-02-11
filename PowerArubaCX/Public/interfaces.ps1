@@ -97,19 +97,26 @@ function Set-ArubaCXInterfaces {
       Configure Aruba CX Interfaces (port, lag, vlan... with name, IP Address, description)
 
       .EXAMPLE
-      Set-ArubaCXInterfaces -interface 1/1/1 -description "Changed by PowerArubaCX"
+      Get-ArubaCXInterfaces -interface 1/1/1 | Set-ArubaCXInterfaces -description "Changed by PowerArubaCX"
 
       Set the description for the Interface 1/1/1
 
       .EXAMPLE
-      Set-ArubaCXInterfaces -interface 1/1/1 -admin up
+      Get-ArubaCXInterfaces -interface 1/1/1 | Set-ArubaCXInterfaces -admin up
 
       Set the admin status to up for the Interface 1/1/1
 
       .EXAMPLE
-      Set-ArubaCXInterfaces -interface 1/1/1 -routing:$false
+      Get-ArubaCXInterfaces -interface 1/1/1 | Set-ArubaCXInterfaces -routing:$false
 
       Set the routing to disable for the Interface 1/1/1
+
+      .EXAMPLE
+      $int = Get-ArubaCXInterfaces -interface 1/1/1 -selector writable
+      PS> $int.description = "My Vlan"
+      PS> $int | Set-ArubaCXInterfaces -use_pipeline
+
+      Configure interface 1/1/1 description using pipeline (can be only with selector equal writable)
     #>
     Param(
         [Parameter (Mandatory = $true, ParameterSetName = "interface")]

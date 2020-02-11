@@ -219,6 +219,7 @@ Describe  "Configure Vlan on Interface" {
     }
 
     It "Change Interface ($pester_interface) to access with vlan ($pester_vlan2)" {
+        #Need to set back the access vlan and remove trunks vlan...
         Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -vlan_mode access -vlan_tag $pester_vlan2 -vlan_trunks $null
         $int = Get-ArubaCXInterfaces -interface $pester_interface
         $int.vlan_mode | Should -Be "access"
