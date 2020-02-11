@@ -122,6 +122,16 @@ function Set-ArubaCXInterfaces {
       Set the interface 1/1/1 on native-untagged mode with vlan 85 and tagged vlan 45 and 45
 
       .EXAMPLE
+      Get-ArubaCXInterfaces -interface 1/1/1 | Set-ArubaCXInterfaces -ip4_address 192.0.2.1 -ip4_mask 32
+
+      Set the interface 1/1/1 with IPv4 ADress 192.0.2.1/32
+
+      .EXAMPLE
+      Get-ArubaCXInterfaces -interface vlan85 | Set-ArubaCXInterfaces -ip4_address $nill
+
+      Remove IPv4 Address of interface vlan85
+
+      .EXAMPLE
       $int = Get-ArubaCXInterfaces -interface 1/1/1 -selector writable
       PS> $int.description = "My Vlan"
       PS> $int | Set-ArubaCXInterfaces -use_pipeline
@@ -150,6 +160,11 @@ function Set-ArubaCXInterfaces {
         [Parameter(Mandatory = $false)]
         #[ValidateRange(1, 4096)]
         [int[]]$vlan_trunks,
+        [Parameter(Mandatory = $false)]
+        [ipaddress]$ip4_address,
+        [Parameter(Mandatory = $false)]
+        [ValidateRange(8, 31)]
+        [int]$ip4_mask,
         [Parameter (Mandatory = $false)]
         [switch]$use_pipeline,
         [Parameter (Mandatory = $False)]
@@ -217,6 +232,24 @@ function Set-ArubaCXInterfaces {
                 $trunks += "/rest/" + $($connection.version) + "/system/vlans/" + $trunk
             }
             $_interface.vlan_trunks = $trunks
+        }
+
+        if ( $PsBoundParameters.ContainsKey('ip4_address') ) {
+            if ($ip4_address -eq $null ) {
+                $_interface.ip4_address = $null
+            }
+            else {
+                if ($ip4_mask -eq "0" ) {
+                    Throw "You need to set ip4_mask when use ipv4_address"
+                }
+                if ($_interface.routing -eq $false) {
+                    Throw "You need to enable routing mode for use ipv4_address"
+                }
+                if ( -not ($ip4_address.AddressFamily) -eq "InterNetwork") {
+                    Thow "You need to specify a IPv4 Adress"
+                }
+                $_interface.ip4_address = $ip4_address.ToString() + "/" + $ip4_mask
+            }
         }
 
         $response = Invoke-ArubaCXRestMethod -uri $uri -method 'PUT' -body $_interface -connection $connection
