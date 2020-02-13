@@ -237,4 +237,51 @@ Describe  "Configure Vlan on Interface" {
     }
 }
 
+Describe  "Configure IP on Interface" {
+    BeforeAll {
+        $script:default_int = Get-ArubaCXInterfaces $pester_interface -selector writable
+
+        #Set interface to mode routing
+        Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -routing:$true
+        #Make a CheckPoint ?
+    }
+
+    It "Try to set ip4_address without ip4_mask" {
+        {
+            Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -ip4_address 192.0.2.1
+        } | Should throw "You need to set ip4_mask when use ipv4_address"
+    }
+
+    It "Try to set ip4_address on interface with no routing" {
+        {
+            Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -routing:$false
+            Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -ip4_address 192.0.2.1 -ip4_mask 24
+        } | Should throw "You need to enable routing mode for use ipv4_address"
+
+        Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -routing:$true
+    }
+
+    It "Try to set a IPv6 Address on interface" {
+        {
+            Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -ip4_address 2001:DB8::1 -ip4_mask 24
+        } | Should throw "You need to specify a IPv4 Address"
+    }
+
+    It "Set ip4_address on interface" {
+        Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -ip4_address 192.0.2.1 -ip4_mask 24
+        $int = Get-ArubaCXInterfaces -interface $pester_interface
+        $int.ip4_address | Should -Be "192.0.2.1/24"
+    }
+
+    It "Set ip4_address to default on interface" {
+        Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -ip4_address $null
+        $int = Get-ArubaCXInterfaces -interface $pester_interface
+        $int.ip4_address | Should -Be $null
+    }
+
+    AfterAll {
+        $default_int | Set-ArubaCXInterfaces -use_pipeline
+    }
+}
+
 Disconnect-ArubaCX -noconfirm
