@@ -116,6 +116,7 @@ Describe  "Get Interfaces" {
 
 Describe  "Configure Interface" {
     BeforeAll {
+        $script:default_int = Get-ArubaCXInterfaces $pester_interface -selector writable
         #Make a CheckPoint ?
     }
 
@@ -151,6 +152,7 @@ Describe  "Configure Interface" {
     }
 
     AfterAll {
+        $default_int | Set-ArubaCXInterfaces -use_pipeline
         #Reverse CheckPoint ?
     }
 }
