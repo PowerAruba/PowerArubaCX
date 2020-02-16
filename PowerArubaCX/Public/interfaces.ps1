@@ -3,6 +3,88 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 #
+
+function Add-ArubaCXInterfacesVlanTrunks {
+
+    <#
+      .SYNOPSIS
+      Add vlan on an interface
+
+      .DESCRIPTION
+      Add vlan (tagged) on an interface
+      The interface need already to be on tagged mode
+
+      .EXAMPLE
+      Get-ArubaCXInterfaces -interface 1/1/1 | Add-ArubaCXInterfacesVlanTrunks -vlan_trunks 44
+
+      Add vlan 44 to vlan trunks on interface 1/1/1
+
+      .EXAMPLE
+      Get-ArubaCXInterfaces -interface 1/1/1 | Add-ArubaCXInterfacesVlanTrunks -vlan_trunks 44, 45
+
+      Add vlan 44 and 45 to vlan trunks on interface 1/1/1
+
+    #>
+    Param(
+        [Parameter (Mandatory = $true, ValueFromPipeline = $true, Position = 1)]
+        [ValidateScript( { Confirm-ArubaCXInterface $_ })]
+        [psobject]$int,
+        [Parameter(Mandatory = $true)]
+        #[ValidateRange(1, 4096)]
+        [int[]]$vlan_trunks,
+        [Parameter (Mandatory = $False)]
+        [ValidateNotNullOrEmpty()]
+        [PSObject]$connection = $DefaultArubaCXConnection
+    )
+
+    Begin {
+    }
+
+    Process {
+
+        $uri = "system/interfaces"
+
+        #get interface name from int ps object
+        $interface = $int.name
+
+        #Add interface to $uri
+        $interface = $interface -replace '/', '%2F'
+        $uri += "/$interface"
+
+        $_interface = Get-ArubaCXInterfaces $interface -selector writable -connection $connection
+
+        #Remove name from vlan (can not be modified)
+        $_interface.psobject.Properties.remove("name")
+
+        if ($_interface.routing -eq $true) {
+            Throw "You need to disable routing mode for use vlan_trunks"
+        }
+
+        if (-not ($_interface.vlan_mode -eq "native-untagged" -or $_interface.vlan_mode -eq "native-tagged")) {
+            Throw "You need to use native-(un)tagged vlan mode"
+        }
+
+        #get list of existant vlan
+        $vlans = $_interface.vlan_trunks
+        foreach ($v in $vlans.psobject.Properties.Name) {
+            $vlan_trunks += $v
+        }
+
+        $trunks = @()
+        #Add new vlan
+        foreach ($trunk in $vlan_trunks) {
+            $trunks += "/rest/" + $($connection.version) + "/system/vlans/" + $trunk
+        }
+        $_interface.vlan_trunks = $trunks
+
+        $response = Invoke-ArubaCXRestMethod -uri $uri -method 'PUT' -body $_interface -connection $connection
+        $response
+        Get-ArubaCXInterfaces $interface -connection $connection
+    }
+
+    End {
+    }
+}
 function Get-ArubaCXInterfaces {
 
     <#
