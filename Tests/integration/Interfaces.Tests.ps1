@@ -266,7 +266,7 @@ Describe  "Add Vlan trunk on Interface" {
     }
 
     It "Add Vlan ($pester_vlan) trunks to an interface ($pester_interface)" {
-        Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -vlan_trunks $pester_vlan
+        Get-ArubaCXInterfaces -interface $pester_interface | Add-ArubaCXInterfacesVlanTrunks -vlan_trunks $pester_vlan
         $int = Get-ArubaCXInterfaces -interface $pester_interface
         $int.vlan_tag | Should -Be $null
         ($int.vlan_trunks | Get-Member -MemberType NoteProperty).count | Should -Be "1"
@@ -274,7 +274,7 @@ Describe  "Add Vlan trunk on Interface" {
     }
 
     It "Add Second Vlan ($pester_vlan2) trunks to an interface ($pester_interface)" {
-        Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -vlan_trunks $pester_vlan2
+        Get-ArubaCXInterfaces -interface $pester_interface | Add-ArubaCXInterfacesVlanTrunks -vlan_trunks $pester_vlan2
         $int = Get-ArubaCXInterfaces -interface $pester_interface
         $int.vlan_tag | Should -Be $null
         ($int.vlan_trunks | Get-Member -MemberType NoteProperty).count | Should -Be "2"
