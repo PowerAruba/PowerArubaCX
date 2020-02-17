@@ -344,3 +344,78 @@ function Set-ArubaCXInterfaces {
     End {
     }
 }
+
+function Remove-ArubaCXInterfacesVlanTrunks {
+
+    <#
+      .SYNOPSIS
+      Remove vlan on an interface
+
+      .DESCRIPTION
+      Remove vlan (tagged) on an interface
+
+      .EXAMPLE
+      Get-ArubaCXInterfaces -interface 1/1/1 | Remove-ArubaCXInterfacesVlanTrunks -vlan_trunks 44
+
+      Remove vlan 44 to vlan trunks on interface 1/1/1
+
+      .EXAMPLE
+      Get-ArubaCXInterfaces -interface 1/1/1 | Remove-ArubaCXInterfacesVlanTrunks -vlan_trunks 44, 45
+
+      Remove vlan 44 and 45 to vlan trunks on interface 1/1/1
+
+    #>
+    Param(
+        [Parameter (Mandatory = $true, ValueFromPipeline = $true, Position = 1)]
+        [ValidateScript( { Confirm-ArubaCXInterface $_ })]
+        [psobject]$int,
+        [Parameter(Mandatory = $true)]
+        #[ValidateRange(1, 4096)]
+        [int[]]$vlan_trunks,
+        [Parameter (Mandatory = $False)]
+        [ValidateNotNullOrEmpty()]
+        [PSObject]$connection = $DefaultArubaCXConnection
+    )
+
+    Begin {
+    }
+
+    Process {
+
+        $uri = "system/interfaces"
+
+        #get interface name from int ps object
+        $interface = $int.name
+
+        #Add interface to $uri
+        $interface = $interface -replace '/', '%2F'
+        $uri += "/$interface"
+
+        $_interface = Get-ArubaCXInterfaces $interface -selector writable -connection $connection
+
+        #Remove name from vlan (can not be modified)
+        $_interface.psobject.Properties.remove("name")
+
+        #get list of existant vlan and recreate $trunk
+        $vlans = $_interface.vlan_trunks
+        $trunks = @()
+        if ($vlans) {
+            foreach ($v in $vlans.psobject.Properties.Name) {
+                #Remove vlan ($v) if it is on vlan_trunks list
+                if ($vlan_trunks -contains $v) {
+                    continue
+                }
+                $trunks += "/rest/" + $($connection.version) + "/system/vlans/" + $v
+            }
+        }
+
+        $_interface.vlan_trunks = $trunks
+
+        $response = Invoke-ArubaCXRestMethod -uri $uri -method 'PUT' -body $_interface -connection $connection
+        $response
+        Get-ArubaCXInterfaces $interface -connection $connection
+    }
+
+    End {
+    }
+}
