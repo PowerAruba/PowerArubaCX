@@ -302,6 +302,46 @@ Describe  "Add Vlan trunk on Interface" {
         Get-ArubaCXVlans -id $pester_vlan2 | Remove-ArubaCXVlans -confirm:$false
     }
 }
+
+Describe "Remove Vlan trunk on Interface" {
+    BeforeAll {
+        $script:default_int = Get-ArubaCXInterfaces $pester_interface -selector writable
+        #Add 2 vlan
+        Add-ArubaCXVlans -id $pester_vlan -name pester_PowerArubaCX
+        Add-ArubaCXVlans -id $pester_vlan2 -name pester_PowerArubaCX2
+
+        #Set interface to mode no routing and vlan mode native untagged
+        Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -routing:$false -vlan_mode native-untagged
+        #Make a CheckPoint ?
+    }
+    BeforeEach {
+        #Affect 2 Vlan on the interface
+        Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -vlan_trunks $pester_vlan, $pester_vlan2
+    }
+
+    It "Remove Vlan ($pester_vlan) trunks to an interface ($pester_interface)" {
+        Get-ArubaCXInterfaces -interface $pester_interface | Remove-ArubaCXInterfacesVlanTrunks -vlan_trunks $pester_vlan
+        $int = Get-ArubaCXInterfaces -interface $pester_interface
+        $int.vlan_tag | Should -Be $null
+        ($int.vlan_trunks | Get-Member -MemberType NoteProperty).count | Should -Be "1"
+        $int.vlan_trunks.$pester_vlan2 | Should -Be ("/rest/" + $($DefaultArubaCXConnection.version) + "/system/vlans/" + $pester_vlan2)
+    }
+
+    It "Remove Vlans ($pester_vlan and $pester_vlan2) trunks to an interface ($pester_interface)" {
+        Get-ArubaCXInterfaces -interface $pester_interface | Remove-ArubaCXInterfacesVlanTrunks -vlan_trunks $pester_vlan, $pester_vlan2
+        $int = Get-ArubaCXInterfaces -interface $pester_interface
+        $int.vlan_tag | Should -Be $null
+        $int.vlan_truns | Should -Be $null
+    }
+
+    AfterAll {
+        $default_int | Set-ArubaCXInterfaces -use_pipeline
+        #Reverse CheckPoint ?
+        Get-ArubaCXVlans -id $pester_vlan | Remove-ArubaCXVlans -confirm:$false
+        Get-ArubaCXVlans -id $pester_vlan2 | Remove-ArubaCXVlans -confirm:$false
+    }
+}
+
 Describe  "Configure IP on Interface" {
     BeforeAll {
         $script:default_int = Get-ArubaCXInterfaces $pester_interface -selector writable
