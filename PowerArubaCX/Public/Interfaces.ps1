@@ -3,7 +3,97 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 #
+function Add-ArubaCXInterfaces {
 
+    <#
+      .SYNOPSIS
+      Add Aruba CX Interfaces (lag, vlan...)
+
+      .DESCRIPTION
+      Add Aruba CX Interfaces (lag, vlan... with name, IP Address, description)
+
+      .EXAMPLE
+      Add-ArubaCXInterfaces -description "Changed by PowerArubaCX"
+
+      Set the description for the Interface 1/1/1
+
+      .EXAMPLE
+      Get-ArubaCXInterfaces -interface 1/1/1 | Set-ArubaCXInterfaces -admin up
+
+      Set the admin status to up for the Interface 1/1/1
+
+      .EXAMPLE
+      Get-ArubaCXInterfaces -interface 1/1/1 | Set-ArubaCXInterfaces -routing:$false
+
+      Set the routing to disable for the Interface 1/1/1
+
+      .EXAMPLE
+      Get-ArubaCXInterfaces -interface 1/1/1 | Set-ArubaCXInterfaces -vlan_mode access -vlan_tag 85
+
+      Set the interface 1/1/1 on access mode with vlan 85
+
+      .EXAMPLE
+      Get-ArubaCXInterfaces -interface 1/1/1 | Set-ArubaCXInterfaces -vlan_mode native-untagged -vlan_tag 85 -vlan_trunks 44,45
+
+      Set the interface 1/1/1 on native-untagged mode with vlan 85 and tagged vlan 45 and 45
+
+      #>
+
+    Begin {
+
+    }
+    Process {
+        $uri = "system/interfaces"
+
+        $name = "vlan" + $vlan_id
+
+        $_interface = New-Object -TypeName PSObject
+
+        $_interface | Add-Member -name "name" -membertype NoteProperty -Value $name
+
+        $_interface | Add-Member -name "type" -membertype NoteProperty -Value "vlan"
+
+        if ( $PsBoundParameters.ContainsKey('description') ) {
+            $_interface.description = $description
+        }
+
+        if ( $PsBoundParameters.ContainsKey('admin') ) {
+            $_interface.user_config.admin = $admin
+        }
+
+        if ( $PsBoundParameters.ContainsKey('routing') ) {
+            if ($routing) {
+                $_interface.routing = $true
+            }
+            else {
+                $_interface.routing = $false
+            }
+        }
+
+        if ( $PsBoundParameters.ContainsKey('ip4_address') ) {
+            if ($ip4_address -eq $null ) {
+                $_interface.ip4_address = $null
+            }
+            else {
+                if ($ip4_mask -eq "0" ) {
+                    Throw "You need to set ip4_mask when use ipv4_address"
+                } if ($_interface.routing -eq $false) {
+                    Throw "You need to enable routing mode for use ipv4_address"
+                } if ( -not ($ip4_address.AddressFamily -eq "InterNetwork" )) {
+                    Throw "You need to specify a IPv4 Address"
+                }
+                $_interface.ip4_address = $ip4_address.ToString() + "/" + $ip4_mask
+            }
+        }
+
+        $response = Invoke-ArubaCXRestMethod -uri $uri -method 'POST' -body $_interface -connection $connection
+        $response
+        Get-ArubaCXInterfaces $name -connection $connection
+    }
+    End {
+
+    }
+}
 function Add-ArubaCXInterfacesVlanTrunks {
 
     <#
