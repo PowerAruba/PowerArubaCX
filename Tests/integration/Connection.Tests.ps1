@@ -13,14 +13,14 @@ Describe  "Connect to a switch (using HTTPS)" {
     }
     It "Connect to a switch (using HTTPS and -SkipCertificateCheck) and check global variable" {
         Connect-ArubaCX $ipaddress -Username $login -password $mysecpassword -SkipCertificateCheck
-        $DefaultArubaCXConnection | Should Not BeNullOrEmpty
-        $DefaultArubaCXConnection.server | Should be $ipaddress
-        $DefaultArubaCXConnection.port | Should be "443"
-        $DefaultArubaCXConnection.session | Should not BeNullOrEmpty
+        $DefaultArubaCXConnection | Should -Not -BeNullOrEmpty
+        $DefaultArubaCXConnection.server | Should -Be $ipaddress
+        $DefaultArubaCXConnection.port | Should -Be "443"
+        $DefaultArubaCXConnection.session | Should -Not -BeNullOrEmpty
     }
     It "Disconnect to a switch (using HTTPS) and check global variable" {
         Disconnect-ArubaCX -confirm:$false
-        $DefaultArubaCXConnection | Should be $null
+        $DefaultArubaCXConnection | Should -Be $null
     }
     #This test only work with PowerShell 6 / Core (-SkipCertificateCheck don't change global variable but only Invoke-WebRequest/RestMethod)
     #This test will be fail, if there is valid certificate...
@@ -59,7 +59,7 @@ Describe  "Connect to a switch (using multi connection)" {
 
     It "Disconnect to a switch (Multi connection)" {
         Disconnect-ArubaCX -connection $cx -confirm:$false
-        $DefaultArubaCXConnection | Should be $null
+        $DefaultArubaCXConnection | Should -Be $null
     }
 
 }
