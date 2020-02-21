@@ -27,7 +27,7 @@ function Add-ArubaCXInterfacesVlanTrunks {
     #>
     Param(
         [Parameter (Mandatory = $true, ValueFromPipeline = $true, Position = 1)]
-        [ValidateScript( { Confirm-ArubaCXInterface $_ })]
+        [ValidateScript( { Confirm-ArubaCXInterfaces $_ })]
         [psobject]$int,
         [Parameter(Mandatory = $true)]
         #[ValidateRange(1, 4096)]
@@ -226,7 +226,7 @@ function Set-ArubaCXInterfaces {
         [Parameter (Mandatory = $true, ParameterSetName = "interface")]
         [String]$interface,
         [Parameter (Mandatory = $true, ValueFromPipeline = $true, Position = 1, ParameterSetName = "int")]
-        [ValidateScript( { Confirm-ArubaCXInterface $_ })]
+        [ValidateScript( { Confirm-ArubaCXInterfaces $_ })]
         [psobject]$int,
         [Parameter(Mandatory = $false)]
         [ValidateSet('up', 'down')]
@@ -367,7 +367,7 @@ function Remove-ArubaCXInterfacesVlanTrunks {
     #>
     Param(
         [Parameter (Mandatory = $true, ValueFromPipeline = $true, Position = 1)]
-        [ValidateScript( { Confirm-ArubaCXInterface $_ })]
+        [ValidateScript( { Confirm-ArubaCXInterfaces $_ })]
         [psobject]$int,
         [Parameter(Mandatory = $true)]
         #[ValidateRange(1, 4096)]

@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-function Confirm-ArubaCXInterface {
+function Confirm-ArubaCXInterfaces {
 
     Param (
         [Parameter (Mandatory = $true)]

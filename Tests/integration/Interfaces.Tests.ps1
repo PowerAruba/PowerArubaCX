@@ -18,9 +18,9 @@ Describe  "Get Interfaces" {
         $int.count | Should not be $NULL
     }
 
-    It "Get Interface ($pester_interface) and confirm (via Confirm-ArubaCXInterface)" {
+    It "Get Interface ($pester_interface) and confirm (via Confirm-ArubaCXInterfaces)" {
         $int = Get-ArubaCXInterfaces -interface $pester_interface
-        Confirm-ArubaCXInterface $int | Should be $true
+        Confirm-ArubaCXInterfaces $int | Should be $true
     }
 
     #Get with attribute, depth...
