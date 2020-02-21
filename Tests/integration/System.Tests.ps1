@@ -129,4 +129,4 @@ Describe  "Configure System" {
 }
 
 
-Disconnect-ArubaCX -noconfirm
+Disconnect-ArubaCX -confirm:$false
