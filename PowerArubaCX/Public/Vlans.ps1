@@ -230,6 +230,7 @@ function Set-ArubaCXVlans {
 
         Configure Vlan 44 name using pipeline (can be only with selector equal writable)
     #>
+    [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'medium')]
     Param(
         [Parameter (Mandatory = $true, ParameterSetName = "id")]
         [ValidateRange(1, 4096)]
@@ -306,8 +307,10 @@ function Set-ArubaCXVlans {
             }
         }
 
-        $response = Invoke-ArubaCXRestMethod -uri $uri -method 'PUT' -body $_vlan -connection $connection
-        $response
+        if ($PSCmdlet.ShouldProcess($id, 'Configure Vlan Settings')) {
+            $response = Invoke-ArubaCXRestMethod -uri $uri -method 'PUT' -body $_vlan -connection $connection
+            $response
+        }
 
         Get-ArubaCXVlans -id $id -connection $connection
     }
