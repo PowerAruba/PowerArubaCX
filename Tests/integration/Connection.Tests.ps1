@@ -15,6 +15,7 @@ Describe  "Connect to a switch (using HTTPS)" {
         Connect-ArubaCX $ipaddress -Username $login -password $mysecpassword -SkipCertificateCheck
         $DefaultArubaCXConnection | Should -Not -BeNullOrEmpty
         $DefaultArubaCXConnection.server | Should -Be $ipaddress
+        $DefaultArubaCXConnection.platform_name | Should -Not -BeNullOrEmpty
         $DefaultArubaCXConnection.port | Should -Be "443"
         $DefaultArubaCXConnection.session | Should -Not -BeNullOrEmpty
     }
@@ -34,6 +35,7 @@ Describe  "Connect to a switch (using multi connection)" {
         $script:cx = Connect-ArubaCX $ipaddress -Username $login -password $mysecpassword -SkipCertificate -DefaultConnection:$false
         $DefaultArubaCXConnection | Should -BeNullOrEmpty
         $cx.server | Should -Be $ipaddress
+        $cx.platform_name | Should -Not -BeNullOrEmpty
         $cx.port | Should -Be "443"
         $cx.session | Should -Not -BeNullOrEmpty
     }
