@@ -98,7 +98,7 @@ function Set-ArubaCXSystem {
 
     Param(
         [Parameter (Mandatory = $false, ValueFromPipeline = $true, Position = 1)]
-        #[ValidateScript( { Confirm-ArubaCXSystem $_ })]
+        [ValidateScript( { Confirm-ArubaCXSystem $_ })]
         [psobject]$system,
         [Parameter (Mandatory = $false)]
         [string]$hostname,
