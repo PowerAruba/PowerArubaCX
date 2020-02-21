@@ -272,7 +272,7 @@ function Set-ArubaCXVlans {
             $_vlan = $vlan
         }
         else {
-            $_vlan = Get-ArubaCXVlans -id $id -selector writable
+            $_vlan = Get-ArubaCXVlans -id $id -selector writable -connection $connection
         }
 
         #Remove id from vlan (can not be modified)
