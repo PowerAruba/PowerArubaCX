@@ -258,4 +258,4 @@ Describe  "Remove vlan" {
 
 }
 
-Disconnect-ArubaCX -noconfirm
+Disconnect-ArubaCX -confirm:$false
