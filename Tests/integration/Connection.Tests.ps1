@@ -45,14 +45,20 @@ Describe  "Connect to a switch (using multi connection)" {
     }
 
     Context "Use Multi connection for call some (Get) cmdlet (Vlan, System...)" {
-        It "Use Multi connection for call Get interfaces" {
-            { Get-ArubaCXinterfaces -connection $cx } | Should Not throw
+        It "Use Multi connection for call Get Firmware" {
+            { Get-ArubaCXFirmware -connection $cx } | Should Not throw
+        }
+        It "Use Multi connection for call Get Interfaces" {
+            { Get-ArubaCXInterfaces -connection $cx } | Should Not throw
         }
         It "Use Multi connection for call Get LLDP Neighbor" {
             { Get-ArubaCXLLDPNeighbor 1/1/1 -connection $cx } | Should Not throw
         }
         It "Use Multi connection for call Get System" {
             { Get-ArubaCXSystem -connection $cx } | Should Not throw
+        }
+        It "Use Multi connection for call Get User" {
+            { Get-ArubaCXUser -connection $cx } | Should Not throw
         }
         It "Use Multi connection for call Get Vlans" {
             { Get-ArubaCXVlans -connection $cx } | Should Not throw
