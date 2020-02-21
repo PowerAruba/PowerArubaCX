@@ -32,7 +32,7 @@ Describe  "Connect to a switch (using HTTPS)" {
 Describe  "Connect to a switch (using multi connection)" {
     It "Connect to a switch (using HTTPS and store on cx variable)" {
         $script:cx = Connect-ArubaCX $ipaddress -Username $login -password $mysecpassword -SkipCertificate -DefaultConnection:$false
-        $DefaultArubaSWConnection | Should -BeNullOrEmpty
+        $DefaultArubaCXConnection | Should -BeNullOrEmpty
         $cx.server | Should -Be $ipaddress
         $cx.port | Should -Be "443"
         $cx.session | Should -Not -BeNullOrEmpty
