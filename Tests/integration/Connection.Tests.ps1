@@ -9,18 +9,19 @@
 Describe  "Connect to a switch (using HTTPS)" {
     BeforeAll {
         #Disconnect "default connection"
-        Disconnect-ArubaCX -noconfirm
+        Disconnect-ArubaCX -confirm:$false
     }
     It "Connect to a switch (using HTTPS and -SkipCertificateCheck) and check global variable" {
         Connect-ArubaCX $ipaddress -Username $login -password $mysecpassword -SkipCertificateCheck
-        $DefaultArubaCXConnection | Should Not BeNullOrEmpty
-        $DefaultArubaCXConnection.server | Should be $ipaddress
-        $DefaultArubaCXConnection.port | Should be "443"
-        $DefaultArubaCXConnection.session | Should not BeNullOrEmpty
+        $DefaultArubaCXConnection | Should -Not -BeNullOrEmpty
+        $DefaultArubaCXConnection.server | Should -Be $ipaddress
+        $DefaultArubaCXConnection.platform_name | Should -Not -BeNullOrEmpty
+        $DefaultArubaCXConnection.port | Should -Be "443"
+        $DefaultArubaCXConnection.session | Should -Not -BeNullOrEmpty
     }
     It "Disconnect to a switch (using HTTPS) and check global variable" {
-        Disconnect-ArubaCX -noconfirm
-        $DefaultArubaCXConnection | Should be $null
+        Disconnect-ArubaCX -confirm:$false
+        $DefaultArubaCXConnection | Should -Be $null
     }
     #This test only work with PowerShell 6 / Core (-SkipCertificateCheck don't change global variable but only Invoke-WebRequest/RestMethod)
     #This test will be fail, if there is valid certificate...
@@ -32,8 +33,9 @@ Describe  "Connect to a switch (using HTTPS)" {
 Describe  "Connect to a switch (using multi connection)" {
     It "Connect to a switch (using HTTPS and store on cx variable)" {
         $script:cx = Connect-ArubaCX $ipaddress -Username $login -password $mysecpassword -SkipCertificate -DefaultConnection:$false
-        $DefaultArubaSWConnection | Should -BeNullOrEmpty
+        $DefaultArubaCXConnection | Should -BeNullOrEmpty
         $cx.server | Should -Be $ipaddress
+        $cx.platform_name | Should -Not -BeNullOrEmpty
         $cx.port | Should -Be "443"
         $cx.session | Should -Not -BeNullOrEmpty
     }
@@ -43,8 +45,11 @@ Describe  "Connect to a switch (using multi connection)" {
     }
 
     Context "Use Multi connection for call some (Get) cmdlet (Vlan, System...)" {
-        It "Use Multi connection for call Get interfaces" {
-            { Get-ArubaCXinterfaces -connection $cx } | Should Not throw
+        It "Use Multi connection for call Get Firmware" {
+            { Get-ArubaCXFirmware -connection $cx } | Should Not throw
+        }
+        It "Use Multi connection for call Get Interfaces" {
+            { Get-ArubaCXInterfaces -connection $cx } | Should Not throw
         }
         It "Use Multi connection for call Get LLDP Neighbor" {
             { Get-ArubaCXLLDPNeighbor 1/1/1 -connection $cx } | Should Not throw
@@ -52,14 +57,17 @@ Describe  "Connect to a switch (using multi connection)" {
         It "Use Multi connection for call Get System" {
             { Get-ArubaCXSystem -connection $cx } | Should Not throw
         }
+        It "Use Multi connection for call Get User" {
+            { Get-ArubaCXUser -connection $cx } | Should Not throw
+        }
         It "Use Multi connection for call Get Vlans" {
             { Get-ArubaCXVlans -connection $cx } | Should Not throw
         }
     }
 
     It "Disconnect to a switch (Multi connection)" {
-        Disconnect-ArubaCX -connection $cx -noconfirm
-        $DefaultArubaCXConnection | Should be $null
+        Disconnect-ArubaCX -connection $cx -confirm:$false
+        $DefaultArubaCXConnection | Should -Be $null
     }
 
 }

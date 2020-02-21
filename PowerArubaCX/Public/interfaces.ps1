@@ -33,7 +33,7 @@ function Get-ArubaCXInterfaces {
         [switch]$vsx_peer,
         [Parameter (Mandatory = $False)]
         [ValidateNotNullOrEmpty()]
-        [PSObject]$connection = $DefaultArubaSWConnection
+        [PSObject]$connection = $DefaultArubaCXConnection
     )
 
     Begin {
