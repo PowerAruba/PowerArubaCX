@@ -140,15 +140,14 @@ function Disconnect-ArubaCX {
         Disconnect the connection
 
         .EXAMPLE
-        Disconnect-ArubaCX -noconfirm
+        Disconnect-ArubaCX -confirm:$false
 
         Disconnect the connection with no confirmation
 
     #>
 
+    [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'high')]
     Param(
-        [Parameter(Mandatory = $false)]
-        [switch]$noconfirm,
         [Parameter (Mandatory = $False)]
         [ValidateNotNullOrEmpty()]
         [PSObject]$connection = $DefaultArubaCXConnection
@@ -161,17 +160,7 @@ function Disconnect-ArubaCX {
 
         $url = "logout"
 
-        if ( -not ( $Noconfirm )) {
-            $message = "Remove ArubaCX Switch connection."
-            $question = "Proceed with removal of ArubaCX Switch connection ?"
-            $choices = New-Object Collections.ObjectModel.Collection[Management.Automation.Host.ChoiceDescription]
-            $choices.Add((New-Object Management.Automation.Host.ChoiceDescription -ArgumentList '&Yes'))
-            $choices.Add((New-Object Management.Automation.Host.ChoiceDescription -ArgumentList '&No'))
-
-            $decision = $Host.UI.PromptForChoice($message, $question, $choices, 1)
-        }
-        else { $decision = 0 }
-        if ($decision -eq 0) {
+        if ($PSCmdlet.ShouldProcess($connection.server, 'Proceed with removal of ArubaCX Switch connection ?')) {
             Write-Progress -activity "Remove ArubaCX SW connection"
             Invoke-ArubaCXRestMethod -method "POST" -uri $url -connection $connection | Out-Null
             Write-Progress -activity "Remove ArubaCX SW connection" -completed
@@ -181,7 +170,6 @@ function Disconnect-ArubaCX {
         }
 
     }
-
     End {
     }
 }
