@@ -389,4 +389,4 @@ Describe  "Configure IP on Interface" {
     }
 }
 
-Disconnect-ArubaCX -noconfirm
+Disconnect-ArubaCX -confirm:$false
