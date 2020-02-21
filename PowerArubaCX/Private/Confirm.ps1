@@ -11,7 +11,7 @@ function Confirm-ArubaCXInterface {
         [object]$argument
     )
 
-    #Check if it looks like an Vlan element
+    #Check if it looks like an Interface element
 
     if ( -not ( $argument | get-member -name name -Membertype Properties)) {
         throw "Element specified does not contain an name property."
