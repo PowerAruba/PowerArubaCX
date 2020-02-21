@@ -158,7 +158,7 @@ function Get-ArubaCXInterfaces {
 
         $response = Invoke-ArubaCXRestMethod -uri $uri -method 'GET' -connection $connection @invokeParams
 
-        #Add bame parameter when use writable type selector
+        #Add name parameter when use writable type selector
         if ( $PsBoundParameters.ContainsKey('selector') -and $selector -eq "writable" ) {
             $response | add-member -name "name" -membertype NoteProperty -Value $interface
         }
@@ -183,7 +183,7 @@ function Set-ArubaCXInterfaces {
       .EXAMPLE
       Get-ArubaCXInterfaces -interface 1/1/1 | Set-ArubaCXInterfaces -description "Changed by PowerArubaCX"
 
-      Set the description for the Interface 1/1/1
+      Set the description "Change by PowerArubaCX" for the Interface 1/1/1
 
       .EXAMPLE
       Get-ArubaCXInterfaces -interface 1/1/1 | Set-ArubaCXInterfaces -admin up
@@ -206,12 +206,12 @@ function Set-ArubaCXInterfaces {
       Set the interface 1/1/1 on native-untagged mode with vlan 85 and tagged vlan 45 and 45
 
       .EXAMPLE
-      Get-ArubaCXInterfaces -interface 1/1/1 | Set-ArubaCXInterfaces -ip4_address 192.0.2.1 -ip4_mask 32
+      Get-ArubaCXInterfaces -interface 1/1/1 | Set-ArubaCXInterfaces -ip4_address 192.0.2.1 -ip4_mask 24
 
-      Set the interface 1/1/1 with IPv4 ADress 192.0.2.1/32
+      Set the interface 1/1/1 with IPv4 Address 192.0.2.1/24
 
       .EXAMPLE
-      Get-ArubaCXInterfaces -interface vlan85 | Set-ArubaCXInterfaces -ip4_address $nill
+      Get-ArubaCXInterfaces -interface vlan85 | Set-ArubaCXInterfaces -ip4_address $null
 
       Remove IPv4 Address of interface vlan85
 
@@ -220,7 +220,7 @@ function Set-ArubaCXInterfaces {
       PS> $int.description = "My Vlan"
       PS> $int | Set-ArubaCXInterfaces -use_pipeline
 
-      Configure interface 1/1/1 description using pipeline (can be only with selector equal writable)
+      Configure some interfacevariable (description) no available on parameter using pipeline (can be only with selector equal writable)
     #>
     Param(
         [Parameter (Mandatory = $true, ParameterSetName = "interface")]
@@ -247,7 +247,7 @@ function Set-ArubaCXInterfaces {
         [Parameter(Mandatory = $false)]
         [ipaddress]$ip4_address,
         [Parameter(Mandatory = $false)]
-        [ValidateRange(8, 31)]
+        [ValidateRange(8, 32)]
         [int]$ip4_mask,
         [Parameter (Mandatory = $false)]
         [switch]$use_pipeline,
