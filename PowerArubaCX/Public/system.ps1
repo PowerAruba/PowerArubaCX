@@ -95,7 +95,7 @@ function Set-ArubaCXSystem {
 
         Configure some system variable (usb_disable) no available on parameter using pipeline (can be only with selector equal writable)
     #>
-
+    [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'medium')]
     Param(
         [Parameter (Mandatory = $false, ValueFromPipeline = $true, Position = 1)]
         [ValidateScript( { Confirm-ArubaCXSystem $_ })]
@@ -139,7 +139,9 @@ function Set-ArubaCXSystem {
             $_system.timezone = $timezone
         }
 
-        Invoke-ArubaCXRestMethod -method "PUT" -body $_system -uri $uri -connection $connection
+        if ($PSCmdlet.ShouldProcess($_system.hostname, 'Configure System Settings')) {
+            Invoke-ArubaCXRestMethod -method "PUT" -body $_system -uri $uri -connection $connection
+        }
 
         Get-ArubaCXSystem -connection $connection
     }
