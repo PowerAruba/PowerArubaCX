@@ -287,7 +287,7 @@ function Set-ArubaCXInterfaces {
         }
 
         if ( $PsBoundParameters.ContainsKey('admin') ) {
-            if ($_interface.user_config.admin -eq $null) {
+            if ($null -eq $_interface.user_config.admin) {
                 $_interface.user_config | Add-member -name "admin" -membertype NoteProperty -Value ""
             }
             $_interface.user_config.admin = $admin
