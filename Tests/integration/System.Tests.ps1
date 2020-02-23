@@ -59,14 +59,14 @@ Describe  "Get System" {
             } | Should Not Throw
         }
 
-        #Skip because fail actually with ArubaCX OVF 10.04.0001
+        #Bug with ArubaCX 10.04.x (Tested with OVA 10.04.0001 and 8320 with 10.04.0030)
         It "Get System with depth equal 3" -Skip:$true {
             {
                 Get-ArubaCXSystem -depth 3
             } | Should Not Throw
         }
 
-        #Skip because fail actually with ArubaCX OVF 10.04.0001
+        #Bug with ArubaCX 10.04.x (Tested with OVA 10.04.0001 and 8320 with 10.04.0030)
         It "Get System with depth equal 4" -Skip:$true {
             {
                 Get-ArubaCXSystem -depth 4
