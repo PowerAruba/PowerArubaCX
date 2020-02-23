@@ -222,6 +222,7 @@ function Set-ArubaCXInterfaces {
 
       Configure some interfacevariable (description) no available on parameter using pipeline (can be only with selector equal writable)
     #>
+    [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'medium')]
     Param(
         [Parameter (Mandatory = $true, ParameterSetName = "interface")]
         [String]$interface,
@@ -336,8 +337,9 @@ function Set-ArubaCXInterfaces {
             }
         }
 
-        $response = Invoke-ArubaCXRestMethod -uri $uri -method 'PUT' -body $_interface -connection $connection
-        $response
+        if ($PSCmdlet.ShouldProcess($interface, 'Configure interface Settings')) {
+            Invoke-ArubaCXRestMethod -uri $uri -method 'PUT' -body $_interface -connection $connection
+        }
         Get-ArubaCXInterfaces $interface -connection $connection
     }
 
@@ -365,6 +367,7 @@ function Remove-ArubaCXInterfacesVlanTrunks {
       Remove vlan 44 and 45 to vlan trunks on interface 1/1/1
 
     #>
+    [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'medium')]
     Param(
         [Parameter (Mandatory = $true, ValueFromPipeline = $true, Position = 1)]
         [ValidateScript( { Confirm-ArubaCXInterfaces $_ })]
@@ -411,7 +414,9 @@ function Remove-ArubaCXInterfacesVlanTrunks {
 
         $_interface.vlan_trunks = $trunks
 
-        $response = Invoke-ArubaCXRestMethod -uri $uri -method 'PUT' -body $_interface -connection $connection
+        if ($PSCmdlet.ShouldProcess($interface, 'Remove vlan tagged on interface')) {
+            $response = Invoke-ArubaCXRestMethod -uri $uri -method 'PUT' -body $_interface -connection $connection
+        }
         $response
         Get-ArubaCXInterfaces $interface -connection $connection
     }
