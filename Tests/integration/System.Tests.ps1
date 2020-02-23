@@ -92,7 +92,7 @@ Describe  "Get System" {
 }
 
 Describe  "Configure System" {
-    AfterAll {
+    BeforeAll {
         $script:default_sys = Get-ArubaCXSystem -selector writable
         #Add CheckPoint ?
     }
