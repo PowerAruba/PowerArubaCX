@@ -62,6 +62,10 @@ function Confirm-ArubaCXSystem {
 
 function Confirm-ArubaCXVlans {
 
+    Param (
+        [Parameter (Mandatory = $true)]
+        [object]$argument
+    )
     #Check if it looks like an Vlan element
 
     if ( -not ( $argument | get-member -name id -Membertype Properties)) {
