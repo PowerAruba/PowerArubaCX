@@ -14,7 +14,7 @@ Describe  "Get System" {
 
     It "Get System ($pester_vlan) and confirm (via Confirm-ArubaCXSystem)" {
         $sys = Get-ArubaCXSystem
-        Confirm-ArubaCXSystem ($sys) | Should be $true
+        Confirm-ArubaCXSystem ($sys) | Should -Be $true
     }
 
     #Get with attribute, depth...
@@ -113,7 +113,7 @@ Describe  "Configure System" {
     It "Change System timezone" {
         Set-ArubaCXSystem -timezone Europe/Paris
         $sys = Get-ArubaCXSystem
-        $sys.timezone | Should be "Europe/Paris"
+        $sys.timezone | Should -Be "Europe/Paris"
     }
 
     It "Change System banner" {
