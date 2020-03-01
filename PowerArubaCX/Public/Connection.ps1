@@ -62,13 +62,13 @@ function Connect-ArubaCX {
         $connection = @{server = ""; session = ""; invokeParams = ""; port = $port; version = ""; platform_name = "" }
         $invokeParams = @{DisableKeepAlive = $false; UseBasicParsing = $true; SkipCertificateCheck = $SkipCertificateCheck }
 
-        #If there is a password (and a user), create a credentials
+        #If there is a password (and a user), create a credential
         if ($Password) {
-            $Credentials = New-Object System.Management.Automation.PSCredential($Username, $Password)
+            $Credential = New-Object System.Management.Automation.PSCredential($Username, $Password)
         }
         #Not Credentials (and no password)
-        if ($null -eq $Credentials) {
-            $Credentials = Get-Credential -Message 'Please enter administrative credentials for your ArubaCX Switch'
+        if ($null -eq $Credential) {
+            $Credential = Get-Credential -Message 'Please enter administrative credential for your ArubaCX Switch'
         }
 
         if ("Desktop" -eq $PSVersionTable.PsEdition) {
