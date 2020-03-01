@@ -12,6 +12,7 @@ function Connect-ArubaCX {
 
       .DESCRIPTION
       Connect to a ArubaCX Switches
+
       .EXAMPLE
       Connect-ArubaCX -Server 192.0.2.1
 
