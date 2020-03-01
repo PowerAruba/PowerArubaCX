@@ -2,6 +2,8 @@
 
 This is a Powershell module for configure a ArubaCX Switch.
 
+![PowerAruba CX Logo](./Medias/PowerArubaCX.png)
+
 With this module (version 0.4.0) you can manage:
 
 - [Invoke API](#Invoke-API) using Invoke-ArubaCXRestMethod
