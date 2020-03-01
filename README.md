@@ -2,7 +2,9 @@
 
 This is a Powershell module for configure a ArubaCX Switch.
 
-<img src="https://raw.githubusercontent.com/alagoutte/PowerArubaCX/readme/Medias/PowerArubaCX.png" width="250" height="250" class="center" />
+<p align="center">
+<img src="https://raw.githubusercontent.com/alagoutte/PowerArubaCX/readme/Medias/PowerArubaCX.png" width="250" height="250" />
+</p>
 
 With this module (version 0.4.0) you can manage:
 
