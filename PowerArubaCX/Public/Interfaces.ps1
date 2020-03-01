@@ -38,7 +38,34 @@ function Add-ArubaCXInterfaces {
       Set the interface 1/1/1 on native-untagged mode with vlan 85 and tagged vlan 45 and 45
 
       #>
-
+    Param(
+        [Parameter (Mandatory = $true, ParameterSetName = "vlan")]
+        [string]$vlan_id,
+        [Parameter(Mandatory = $false)]
+        [ValidateSet('up', 'down')]
+        [string]$admin,
+        [Parameter(Mandatory = $false)]
+        [string]$description,
+        [Parameter(Mandatory = $false)]
+        [switch]$routing,
+        [Parameter(Mandatory = $false)]
+        [ValidateSet('access', 'native-untagged', 'native-tagged', IgnoreCase = $false)]
+        [string]$vlan_mode,
+        [Parameter(Mandatory = $false)]
+        [ValidateRange(1, 4096)]
+        [int]$vlan_tag,
+        [Parameter(Mandatory = $false)]
+        #[ValidateRange(1, 4096)]
+        [int[]]$vlan_trunks,
+        [Parameter(Mandatory = $false)]
+        [ipaddress]$ip4_address,
+        [Parameter(Mandatory = $false)]
+        [ValidateRange(8, 31)]
+        [int]$ip4_mask,
+        [Parameter (Mandatory = $False)]
+        [ValidateNotNullOrEmpty()]
+        [PSObject]$connection = $DefaultArubaCXConnection
+    )
     Begin {
 
     }
@@ -53,9 +80,21 @@ function Add-ArubaCXInterfaces {
 
         $_interface | Add-Member -name "type" -membertype NoteProperty -Value "vlan"
 
+        $vlan = "/rest/" + $($connection.version) + "/system/vlans/" + $vlan_id
+        $_interface | Add-Member -name "vlan_tag" -membertype NoteProperty -Value $vlan
+
+        $user_config = New-Object -TypeName PSObject
+        $user_config | Add-member -name "admin" -membertype NoteProperty -Value "up"
+        #$_interface | Add-Member -name "user_config" -membertype NoteProperty -Value $user_config
+
+        $vrf = "/rest/" + $($connection.version) + "/system/vrfs/default"
+        #"vrf": "/rest/v10.04/system/vrfs/%s" % vrf_name,
+        $_interface | Add-Member -name "vrf" -membertype NoteProperty -Value $vrf
+
         if ( $PsBoundParameters.ContainsKey('description') ) {
             $_interface.description = $description
         }
+        #$_interface.user_config | Add-member -name "admin" -membertype NoteProperty -Value ""
 
         if ( $PsBoundParameters.ContainsKey('admin') ) {
             $_interface.user_config.admin = $admin
