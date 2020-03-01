@@ -8,6 +8,7 @@ With this module (version 0.4.0) you can manage:
 - System (Get)
 - Interfaces (Get)
 - LLDP Neighbor (Get)
+- Vlans (Add/Get/Set/Remove)
 
 More functionality will be added later.
 
@@ -16,13 +17,12 @@ Tested with ArubaCX 8400 and 8320, 6x00 (using >= 10.04.xx firmware) on Windows/
 # Usage
 
 All resource management functions are available with the Powershell verbs GET, ADD, SET, REMOVE.
-<!--
+
 For example, you can manage Vlans with the following commands:
 - `Get-ArubaCXVlans`
 - `Add-ArubaCXVlans`
 - `Set-ArubaCXVlans`
 - `Remove-ArubaCXVlans`
--->
 
 # Requirements
 
@@ -57,37 +57,65 @@ The first thing to do is to connect to a Aruba Switch with the command `Connect-
 #we get a prompt for credential
 ```
 
-<!--
+
 ### Vlans Management
 
-You can create a new Vlan `Add-ArubaSWVlans`, retrieve its information `Get-ArubaSWVlans`, modify its properties `Set-ArubaSWVLans`, or delete it `Remove-ArubaSWVlans`.
+You can create a new Vlan `Add-ArubaCXVlans`, retrieve its information `Get-ArubaCXVlans`, modify its properties `Set-ArubaCXVlans`, or delete it `Remove-ArubaCXVlans`.
 
 ```powershell
 # Create a vlan
-    Add-ArubaSWVlans -id 85 -Name 'PowerArubaSW' -is_voice_enabled
+    Add-ArubaCXVlans -id 85 -Name 'PowerArubaCX'
 
-    uri               : /vlans/85
-    vlan_id           : 85
-    name              : PowerArubaSW
-    status            : VS_PORT_BASED
-    type              : VT_STATIC
-    is_voice_enabled  : False
-    is_jumbo_enabled  : True
-    is_dsnoop_enabled : False
+    [...]
+    admin                             : up
+    clear_ip_bindings                 :
+    description                       :
+    [...]
+    id                                : 85
+    [...]
+    name                              : PowerArubaCX
+    nd_snoop_config                   : @{enable=False; ra_drop_enable=False}
+    nd_snooping_prefix                : {}
+    oper_state                        : down
+    oper_state_reason                 : no_member_port
+    [...]
+    type                              : static
+    voice                             : False
+    vsx_sync                          : {}
 
 
 # Get information about vlan
-    Get-ArubaSWVlans -name PowerArubaSW | ft
+    Get-ArubaCXVlans -id 85 -attributes admin, description, id, name, type, voice | Format-Table
 
-    uri       vlan_id name         status        type      is_voice_enabled is_jumbo_enabled is_dsnoop_enabled is_management_vlan
-    ---       ------- ----         ------        ----      ---------------- ---------------- ----------------- ------------------
-    /vlans/85      85 PowerArubaSW VS_PORT_BASED VT_STATIC            False             True             False              False
+    admin description id name         type   voice
+    ----- ----------- -- ----         ----   -----
+    up                85 PowerArubaCX static False
+
+# Change settings of a vlan (Description and voice)
+    Get-ArubaCXVlans -id 85 | Set-ArubaCXVlans -description "Add via PowerArubaCX" -voice
+
+    [...]
+    admin                             : up
+    clear_ip_bindings                 :
+    description                       : Add via PowerArubaCX
+    [...]
+    id                                : 85
+    [...]
+    name                              : PowerArubaCX
+    nd_snoop_config                   : @{enable=False; ra_drop_enable=False}
+    nd_snooping_prefix                : {}
+    oper_state                        : down
+    oper_state_reason                 : no_member_port
+    [...]
+    type                              : static
+    voice                             : True
+    vsx_sync                          : {}
 
 
 # Remove a vlan
-    Remove-ArubaSWVlans -id 85
+    Get-ArubaCXVlans -name PowerArubaCX | Remove-ArubaCXVlans
 ```
--->
+
 ### Invoke API
 for example to get ArubaCX System Configuration
 
