@@ -8,9 +8,11 @@ This is a Powershell module for configure an ArubaCX Switch.
 
 With this module (version 0.4.0) you can manage:
 
-- [System](#System) (Get/set)
+- Firmware (Get)
 - [Interfaces](#Interface) (Get/Set)
 - LLDP Neighbor (Get)
+- [System](#System) (Get/Set)
+- User (Get)
 - [Vlans](#Vlans-Management) (Add/Get/Set/Remove)
 
 There is some extra feature
