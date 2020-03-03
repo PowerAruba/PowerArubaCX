@@ -9,7 +9,7 @@ This is a Powershell module for configure a ArubaCX Switch.
 With this module (version 0.4.0) you can manage:
 
 - [Invoke API](#Invoke-API) using Invoke-ArubaCXRestMethod
-- System (Get)
+- [System](#System) (Get/set)
 - [Interfaces](#Interface) (Get/Set)
 - LLDP Neighbor (Get)
 - [Vlans](#Vlans-Management) (Add/Get/Set/Remove)
@@ -268,6 +268,63 @@ up          up         1/1/5
 up          up         1/1/6
 up          up         vlan55
 -->
+
+### System
+for example to get/set ArubaCX System settings
+
+```powershell
+
+#Get ALL system settings
+
+    Get-ArubaCXSystem
+
+    aaa                                             : @{dot1x_auth_enable=False; dot1x_remote_auth_method=eap-radius; fail_through=False; login_lockout_time=300; 
+                                                    mac_auth_address_format=no-delimiter; mac_auth_enable=False; mac_auth_radius_auth_method=chap; 
+                                                    portaccess_local_accounting_enable=False; radius_auth=pap; radius_retries=1; radius_timeout=5; 
+                                                    radius_tracking_time_interval=300; radius_tracking_user_name=radius-tracking-user; tacacs_auth=pap; 
+                                                    tacacs_timeout=5; tacacs_tracking_time_interval=300; tacacs_tracking_user_name=tacacs-tracking-user}
+    aaa_accounting_attributes                       : /rest/v10.04/system/aaa_accounting_attributes
+    aaa_server_group_prios                          : /rest/v10.04/system/aaa_server_group_prios
+    aaa_server_groups                               : /rest/v10.04/system/aaa_server_groups
+    acl_object_groups                               : /rest/v10.04/system/acl_object_groups
+    acls                                            : /rest/v10.04/system/acls
+    admin_password_set                              : True
+    [...]
+
+#Get hostname and timezone system settings
+
+    Get-ArubaCXSystem -attribute hostname, timezone
+
+    hostname    timezone
+    --------    --------
+    switch      UTC
+
+#Set hostname
+
+    Set-ArubaCXSystem -hostname PowerArubaCX-Switch
+
+    [...]
+    hostname                                        : PowerArubaCX-Switch
+    [...]
+
+#Set timezone
+
+    Set-ArubaCXSystem -timezone Europe/Paris
+
+    [...]
+    timezone                                        : Europe/Paris
+    [...]
+
+#Set a setting don't have (yet) parameter (usb_disable)
+
+    $system = Get-ArubaCXSystem -selector writable
+    $system.usb_disable = $true
+    $system | Set-ArubaCXSystem -use_pipeline
+
+    [...]
+    usb_disable                                     : True
+    [...]
+```
 
 ### Disconnecting
 
