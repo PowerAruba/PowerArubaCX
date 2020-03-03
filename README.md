@@ -156,7 +156,9 @@ icmp_unreachable_ratelimit         : 1000
 dns_servers hostname
 ----------- --------
 {}          PowerArubaCX-SW1
+```
 
+<!--
 # get only Aruba CX Interfaces with depth 2 and attributes name...
     Invoke-ArubaCXRestMethod -method "get" -uri "system/interfaces" -depth 2 -attributes name, admin
 
@@ -171,8 +173,9 @@ lag1          @{error=up}
 lag2          @{error=up}
 lag5          @{error=up}
 1/1/6         @{error=up}
+-->
 
-```
+
 to get API uri, go to ArubaCX Swagger (https://ArubaCX-IP/api/v10.04/)
 ![](./Medias/ArubaCX_API.png)
 
