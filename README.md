@@ -1,6 +1,6 @@
 # PowerArubaCX
 
-This is a Powershell module for configure a ArubaCX Switch.
+This is a Powershell module for configure an ArubaCX Switch.
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/alagoutte/PowerArubaCX/readme/Medias/PowerArubaCX.png" width="250" height="250" />
@@ -56,7 +56,7 @@ For example, you can manage Vlans with the following commands:
 # Examples
 ### Connecting to the Aruba Switch
 
-The first thing to do is to connect to a Aruba Switch with the command `Connect-ArubaCX`:
+The first thing to do is to connect to an ArubaCX Switch with the command `Connect-ArubaCX`:
 
 ```powershell
 # Connect to the Aruba CX Switch
