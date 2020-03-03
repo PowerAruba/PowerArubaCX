@@ -22,7 +22,7 @@ There is some extra feature
 
 More functionality will be added later.
 
-Tested with ArubaCX 8400 and 8320, 6x00 (using >= 10.04.xx firmware) on Windows/Linux/macOS
+Tested with ArubaCX 8400 and 832x, 6x00 (using >= 10.04.xx firmware) on Windows/Linux/macOS
 
 # Usage
 
