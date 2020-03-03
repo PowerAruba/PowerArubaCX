@@ -157,7 +157,7 @@ dns_servers hostname
 ----------- --------
 {}          PowerArubaCX-SW1
 
-# get only Aruba CX Interfaces with depth 21 and attributes name...
+# get only Aruba CX Interfaces with depth 2 and attributes name...
     Invoke-ArubaCXRestMethod -method "get" -uri "system/interfaces" -depth 2 -attributes name, admin
 
 name          admin
@@ -185,7 +185,7 @@ for example to get ArubaCX Interface
 ```powershell
 
 #Get interface configuration
-    Get-ArubaCXinterfaces -depth 1 -selector configuration | Format-Table
+    Get-ArubaCXInterfaces -depth 1 -selector configuration | Format-Table
 
 options other_config              udld_arubaos_compatibility_mode udld_compatibility udld_enable udld_interval udld_retries udld_rfc5171_compat
                                                                                                                             ibility_mode
@@ -202,7 +202,7 @@ options other_config              udld_arubaos_compatibility_mode udld_compatibi
 
 #Get name, admin state and link state of interface
 
-    Get-ArubaCXinterfaces -depth 1 -attributes name, admin_state, link_state
+    Get-ArubaCXInterfaces -depth 1 -attributes name, admin_state, link_state
 
 admin_state link_state name
 ----------- ---------- ----
