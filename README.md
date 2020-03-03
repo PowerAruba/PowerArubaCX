@@ -8,11 +8,15 @@ This is a Powershell module for configure a ArubaCX Switch.
 
 With this module (version 0.4.0) you can manage:
 
-- [Invoke API](#Invoke-API) using Invoke-ArubaCXRestMethod
 - [System](#System) (Get/set)
 - [Interfaces](#Interface) (Get/Set)
 - LLDP Neighbor (Get)
 - [Vlans](#Vlans-Management) (Add/Get/Set/Remove)
+
+There is some extra feature
+- [Invoke API](#Invoke-API) using Invoke-ArubaCXRestMethod
+<!-- - [Filtering](#Filtering) -->
+- [Multi Connection](#MultiConnection)
 
 More functionality will be added later.
 
@@ -324,6 +328,40 @@ for example to get/set ArubaCX System settings
     [...]
     usb_disable                                     : True
     [...]
+```
+
+### MultiConnection
+
+From release 0.4.0, it is possible to connect on same times to multi Aruba CX
+You need to use -connection parameter to cmdlet
+
+For example to get interface of 2 FortiGate
+
+```powershell
+# Connect to first ArubaCX
+    $cx1 = Connect-ArubaCX 192.0.2.1 -SkipCertificateCheck -DefaultConnection:$false
+
+#DefaultConnection set to false is not mandatory but only don't set the connection info on global variable
+
+# Connect to second FortiGate
+    $cx2 = Connect-FGT 192.0.2.2 -SkipCertificateCheck -DefaultConnection:$false
+
+    # Get System hostname and mgmt  interface for first ArubaCX Switch
+    Get-ArubaCXSystem -attributes mgmt_intf, hostname -connection $cx1
+
+    hostname             mgmt_intf
+    --------             ---------
+    PowerArubaCX-Switch1 @{admin_state=up; default_gateway=10.200.11.254; dns_server_1=10.200.11.254; dns_server_2=0.0.0.0; ip=10.200.11.1; mode=static;
+
+# Get Interface for second ArubaCX Switch
+    Get-ArubaCXSystem -attributes mgmt_intf, hostname -connection $cx2
+
+    hostname             mgmt_intf
+    --------             ---------
+    PowerArubaCX-Switch2 @{admin_state=up; default_gateway=10.200.11.254; dns_server_1=10.200.11.254; dns_server_2=0.0.0.0; ip=10.200.11.2; mode=static;
+
+#Each cmdlet can use -connection parameter
+
 ```
 
 ### Disconnecting
