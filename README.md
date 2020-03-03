@@ -335,7 +335,7 @@ for example to get/set ArubaCX System settings
 From release 0.4.0, it is possible to connect on same times to multi Aruba CX
 You need to use -connection parameter to cmdlet
 
-For example to get interface of 2 FortiGate
+For example to get system of 2 ArubaCX
 
 ```powershell
 # Connect to first ArubaCX
@@ -343,8 +343,8 @@ For example to get interface of 2 FortiGate
 
 #DefaultConnection set to false is not mandatory but only don't set the connection info on global variable
 
-# Connect to second FortiGate
-    $cx2 = Connect-FGT 192.0.2.2 -SkipCertificateCheck -DefaultConnection:$false
+# Connect to second ArubaCX
+    $cx2 = Connect-ArubaCX 192.0.2.2 -SkipCertificateCheck -DefaultConnection:$false
 
     # Get System hostname and mgmt  interface for first ArubaCX Switch
     Get-ArubaCXSystem -attributes mgmt_intf, hostname -connection $cx1
