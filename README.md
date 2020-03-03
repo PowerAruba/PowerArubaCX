@@ -187,25 +187,30 @@ for example to get ArubaCX Interface
 
 ```powershell
 
-#Get interface configuration
-    Get-ArubaCXInterfaces -depth 1 -selector configuration | Format-Table
+#Get interface 1/1/1 configuration
+    Get-ArubaCXInterfaces 1/1/1 -selector configuration
 
-options other_config              udld_arubaos_compatibility_mode udld_compatibility udld_enable udld_interval udld_retries udld_rfc5171_compat
-                                                                                                                            ibility_mode
-------- ------------              ------------------------------- ------------------ ----------- ------------- ------------ -------------------
-                                  forward_then_verify             aruba_os                 False          7000            4 normal
-                                  forward_then_verify             aruba_os                 False          7000            4 normal
-                                  forward_then_verify             aruba_os                 False          7000            4 normal
-                                  forward_then_verify             aruba_os                 False          7000            4 normal
-                                  forward_then_verify             aruba_os                 False          7000            4 normal
-        @{lacp-aggregation-key=1} forward_then_verify             aruba_os                 False          7000            4 normal
-        @{lacp-aggregation-key=1} forward_then_verify             aruba_os                 False          7000            4 normal
-                                  forward_then_verify             aruba_os                 False          7000            4 normal
+    aaa_auth_precedence                  :
+    aclmac_in_cfg                        :
+    aclmac_in_cfg_version                :
+    aclmac_out_cfg                       :
+    aclmac_out_cfg_version               :
+    aclv4_in_cfg                         :
+    aclv4_in_cfg_version                 :
+    aclv4_out_cfg                        :
+    aclv4_out_cfg_version                :
+    aclv6_in_cfg                         :
+    aclv6_in_cfg_version                 :
+    aclv6_out_cfg                        :
+    aclv6_out_cfg_version                :
+    admin                                : up
+    [...]
 
-
+```
+<!--
 #Get name, admin state and link state of interface
 
-    Get-ArubaCXInterfaces -depth 1 -attributes name, admin_state, link_state
+    Get-ArubaCXInterfaces 1/1/1 -attributes name, admin_state, link_state
 
 admin_state link_state name
 ----------- ---------- ----
@@ -217,7 +222,7 @@ down        down       1/1/2
 up          up         1/1/5
 up          up         1/1/6
 up          up         vlan55
-```
+-->
 
 ### Disconnecting
 
