@@ -12,7 +12,7 @@
 RootModule = 'PowerArubaCX.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.3.0'
+ModuleVersion = '0.4.0'
 
 # ID used to uniquely identify this module
 GUID = '44c73bcd-17c0-5d37-c0bd-16b5b41d621a'
@@ -103,7 +103,7 @@ PrivateData = @{
          ProjectUri = 'https://github.com/PowerAruba/PowerArubaCX'
 
         # A URL to an icon representing this module.
-        # IconUri = ''
+        IconUri = 'https://raw.githubusercontent.com/alagoutte/PowerArubaCX/readme/Medias/PowerArubaCX.png'
 
         # ReleaseNotes of this module
         # ReleaseNotes = ''

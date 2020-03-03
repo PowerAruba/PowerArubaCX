@@ -203,7 +203,7 @@ function Set-ArubaCXInterfaces {
       .EXAMPLE
       Get-ArubaCXInterfaces -interface 1/1/1 | Set-ArubaCXInterfaces -vlan_mode native-untagged -vlan_tag 85 -vlan_trunks 44,45
 
-      Set the interface 1/1/1 on native-untagged mode with vlan 85 and tagged vlan 45 and 45
+      Set the interface 1/1/1 on native-untagged mode with vlan 85 and tagged vlan 44 and 45
 
       .EXAMPLE
       Get-ArubaCXInterfaces -interface 1/1/1 | Set-ArubaCXInterfaces -ip4_address 192.0.2.1 -ip4_mask 24
