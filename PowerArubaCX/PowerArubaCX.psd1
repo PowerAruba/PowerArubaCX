@@ -103,7 +103,7 @@ PrivateData = @{
          ProjectUri = 'https://github.com/PowerAruba/PowerArubaCX'
 
         # A URL to an icon representing this module.
-        # IconUri = ''
+        IconUri = 'https://raw.githubusercontent.com/alagoutte/PowerArubaCX/readme/Medias/PowerArubaCX.png'
 
         # ReleaseNotes of this module
         # ReleaseNotes = ''
