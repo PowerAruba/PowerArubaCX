@@ -120,6 +120,8 @@ You can create a new Vlan `Add-ArubaCXVlans`, retrieve its information `Get-Arub
     Get-ArubaCXVlans -name PowerArubaCX | Remove-ArubaCXVlans
 ```
 
+For configure a vlan to an interface, need to use [Set-ArubaCXInterfaces](#Interface)
+
 ### Invoke API
 for example to get ArubaCX System Configuration
 
