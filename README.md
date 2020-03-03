@@ -238,9 +238,19 @@ for example to get ArubaCX Interface
     vlan_tag                                : @{85=/rest/v10.04/system/vlans/85}
     [...]
 
-#Configure interface 1/1/1 on native-untagged mode with vlan 85 and tagged vlan 44 and 45
+#Configure interface 1/1/1 on native-untagged mode with vlan 85 and tagged vlan 44
 
-    Get-ArubaCXInterfaces -interface 1/1/1 | Set-ArubaCXInterfaces -vlan_mode native-untagged -vlan_tag 85 -vlan_trunks 44,45
+    Get-ArubaCXInterfaces -interface 1/1/1 | Set-ArubaCXInterfaces -vlan_mode native-untagged -vlan_tag 85 -vlan_trunks 44
+
+    name                                    : 1/1/1
+    [...]
+    vlan_mode                               : native-untagged
+    vlan_tag                                : @{85=/rest/v10.04/system/vlans/85}
+    vlan_trunks                             : @{44=/rest/v10.04/system/vlans/44}
+
+#Configure interface 1/1/1 and add vlan 44 to trunks
+
+    Get-ArubaCXInterfaces -interface 1/1/1 | Add-ArubaCXInterfacesVlanTrunks -vlan_trunks 45
 
     name                                    : 1/1/1
     [...]
