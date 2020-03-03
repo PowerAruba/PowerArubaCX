@@ -133,52 +133,52 @@ for example to get ArubaCX System Configuration
 # get Aruba CX System configuration using API
     Invoke-ArubaCXRestMethod -method "get" -uri "system" -selector configuration
 
-aaa                                : @{fail_through=False; login_lockout_time=300; radius_auth=pap; radius_retries=1;
-                                     radius_timeout=5; ssh_passkeyauthentication_enable=True;
-                                     ssh_publickeyauthentication_enable=True; tacacs_auth=pap; tacacs_timeout=5}
-all_user_copp_policies             : {}
-arp_config                         : @{gc_threshold=131072; timeout=30}
-bfd_detect_multiplier              : 5
-bfd_echo_disable                   : False
-bfd_enable                         : False
-bfd_min_echo_rx_interval           : 500
-bfd_min_rx_interval                : 3000
-bfd_min_tx_interval                : 3000
-checkpoint_post_config             : @{disable=False; timeout=300}
-dhcp_config                        :
-dlog_destination                   :
-dns_servers                        : {}
-ecmp_config                        :
-hostname                           : PowerArubaCX-SW1
-hpe_rda_enable                     : False
-icmp_redirect_disable              : False
-icmp_unreachable_disable           : False
-icmp_unreachable_ratelimit         : 1000
+    aaa                                : @{fail_through=False; login_lockout_time=300; radius_auth=pap; radius_retries=1;
+                                        radius_timeout=5; ssh_passkeyauthentication_enable=True;
+                                        ssh_publickeyauthentication_enable=True; tacacs_auth=pap; tacacs_timeout=5}
+    all_user_copp_policies             : {}
+    arp_config                         : @{gc_threshold=131072; timeout=30}
+    bfd_detect_multiplier              : 5
+    bfd_echo_disable                   : False
+    bfd_enable                         : False
+    bfd_min_echo_rx_interval           : 500
+    bfd_min_rx_interval                : 3000
+    bfd_min_tx_interval                : 3000
+    checkpoint_post_config             : @{disable=False; timeout=300}
+    dhcp_config                        :
+    dlog_destination                   :
+    dns_servers                        : {}
+    ecmp_config                        :
+    hostname                           : PowerArubaCX-SW1
+    hpe_rda_enable                     : False
+    icmp_redirect_disable              : False
+    icmp_unreachable_disable           : False
+    icmp_unreachable_ratelimit         : 1000
 
 [...]
 # get only Aruba CX System hostname and dns servers
     Invoke-ArubaCXRestMethod -method "get" -uri "system" -attributes hostname, dns_servers
 
-dns_servers hostname
------------ --------
-{}          PowerArubaCX-SW1
+    dns_servers hostname
+    ----------- --------
+    {}          PowerArubaCX-SW1
 ```
 
 <!--
 # get only Aruba CX Interfaces with depth 2 and attributes name...
     Invoke-ArubaCXRestMethod -method "get" -uri "system/interfaces" -depth 2 -attributes name, admin
 
-name          admin
-----          ------
-bridge_normal @{error=up}
-1/1/1         @{error=up}
-vlan55        @{error=up}
-1/1/3         @{error=up}
-1/1/2         @{error=up}
-lag1          @{error=up}
-lag2          @{error=up}
-lag5          @{error=up}
-1/1/6         @{error=up}
+    name          admin
+    ----          ------
+    bridge_normal @{error=up}
+    1/1/1         @{error=up}
+    vlan55        @{error=up}
+    1/1/3         @{error=up}
+    1/1/2         @{error=up}
+    lag1          @{error=up}
+    lag2          @{error=up}
+    lag5          @{error=up}
+    1/1/6         @{error=up}
 -->
 
 
@@ -261,16 +261,16 @@ for example to get ArubaCX Interface
 
     Get-ArubaCXInterfaces 1/1/1 -attributes name, admin_state, link_state
 
-admin_state link_state name
------------ ---------- ----
-up          up         bridge_normal
-up          up         1/1/1
-down        down       1/1/4
-down        down       1/1/3
-down        down       1/1/2
-up          up         1/1/5
-up          up         1/1/6
-up          up         vlan55
+    admin_state link_state name
+    ----------- ---------- ----
+    up          up         bridge_normal
+    up          up         1/1/1
+    down        down       1/1/4
+    down        down       1/1/3
+    down        down       1/1/2
+    up          up         1/1/5
+    up          up         1/1/6
+    up          up         vlan55
 -->
 
 ### System
