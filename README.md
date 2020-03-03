@@ -373,14 +373,27 @@ For example to get system of 2 ArubaCX
 
 # List of available command
 ```powershell
+Add-ArubaCXInterfacesVlanTrunks
+Add-ArubaCXVlans
+Confirm-ArubaCXInterfaces
+Confirm-ArubaCXSystem
+Confirm-ArubaCXVlans
 Connect-ArubaCX
 Disconnect-ArubaCX
+Get-ArubaCXFirmware
 Get-ArubaCXInterfaces
 Get-ArubaCXLLDPNeighbor
 Get-ArubaCXSystem
+Get-ArubaCXUser
+Get-ArubaCXVlans
 Invoke-ArubaCXRestMethod
+Remove-ArubaCXInterfacesVlanTrunks
+Remove-ArubaCXVlans
 Set-ArubaCXCipherSSL
+Set-ArubaCXInterfaces
+Set-ArubaCXSystem
 Set-ArubaCXuntrustedSSL
+Set-ArubaCXVlans
 Show-ArubaCXException
 ```
 
