@@ -10,7 +10,7 @@ With this module (version 0.4.0) you can manage:
 
 - [Invoke API](#Invoke-API) using Invoke-ArubaCXRestMethod
 - System (Get)
-- [Interfaces](#Interface) (Get)
+- [Interfaces](#Interface) (Get/Set)
 - LLDP Neighbor (Get)
 - [Vlans](#Vlans-Management) (Add/Get/Set/Remove)
 
@@ -206,6 +206,49 @@ for example to get ArubaCX Interface
     admin                                : up
     [...]
 
+#Configure interface 1/1/1 (Description, admin and routing)
+
+    Get-ArubaCXInterfaces 1/1/1 | Set-ArubaCXInterfaces -description "Changed by PowerArubaCX" -admin up -routing:$false
+
+    [...]
+    admin                                   : up
+    [...]
+    description                             : Changed by PowerArubaCX
+    [...]
+    name                                    : 1/1/1
+    [...]
+    routing                                 : False
+    [...]
+
+#Configure interface 1/1/1 on vlan access 85
+
+    Get-ArubaCXInterfaces -interface 1/1/1 | Set-ArubaCXInterfaces -vlan_mode access -vlan_tag 85
+
+    name                                    : 1/1/1
+    [...]
+    vlan_mode                               : access
+    vlan_tag                                : @{85=/rest/v10.04/system/vlans/85}
+    [...]
+
+#Configure interface 1/1/1 on native-untagged mode with vlan 85 and tagged vlan 44 and 45
+
+    Get-ArubaCXInterfaces -interface 1/1/1 | Set-ArubaCXInterfaces -vlan_mode native-untagged -vlan_tag 85 -vlan_trunks 44,45
+
+    name                                    : 1/1/1
+    [...]
+    vlan_mode                               : native-untagged
+    vlan_tag                                : @{85=/rest/v10.04/system/vlans/85}
+    vlan_trunks                             : @{44=/rest/v10.04/system/vlans/44; 45=/rest/v10.04/system/vlans/45}
+    [...]
+
+#Configure interface 1/1/1 with a IPv4 address
+
+    Get-ArubaCXInterfaces -interface 1/1/1 | Set-ArubaCXInterfaces -ip4_address 192.0.2.1 -ip4_mask 24
+
+    name                                    : 1/1/1
+    [...]
+    ip4_address                             : 192.0.2.1/24
+    [...]
 ```
 <!--
 #Get name, admin state and link state of interface
