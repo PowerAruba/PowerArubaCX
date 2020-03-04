@@ -92,7 +92,7 @@ function Connect-ArubaCX {
             }
         }
 
-        $postParams = @{username = $Credentials.username; password = $Credentials.GetNetworkCredential().Password }
+        $postParams = @{username = $Credential.username; password = $Credential.GetNetworkCredential().Password }
         $url = "https://${Server}:${Port}/rest/v1/login"
         try {
             Invoke-RestMethod $url -Method POST -Body $postParams -SessionVariable arubacx @invokeParams | Out-Null
