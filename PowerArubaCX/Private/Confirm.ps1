@@ -88,3 +88,32 @@ function Confirm-ArubaCXVlans {
     }
     $true
 }
+
+function Confirm-ArubaCXVrfs {
+
+    Param (
+        [Parameter (Mandatory = $true)]
+        [object]$argument
+    )
+    #Check if it looks like an VRF element
+
+    if ( -not ( $argument | get-member -name rd -Membertype Properties)) {
+        throw "Element specified does not contain a rd property."
+    }
+    if ( -not ( $argument | get-member -name https_server -Membertype Properties)) {
+        throw "Element specified does not contain a https_server property."
+    }
+    if ( -not ( $argument | get-member -name snmp_enable -Membertype Properties)) {
+        throw "Element specified does not contain a snmp_enable property."
+    }
+    if ( -not ( $argument | get-member -name source_interface -Membertype Properties)) {
+        throw "Element specified does not contain a source_interface property."
+    }
+    if ( -not ( $argument | get-member -name source_ip -Membertype Properties)) {
+        throw "Element specified does not contain a source_ip property."
+    }
+    if ( -not ( $argument | get-member -name ssh_enable -Membertype Properties)) {
+        throw "Element specified does not contain a ssh_enable property."
+    }
+    $true
+}
