@@ -261,6 +261,10 @@ function Set-ArubaCXInterfaces {
         [Parameter(Mandatory = $false)]
         [ValidateRange(68, 9198)]
         [int]$ip_mtu,
+        [Parameter(Mandatory = $false)]
+        [switch]$l3_counters_rx,
+        [Parameter(Mandatory = $false)]
+        [switch]$l3_counters_tx,
         [Parameter (Mandatory = $false)]
         [switch]$use_pipeline,
         [Parameter (Mandatory = $False)]
@@ -357,6 +361,24 @@ function Set-ArubaCXInterfaces {
 
         if ( $PsBoundParameters.ContainsKey('ip_mtu') ) {
             $_interface.ip_mtu = $ip_mtu
+        }
+
+        if ( $PsBoundParameters.ContainsKey('l3_counters_rx') ) {
+            if ($l3_counters_rx) {
+                $_interface.l3_counters_enable.rx = $true
+            }
+            else {
+                $_interface.l3_counters_enable.rx = $false
+            }
+        }
+
+        if ( $PsBoundParameters.ContainsKey('l3_counters_tx') ) {
+            if ($l3_counters_tx) {
+                $_interface.l3_counters_enable.tx = $true
+            }
+            else {
+                $_interface.l3_counters_enable.tx = $false
+            }
         }
 
         if ($PSCmdlet.ShouldProcess($interface, 'Configure interface Settings')) {
