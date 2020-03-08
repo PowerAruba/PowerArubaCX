@@ -151,6 +151,18 @@ Describe "Configure Interface" {
         $int.routing | Should -Be $true
     }
 
+    It "Change interface MTU (9198)" {
+        Set-ArubaCXInterfaces -interface $pester_interface -mtu 9198
+        $int = Get-ArubaCXInterfaces -interface $pester_interface
+        $int.user_config.mtu | Should be "9198"
+    }
+
+    It "Change interface IP MTU (9198)" {
+        Set-ArubaCXInterfaces -interface $pester_interface -ip_mtu 9198
+        $int = Get-ArubaCXInterfaces -interface $pester_interface
+        $int.ip_mtu | Should be "9198"
+    }
+
     AfterAll {
         $default_int | Set-ArubaCXInterfaces -use_pipeline
         #Reverse CheckPoint ?

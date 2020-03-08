@@ -216,6 +216,11 @@ function Set-ArubaCXInterfaces {
       Remove IPv4 Address of interface vlan85
 
       .EXAMPLE
+      Get-ArubaCXInterfaces -interface 1/1/1 | Set-ArubaCXInterfaces -mtu 9198 -ip_mtu 9198
+
+      Set MTU and IP MTU to 9198 (Default 1500)
+
+      .EXAMPLE
       $int = Get-ArubaCXInterfaces -interface 1/1/1 -selector writable
       PS> $int.description = "My Vlan"
       PS> $int | Set-ArubaCXInterfaces -use_pipeline
@@ -250,6 +255,12 @@ function Set-ArubaCXInterfaces {
         [Parameter(Mandatory = $false)]
         [ValidateRange(8, 32)]
         [int]$ip4_mask,
+        [Parameter(Mandatory = $false)]
+        [ValidateRange(46, 9198)]
+        [int]$mtu,
+        [Parameter(Mandatory = $false)]
+        [ValidateRange(68, 9198)]
+        [int]$ip_mtu,
         [Parameter (Mandatory = $false)]
         [switch]$use_pipeline,
         [Parameter (Mandatory = $False)]
@@ -335,6 +346,17 @@ function Set-ArubaCXInterfaces {
                 }
                 $_interface.ip4_address = $ip4_address.ToString() + "/" + $ip4_mask
             }
+        }
+
+        if ( $PsBoundParameters.ContainsKey('mtu') ) {
+            if ($null -eq $_interface.user_config.mtu) {
+                $_interface.user_config | Add-member -name "mtu" -membertype NoteProperty -Value ""
+            }
+            $_interface.user_config.mtu = $mtu
+        }
+
+        if ( $PsBoundParameters.ContainsKey('ip_mtu') ) {
+            $_interface.ip_mtu = $ip_mtu
         }
 
         if ($PSCmdlet.ShouldProcess($interface, 'Configure interface Settings')) {
