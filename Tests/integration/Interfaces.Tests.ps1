@@ -177,6 +177,29 @@ Describe "Configure Interface" {
         $int.l3_counters_enable.tx | Should be $false
     }
 
+    #it is set on interface (1/1/x) but don't work for the moment (10.04.0030) with Vlan (get internal error)
+    It "Change Active Gateway (vsx_virtual_gw_mac_v4) MAC" {
+        Set-ArubaCXInterfaces -interface $pester_interface -vsx_virtual_gw_mac_v4 00:01:02:03:04:05
+        $int = Get-ArubaCXInterfaces -interface $pester_interface
+        $int.vsx_virtual_gw_mac_v4 | Should -Be "00:01:02:03:04:05"
+    }
+
+    It "Change Active Gateway (vsx_virtual_ip4) IP" {
+        Set-ArubaCXInterfaces -interface $pester_interface -vsx_virtual_ip4 192.0.2.254
+        $int = Get-ArubaCXInterfaces -interface $pester_interface
+        ($int.vsx_virtual_ip4).count | should -Be "1"
+        $int.vsx_virtual_ip4 | Should -Be "192.0.2.254"
+
+    }
+
+    It "Change Active Gateway (vsx_virtual_ip4) IP and a secondary" {
+        Set-ArubaCXInterfaces -interface $pester_interface -vsx_virtual_ip4 192.0.2.1, 192.0.2.2
+        $int = Get-ArubaCXInterfaces -interface $pester_interface
+        ($int.vsx_virtual_ip4).count | should -Be "2"
+        $int.vsx_virtual_ip4[0] | Should -Be "192.0.2.1"
+        $int.vsx_virtual_ip4[1] | Should -Be "192.0.2.2"
+    }
+
     AfterAll {
         $default_int | Set-ArubaCXInterfaces -use_pipeline
         #Reverse CheckPoint ?

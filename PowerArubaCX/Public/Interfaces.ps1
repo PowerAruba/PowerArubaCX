@@ -265,6 +265,12 @@ function Set-ArubaCXInterfaces {
         [switch]$l3_counters_rx,
         [Parameter(Mandatory = $false)]
         [switch]$l3_counters_tx,
+        [Parameter(Mandatory = $false)]
+        [Alias('active_gateway_mac')]
+        [string]$vsx_virtual_gw_mac_v4,
+        [Parameter(Mandatory = $false)]
+        [Alias('active_gateway')]
+        [ipaddress[]]$vsx_virtual_ip4,
         [Parameter (Mandatory = $false)]
         [switch]$use_pipeline,
         [Parameter (Mandatory = $False)]
@@ -379,6 +385,19 @@ function Set-ArubaCXInterfaces {
             else {
                 $_interface.l3_counters_enable.tx = $false
             }
+        }
+
+        if ( $PsBoundParameters.ContainsKey('vsx_virtual_gw_mac_v4') ) {
+            $_interface.vsx_virtual_gw_mac_v4 = $vsx_virtual_gw_mac_v4
+        }
+
+        if ( $PsBoundParameters.ContainsKey('vsx_virtual_ip4') ) {
+            $ag_ip4 = @()
+
+            foreach ($ip4 in $vsx_virtual_ip4) {
+                $ag_ip4 += $ip4.ToString()
+            }
+            $_interface.vsx_virtual_ip4 = $ag_ip4
         }
 
         if ($PSCmdlet.ShouldProcess($interface, 'Configure interface Settings')) {
