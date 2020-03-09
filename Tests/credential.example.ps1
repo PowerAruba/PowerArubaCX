@@ -15,3 +15,4 @@ $script:password = "enable"
 #$script:pester_vlan = 85
 #$script:pester_vlan2 = 85
 #$script:pester_interface = "1/1/1"
+#$script:pester_vrf = "pester_vrf"
