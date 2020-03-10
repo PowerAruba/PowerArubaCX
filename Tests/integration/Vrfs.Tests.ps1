@@ -5,7 +5,7 @@
 #
 . ../common.ps1
 
-Describe  "Get Vrf" {
+Describe "Get Vrf" {
     BeforeALL {
         Add-ArubaCXVrfs -name $pester_vrf
     }
@@ -164,7 +164,7 @@ Describe "Add Vrf" {
     }
 }
 
-Describe  "Configure Vrf" {
+Describe "Configure Vrf" {
     BeforeAll {
         Add-ArubaCXVrfs -name $pester_vrf
         #Make a CheckPoint ?
@@ -217,7 +217,7 @@ Describe  "Configure Vrf" {
     }
 }
 
-Describe  "Remove Vrf" {
+Describe "Remove Vrf" {
 
     BeforeEach {
         #Always add Vrf $pester_vrf...
