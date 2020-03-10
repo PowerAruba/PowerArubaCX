@@ -331,7 +331,7 @@ Describe "Remove Vlan trunk on Interface" {
         Get-ArubaCXInterfaces -interface $pester_interface | Remove-ArubaCXInterfacesVlanTrunks -vlan_trunks $pester_vlan, $pester_vlan2
         $int = Get-ArubaCXInterfaces -interface $pester_interface
         $int.vlan_tag | Should -Be $null
-        $int.vlan_truns | Should -Be $null
+        $int.vlan_trunks | Should -Be $null
     }
 
     AfterAll {
