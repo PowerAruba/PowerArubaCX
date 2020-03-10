@@ -5,7 +5,7 @@
 #
 . ../common.ps1
 
-Describe  "Get System" {
+Describe "Get System" {
     It "Get System Does not throw an error" {
         {
             Get-ArubaCXSystem
@@ -91,7 +91,7 @@ Describe  "Get System" {
 
 }
 
-Describe  "Configure System" {
+Describe "Configure System" {
     BeforeAll {
         $script:default_sys = Get-ArubaCXSystem -selector writable
         #Add CheckPoint ?
