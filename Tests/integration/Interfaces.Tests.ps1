@@ -121,32 +121,32 @@ Describe "Configure Interface" {
     }
 
     It "Change interface description" {
-        Set-ArubaCXInterfaces -interface $pester_interface -description "Modified by PowerArubaCX"
+        Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -description "Modified by PowerArubaCX"
         $int = Get-ArubaCXInterfaces -interface $pester_interface
         $int.name | Should -Be "$pester_interface"
         $int.description | Should -Be "Modified by PowerArubaCX"
     }
 
     It "Change interface status (up)" {
-        Set-ArubaCXInterfaces -interface $pester_interface -admin up
+        Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -admin up
         $int = Get-ArubaCXInterfaces -interface $pester_interface
         $int.user_config.admin | Should -Be "up"
     }
 
     It "Change interface status (down)" {
-        Set-ArubaCXInterfaces -interface $pester_interface -admin down
+        Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -admin down
         $int = Get-ArubaCXInterfaces -interface $pester_interface
         $int.user_config.admin | Should -Be "down"
     }
 
     It "Change interface routing (disable)" {
-        Set-ArubaCXInterfaces -interface $pester_interface -routing:$false
+        Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -routing:$false
         $int = Get-ArubaCXInterfaces -interface $pester_interface
         $int.routing | Should -Be $false
     }
 
     It "Change interface routing (enable)" {
-        Set-ArubaCXInterfaces -interface $pester_interface -routing:$true
+        Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -routing:$true
         $int = Get-ArubaCXInterfaces -interface $pester_interface
         $int.routing | Should -Be $true
     }
