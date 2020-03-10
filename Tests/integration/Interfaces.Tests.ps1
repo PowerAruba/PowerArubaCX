@@ -5,7 +5,7 @@
 #
 . ../common.ps1
 
-Describe  "Get Interfaces" {
+Describe "Get Interfaces" {
 
     It "Get Interface Does not throw an error" {
         {
@@ -114,7 +114,7 @@ Describe  "Get Interfaces" {
 }
 
 
-Describe  "Configure Interface" {
+Describe "Configure Interface" {
     BeforeAll {
         $script:default_int = Get-ArubaCXInterfaces $pester_interface -selector writable
         #Make a CheckPoint ?
@@ -158,7 +158,7 @@ Describe  "Configure Interface" {
 }
 
 
-Describe  "Configure Vlan on Interface" {
+Describe "Configure Vlan on Interface" {
     BeforeAll {
         $script:default_int = Get-ArubaCXInterfaces $pester_interface -selector writable
         #Add 2 vlan
@@ -237,7 +237,7 @@ Describe  "Configure Vlan on Interface" {
     }
 }
 
-Describe  "Add Vlan trunk on Interface" {
+Describe "Add Vlan trunk on Interface" {
     BeforeAll {
         $script:default_int = Get-ArubaCXInterfaces $pester_interface -selector writable
         #Add 2 vlan
@@ -342,7 +342,7 @@ Describe "Remove Vlan trunk on Interface" {
     }
 }
 
-Describe  "Configure IP on Interface" {
+Describe "Configure IP on Interface" {
     BeforeAll {
         $script:default_int = Get-ArubaCXInterfaces $pester_interface -selector writable
 

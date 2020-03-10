@@ -5,7 +5,7 @@
 #
 . ../common.ps1
 
-Describe  "Get Vlan" {
+Describe "Get Vlan" {
     BeforeALL {
         Add-ArubaCXVlans -id $pester_vlan -name pester_vlan
     }
@@ -128,7 +128,7 @@ Describe  "Get Vlan" {
     }
 }
 
-Describe  "Add Vlan" {
+Describe "Add Vlan" {
 
     AfterEach {
         Get-ArubaCXVlans -id $pester_vlan -ErrorAction SilentlyContinue | Remove-ArubaCXVlans -confirm:$false -ErrorAction SilentlyContinue
@@ -172,7 +172,7 @@ Describe  "Add Vlan" {
     }
 }
 
-Describe  "Configure Vlan" {
+Describe "Configure Vlan" {
     BeforeAll {
         Add-ArubaCXVlans -id $pester_vlan -name pester_vlan
         #Make a CheckPoint ?
@@ -236,7 +236,7 @@ Describe  "Configure Vlan" {
     }
 }
 
-Describe  "Remove vlan" {
+Describe "Remove vlan" {
 
     BeforeEach {
         #Always add vlan $pester_vlan...
