@@ -438,4 +438,29 @@ Describe "Configure IP on Interface" {
     }
 }
 
+Describe "Configure VRF on Interface" {
+    BeforeAll {
+        $script:default_int = Get-ArubaCXInterfaces $pester_interface -selector writable
+
+        #Set interface to mode routing
+        Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -routing:$true
+
+        #Create the vrf
+        Add-ArubaCXVrfs -name $pester_vrf
+    }
+
+    It "Attach vrf ($pester_vrf) to an interface ($pester_interface)" {
+        Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -vrf $pester_vrf
+        $int = Get-ArubaCXInterfaces -interface $pester_interface
+        $int.vrf.$pester_vrf | Should -Be ("/rest/" + $($DefaultArubaCXConnection.version) + "/system/vrfs/" + $pester_vrf)
+    }
+
+    AfterAll {
+        $default_int | Set-ArubaCXInterfaces -use_pipeline
+
+        #Remove vrf
+        Get-ArubaCXVrfs -name $pester_vrf | Remove-ArubaCXVrfs -confirm:$false
+    }
+}
+
 Disconnect-ArubaCX -confirm:$false

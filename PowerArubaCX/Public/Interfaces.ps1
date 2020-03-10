@@ -232,6 +232,11 @@ function Set-ArubaCXInterfaces {
       Set Active Gateway IP (Primary and secondary) on interface 1/1/1
 
       .EXAMPLE
+      Get-ArubaCXInterfaces -interface 1/1/1 | Set-ArubaCXInterfaces -vrf MyVRF
+
+      Set interface 1/1/1 on the vrf MyVRF
+
+      .EXAMPLE
       $int = Get-ArubaCXInterfaces -interface 1/1/1 -selector writable
       PS> $int.description = "My Vlan"
       PS> $int | Set-ArubaCXInterfaces -use_pipeline
@@ -282,6 +287,8 @@ function Set-ArubaCXInterfaces {
         [Parameter(Mandatory = $false)]
         [Alias('active_gateway')]
         [ipaddress[]]$vsx_virtual_ip4,
+        [Parameter(Mandatory = $false)]
+        [string]$vrf,
         [Parameter (Mandatory = $false)]
         [switch]$use_pipeline,
         [Parameter (Mandatory = $False)]
@@ -409,6 +416,10 @@ function Set-ArubaCXInterfaces {
                 $ag_ip4 += $ip4.ToString()
             }
             $_interface.vsx_virtual_ip4 = $ag_ip4
+        }
+
+        if ( $PsBoundParameters.ContainsKey('vrf') ) {
+            $_interface.vrf = "/rest/" + $($connection.version) + "/system/vrfs/" + $vrf
         }
 
         if ($PSCmdlet.ShouldProcess($interface, 'Configure interface Settings')) {
