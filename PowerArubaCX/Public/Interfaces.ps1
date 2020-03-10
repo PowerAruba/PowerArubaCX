@@ -221,6 +221,17 @@ function Set-ArubaCXInterfaces {
       Set MTU and IP MTU to 9198 (Default 1500)
 
       .EXAMPLE
+      Get-ArubaCXInterfaces -interface 1/1/1 | Set-ArubaCXInterfaces -vsx_virtual_gw_mac_v4 00:01:02:03:04:05 -vsx_virtual_ip4 192.0.2.254
+
+      Set Active Gateway (vsx virtual gw/ip...) MAC and IPv4 interface 1/1/1
+      You can use also following alias active_gateway_mac or active_gateway
+
+      .EXAMPLE
+      Get-ArubaCXInterfaces -interface 1/1/1 | Set-ArubaCXInterfaces -vsx_virtual_ip4 192.0.2.1, 192.0.2.2
+
+      Set Active Gateway IP (Primary and secondary) on interface 1/1/1
+
+      .EXAMPLE
       $int = Get-ArubaCXInterfaces -interface 1/1/1 -selector writable
       PS> $int.description = "My Vlan"
       PS> $int | Set-ArubaCXInterfaces -use_pipeline
