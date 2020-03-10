@@ -154,27 +154,27 @@ Describe "Configure Interface" {
     It "Change interface MTU (9198)" {
         Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -mtu 9198
         $int = Get-ArubaCXInterfaces -interface $pester_interface
-        $int.user_config.mtu | Should be "9198"
+        $int.user_config.mtu | Should -Be "9198"
     }
 
     It "Change interface IP MTU (9198)" {
         Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -ip_mtu 9198
         $int = Get-ArubaCXInterfaces -interface $pester_interface
-        $int.ip_mtu | Should be "9198"
+        $int.ip_mtu | Should -Be "9198"
     }
 
     It "Change interface routing (Set enable for tx and tx)" {
         Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -l3_counters_tx:$true -l3_counters_rx:$true
         $int = Get-ArubaCXInterfaces -interface $pester_interface
-        $int.l3_counters_enable.rx | Should be $true
-        $int.l3_counters_enable.tx | Should be $true
+        $int.l3_counters_enable.rx | Should -Be $true
+        $int.l3_counters_enable.tx | Should -Be $true
     }
 
     It "Change interface l3 counters (Set disable for tx and tx)" {
         Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -l3_counters_tx:$false -l3_counters_rx:$false
         $int = Get-ArubaCXInterfaces -interface $pester_interface
-        $int.l3_counters_enable.rx | Should be $false
-        $int.l3_counters_enable.tx | Should be $false
+        $int.l3_counters_enable.rx | Should -Be $false
+        $int.l3_counters_enable.tx | Should -Be $false
     }
 
     #it is set on interface (1/1/x) but don't work for the moment (10.04.0030) with Vlan (get internal error)
