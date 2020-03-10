@@ -216,6 +216,22 @@ function Set-ArubaCXInterfaces {
       Remove IPv4 Address of interface vlan85
 
       .EXAMPLE
+      Get-ArubaCXInterfaces -interface 1/1/1 | Set-ArubaCXInterfaces -mtu 9198 -ip_mtu 9198
+
+      Set MTU and IP MTU to 9198 (Default 1500)
+
+      .EXAMPLE
+      Get-ArubaCXInterfaces -interface 1/1/1 | Set-ArubaCXInterfaces -vsx_virtual_gw_mac_v4 00:01:02:03:04:05 -vsx_virtual_ip4 192.0.2.254
+
+      Set Active Gateway (vsx virtual gw/ip...) MAC and IPv4 interface 1/1/1
+      You can use also following alias active_gateway_mac or active_gateway
+
+      .EXAMPLE
+      Get-ArubaCXInterfaces -interface 1/1/1 | Set-ArubaCXInterfaces -vsx_virtual_ip4 192.0.2.1, 192.0.2.2
+
+      Set Active Gateway IP (Primary and secondary) on interface 1/1/1
+
+      .EXAMPLE
       $int = Get-ArubaCXInterfaces -interface 1/1/1 -selector writable
       PS> $int.description = "My Vlan"
       PS> $int | Set-ArubaCXInterfaces -use_pipeline
@@ -250,6 +266,22 @@ function Set-ArubaCXInterfaces {
         [Parameter(Mandatory = $false)]
         [ValidateRange(8, 32)]
         [int]$ip4_mask,
+        [Parameter(Mandatory = $false)]
+        [ValidateRange(46, 9198)]
+        [int]$mtu,
+        [Parameter(Mandatory = $false)]
+        [ValidateRange(68, 9198)]
+        [int]$ip_mtu,
+        [Parameter(Mandatory = $false)]
+        [switch]$l3_counters_rx,
+        [Parameter(Mandatory = $false)]
+        [switch]$l3_counters_tx,
+        [Parameter(Mandatory = $false)]
+        [Alias('active_gateway_mac')]
+        [string]$vsx_virtual_gw_mac_v4,
+        [Parameter(Mandatory = $false)]
+        [Alias('active_gateway')]
+        [ipaddress[]]$vsx_virtual_ip4,
         [Parameter (Mandatory = $false)]
         [switch]$use_pipeline,
         [Parameter (Mandatory = $False)]
@@ -335,6 +367,48 @@ function Set-ArubaCXInterfaces {
                 }
                 $_interface.ip4_address = $ip4_address.ToString() + "/" + $ip4_mask
             }
+        }
+
+        if ( $PsBoundParameters.ContainsKey('mtu') ) {
+            if ($null -eq $_interface.user_config.mtu) {
+                $_interface.user_config | Add-member -name "mtu" -membertype NoteProperty -Value ""
+            }
+            $_interface.user_config.mtu = $mtu
+        }
+
+        if ( $PsBoundParameters.ContainsKey('ip_mtu') ) {
+            $_interface.ip_mtu = $ip_mtu
+        }
+
+        if ( $PsBoundParameters.ContainsKey('l3_counters_rx') ) {
+            if ($l3_counters_rx) {
+                $_interface.l3_counters_enable.rx = $true
+            }
+            else {
+                $_interface.l3_counters_enable.rx = $false
+            }
+        }
+
+        if ( $PsBoundParameters.ContainsKey('l3_counters_tx') ) {
+            if ($l3_counters_tx) {
+                $_interface.l3_counters_enable.tx = $true
+            }
+            else {
+                $_interface.l3_counters_enable.tx = $false
+            }
+        }
+
+        if ( $PsBoundParameters.ContainsKey('vsx_virtual_gw_mac_v4') ) {
+            $_interface.vsx_virtual_gw_mac_v4 = $vsx_virtual_gw_mac_v4
+        }
+
+        if ( $PsBoundParameters.ContainsKey('vsx_virtual_ip4') ) {
+            $ag_ip4 = @()
+
+            foreach ($ip4 in $vsx_virtual_ip4) {
+                $ag_ip4 += $ip4.ToString()
+            }
+            $_interface.vsx_virtual_ip4 = $ag_ip4
         }
 
         if ($PSCmdlet.ShouldProcess($interface, 'Configure interface Settings')) {
