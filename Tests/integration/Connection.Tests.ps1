@@ -63,6 +63,9 @@ Describe "Connect to a switch (using multi connection)" {
         It "Use Multi connection for call Get Vlans" {
             { Get-ArubaCXVlans -connection $cx } | Should Not throw
         }
+        It "Use Multi connection for call Get Vrfs" {
+            { Get-ArubaCXVrfs -connection $cx } | Should Not throw
+        }
     }
 
     It "Disconnect to a switch (Multi connection)" {
