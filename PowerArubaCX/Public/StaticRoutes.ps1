@@ -22,12 +22,27 @@ function Get-ArubaCXStaticRoutes {
         Get-ArubaCXStaticRoutes -prefix 192.0.2.0/24
 
         Get Static Route information of prefix 192.0.2.0/24
+
+        .EXAMPLE
+        Get-ArubaCXVrfs -vrf MyVRF | Get-ArubaCXStaticRoutes
+
+        Get Static Route information from VRF named MyVRF (using pipeline)
+
+        .EXAMPLE
+        Get-ArubaCXStaticRoutes -vrf MyVRF
+
+        Get Static Route information from VRF named MyVRF
     #>
 
     [CmdletBinding(DefaultParametersetname = "Default")]
     Param(
         [Parameter (Mandatory = $false, ParameterSetName = "prefix", position = "1")]
         [string]$prefix,
+        [Parameter (Mandatory = $false, ValueFromPipeline = $true)]
+        [ValidateScript( { Confirm-ArubaCXVrfs $_ })]
+        [psobject]$vrf_pp,
+        [Parameter(Mandatory = $false)]
+        [string]$vrf = "default",
         [Parameter(Mandatory = $false)]
         [ValidateRange(1, 4)]
         [Int]$depth,
@@ -36,8 +51,6 @@ function Get-ArubaCXStaticRoutes {
         [String]$selector,
         [Parameter(Mandatory = $false)]
         [String[]]$attributes,
-        [Parameter(Mandatory = $false)]
-        [string]$vrf = "default",
         [Parameter(Mandatory = $false)]
         [switch]$vsx_peer,
         [Parameter (Mandatory = $False)]
@@ -50,6 +63,10 @@ function Get-ArubaCXStaticRoutes {
 
     Process {
 
+        #get vrf name from vrf_pp ps object (based by pipeline)
+        if ($vrf_pp) {
+            $vrf = $vrf_pp.name
+        }
 
         $invokeParams = @{ }
         if ( $PsBoundParameters.ContainsKey('depth') ) {
