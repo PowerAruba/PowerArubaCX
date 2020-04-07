@@ -4,6 +4,90 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
+function Add-ArubaCXStaticRoutes {
+
+    <#
+        .SYNOPSIS
+        Add Aruba CX Static Static Route
+
+        .DESCRIPTION
+        Add Static Route (address_family, prefix, static_nexthops, type)
+
+        .EXAMPLE
+        Add-ArubaCXStaticRoutes -address_family ipv4 -prefix_ip4 192.0.2.0 -prefix_ip4_mask 24 -type forward
+
+        Add Static Route type forward for network 192.0.2.0/24 (on default vrf)
+
+        .EXAMPLE
+        Add-ArubaCXStaticRoutes -address_family ipv4 -prefix_ip4 192.0.2.0 -prefix_ip4_mask 24 -type blackhole -vrf MyVrf
+
+        Add Static Route type blackhole for network 192.0.2.0/24 on MyVRF
+
+        .EXAMPLE
+        Get-ArubaCXVrf MyVRF | Add-ArubaCXStaticRoutes -address_family ipv4 -prefix_ip4 192.0.2.0 -prefix_ip4_mask 24 -type rject
+
+        Add Static Route type reject for network 192.0.2.0/24 on MyVRF (using pipeline)
+    #>
+    Param(
+        [Parameter (Mandatory = $false, ValueFromPipeline = $true)]
+        [ValidateScript( { Confirm-ArubaCXVrfs $_ })]
+        [psobject]$vrf_pp,
+        [Parameter(Mandatory = $false)]
+        [string]$vrf = "default",
+        [Parameter (Mandatory = $true)]
+        [ValidateSet('ipv4', IgnoreCase = $false)]
+        [string]$address_family = "ipv4",
+        [Parameter (Mandatory = $true)]
+        [ipaddress]$prefix_ip4,
+        [Parameter (Mandatory = $true)]
+        [ValidateRange(0, 32)]
+        [int]$prefix_ip4_mask,
+        [Parameter (Mandatory = $true)]
+        [ValidateSet('forward', 'reject', 'blackhole')]
+        [string]$type,
+        [Parameter (Mandatory = $False)]
+        [ValidateNotNullOrEmpty()]
+        [PSObject]$connection = $DefaultArubaCXConnection
+    )
+
+    Begin {
+    }
+
+    Process {
+
+        #get vrf name from vrf_pp ps object (based by pipeline)
+        if ($vrf_pp) {
+            $vrf = $vrf_pp.name
+        }
+
+        if ( -not ($prefix_ip4.AddressFamily -eq "InterNetwork" )) {
+            Throw "You need to specify a IPv4 Address"
+        }
+        $prefix = $prefix_ip4.ToString() + "/" + $prefix_ip4_mask
+        #replace / by %2F
+        $prefix = $prefix -replace '/', '%2F'
+
+        $uri = "system/vrfs/$vrf/static_routes"
+
+        $_sr = new-Object -TypeName PSObject
+
+        $_sr | add-member -name "address_family" -membertype NoteProperty -Value $address_family
+
+        $_sr | add-member -name "prefix" -membertype NoteProperty -Value $prefix
+
+        $_sr | add-member -name "type" -membertype NoteProperty -Value $type
+
+        $_sr | add-member -name "vrf" -membertype NoteProperty -Value $vrf
+
+        $response = Invoke-ArubaCXRestMethod -uri $uri -method 'POST' -body $_sr -connection $connection
+        $response
+
+        Get-ArubaCXStaticRoutes -vrf $vrf -prefix $prefix -connection $connection
+    }
+
+    End {
+    }
+}
 function Get-ArubaCXStaticRoutes {
 
     <#
