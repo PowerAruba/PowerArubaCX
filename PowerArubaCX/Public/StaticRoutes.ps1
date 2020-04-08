@@ -188,3 +188,64 @@ function Get-ArubaCXStaticRoutes {
     End {
     }
 }
+
+function Remove-ArubaCXStaticRoutes {
+
+    <#
+        .SYNOPSIS
+        Remove a Static Route on Aruba CX Switch
+
+        .DESCRIPTION
+        Remove a Static Route on Aruba CX Switch
+
+        .EXAMPLE
+        $sr = Get-ArubaCXStaticRoutes -prefix 192.0.2.0/24
+        PS C:\>$sr | Remove-ArubaCXStaticRoutes -vrf default
+
+        Remove Static Route with prefix 192.0.2.0/24
+
+        .EXAMPLE
+        Remove-ArubaCXStaticRoutes -prefix 192.0.2.0/24 -confirm:$false -vrf MyVRF
+
+        Remove Static Route 192.0.2.0/24 with no confirmation
+    #>
+
+    [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'high')]
+    Param(
+        [Parameter (Mandatory = $true, ParameterSetName = "name")]
+        [string]$prefix,
+        [Parameter (Mandatory = $true, ValueFromPipeline = $true, Position = 1, ParameterSetName = "route")]
+        [ValidateScript( { Confirm-ArubaCXStaticRoutes $_ })]
+        [psobject]$sr,
+        [Parameter(Mandatory = $true)]
+        [string]$vrf,
+        [Parameter (Mandatory = $False)]
+        [ValidateNotNullOrEmpty()]
+        [PSObject]$connection = $DefaultArubaCXConnection
+    )
+
+    Begin {
+    }
+
+    Process {
+
+        #get prefix from static route ps object
+        if ($sr) {
+            $prefix = $sr.prefix
+        }
+
+        #replace / by %2F
+        $prefix2 = $prefix -replace '/', '%2F'
+
+        $uri = "system/vrfs/$vrf/static_routes/$prefix2"
+
+        if ($PSCmdlet.ShouldProcess("Static Route", "Remove Static Route ${prefix}")) {
+            Write-Progress -activity "Remove Static Route"
+            Invoke-ArubaCXRestMethod -method "DELETE" -uri $uri -connection $connection
+            Write-Progress -activity "Remove Static Route" -completed
+        }
+    }
+
+    End {
+    }
+}
