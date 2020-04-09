@@ -77,7 +77,7 @@ function Add-ArubaCXStaticRoutes {
 
         $_sr | add-member -name "type" -membertype NoteProperty -Value $type
 
-        $_sr | add-member -name "vrf" -membertype NoteProperty -Value $vrf
+        $_sr | add-member -name "vrf" -membertype NoteProperty -Value ("/rest/" + $($connection.version) + "/system/vrfs/" + $vrf)
 
         $response = Invoke-ArubaCXRestMethod -uri $uri -method 'POST' -body $_sr -connection $connection
         $response
