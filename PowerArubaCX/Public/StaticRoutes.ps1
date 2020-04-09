@@ -64,8 +64,6 @@ function Add-ArubaCXStaticRoutes {
             Throw "You need to specify a IPv4 Address"
         }
         $prefix = $prefix_ip4.ToString() + "/" + $prefix_ip4_mask
-        #replace / by %2F
-        $prefix = $prefix -replace '/', '%2F'
 
         $uri = "system/vrfs/$vrf/static_routes"
 
