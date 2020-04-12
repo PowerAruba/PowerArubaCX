@@ -175,9 +175,9 @@ function Get-ArubaCXStaticRoutes {
 
         $response = Invoke-ArubaCXRestMethod -uri $uri -method 'GET' -connection $connection @invokeParams
 
-        #Add id parameter when use writable type selector
-        if ( $PsBoundParameters.ContainsKey('selector') -and $PsBoundParameters.ContainsKey('prefix') -and $selector -eq "writable" ) {
-            $response | add-member -name "prefix" -membertype NoteProperty -Value $prefix
+        #Add vref parameter when use prefix (more easy to remove and also for get vrf source...)
+        if ( $PsBoundParameters.ContainsKey('prefix')  ) {
+            $response | add-member -name "vrf" -membertype NoteProperty -Value $vrf
         }
 
         $response
