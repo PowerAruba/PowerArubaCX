@@ -51,6 +51,9 @@ function Confirm-ArubaCXStaticRoutes {
     if ( -not ( $argument | get-member -name type -Membertype Properties)) {
         throw "Element specified does not contain a type property."
     }
+    if ( -not ( $argument | get-member -name vrf -Membertype Properties)) {
+        throw "Element specified does not contain a vrf property."
+    }
     $true
 
 }
