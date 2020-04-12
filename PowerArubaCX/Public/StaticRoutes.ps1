@@ -24,7 +24,7 @@ function Add-ArubaCXStaticRoutes {
         Add Static Route type blackhole for network 192.0.2.0/24 on MyVRF
 
         .EXAMPLE
-        Get-ArubaCXVrf MyVRF | Add-ArubaCXStaticRoutes -address_family ipv4 -prefix_ip4 192.0.2.0 -prefix_ip4_mask 24 -type rject
+        Get-ArubaCXVrf MyVRF | Add-ArubaCXStaticRoutes -address_family ipv4 -prefix_ip4 192.0.2.0 -prefix_ip4_mask 24 -type reject
 
         Add Static Route type reject for network 192.0.2.0/24 on MyVRF (using pipeline)
     #>
