@@ -210,12 +210,12 @@ function Remove-ArubaCXStaticRoutes {
 
     [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'high')]
     Param(
-        [Parameter (Mandatory = $true, ParameterSetName = "name")]
+        [Parameter (Mandatory = $true, ParameterSetName = "prefix")]
         [string]$prefix,
         [Parameter (Mandatory = $true, ValueFromPipeline = $true, Position = 1, ParameterSetName = "route")]
         [ValidateScript( { Confirm-ArubaCXStaticRoutes $_ })]
         [psobject]$sr,
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "prefix")]
         [string]$vrf,
         [Parameter (Mandatory = $False)]
         [ValidateNotNullOrEmpty()]
@@ -227,9 +227,10 @@ function Remove-ArubaCXStaticRoutes {
 
     Process {
 
-        #get prefix from static route ps object
+        #get prefix and vrf from static route ps object
         if ($sr) {
             $prefix = $sr.prefix
+            $vrf = $sr.vrf
         }
 
         #replace / by %2F
@@ -237,7 +238,7 @@ function Remove-ArubaCXStaticRoutes {
 
         $uri = "system/vrfs/$vrf/static_routes/$prefix2"
 
-        if ($PSCmdlet.ShouldProcess("Static Route", "Remove Static Route ${prefix}")) {
+        if ($PSCmdlet.ShouldProcess("Static Route (VRF: ${vrf})", "Remove ${prefix}")) {
             Write-Progress -activity "Remove Static Route"
             Invoke-ArubaCXRestMethod -method "DELETE" -uri $uri -connection $connection
             Write-Progress -activity "Remove Static Route" -completed
