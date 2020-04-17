@@ -245,55 +245,82 @@ Describe "Get Static Route" {
 
 Describe "Add Static Route" {
 
-    BeforeAll {
-        #Add Vrf
-        Add-ArubaCXVrfs -name $pester_vrf
 
+
+    Context "Add Static Route on VRF: default" {
+
+        AfterEach {
+            Get-ArubaCXStaticRoutes -prefix $pester_sr | Remove-ArubaCXStaticRoutes -confirm:$false
+        }
+
+        It "Add Static Route $pester_sr (type forward)" {
+            Add-ArubaCXStaticRoutes -address_family ipv4 -prefix_ip4 $pester_sr_ip4 -prefix_ip4_mask $pester_sr_mask -type forward
+            $sr = Get-ArubaCXStaticRoutes -prefix $pester_sr
+            $sr.prefix | Should -Be $pester_sr
+            $sr.address_family | Should -Be "ipv4"
+            $sr.type | Should -Be "forward"
+            $sr.vrf | Should -Be "default"
+        }
+
+        It "Add Static Route $pester_sr (type reject)" {
+            Add-ArubaCXStaticRoutes -address_family ipv4 -prefix_ip4 $pester_sr_ip4 -prefix_ip4_mask $pester_sr_mask -type reject
+            $sr = Get-ArubaCXStaticRoutes -prefix $pester_sr
+            $sr.prefix | Should -Be $pester_sr
+            $sr.address_family | Should -Be "ipv4"
+            $sr.type | Should -Be "reject"
+            $sr.vrf | Should -Be "default"
+        }
+
+        It "Add Static Route $pester_sr (type blackhole)" {
+            Add-ArubaCXStaticRoutes -address_family ipv4 -prefix_ip4 $pester_sr_ip4 -prefix_ip4_mask $pester_sr_mask -type blackhole
+            $sr = Get-ArubaCXStaticRoutes -prefix $pester_sr
+            $sr.prefix | Should -Be $pester_sr
+            $sr.address_family | Should -Be "ipv4"
+            $sr.type | Should -Be "blackhole"
+            $sr.vrf | Should -Be "default"
+        }
     }
 
-    AfterEach {
-        Get-ArubaCXStaticRoutes -prefix $pester_sr | Remove-ArubaCXStaticRoutes -confirm:$false
-        #Reverse CheckPoint ?
-    }
+    Context "Add Static Route on VRF: $pester_vrf" {
+        BeforeAll {
+            #Add Vrf
+            Add-ArubaCXVrfs -name $pester_vrf
+        }
 
-    It "Add Static Route $pester_sr (type forward)" {
-        Add-ArubaCXStaticRoutes -address_family ipv4 -prefix_ip4 $pester_sr_ip4 -prefix_ip4_mask $pester_sr_mask -type forward
-        $sr = Get-ArubaCXStaticRoutes -prefix $pester_sr
-        $sr.prefix | Should -Be $pester_sr
-        $sr.address_family | Should -Be "ipv4"
-        $sr.type | Should -Be "forward"
-        $sr.vrf | Should -Be "default"
-    }
+        AfterEach {
+            Get-ArubaCXStaticRoutes -prefix $pester_sr -vrf $pester_vrf | Remove-ArubaCXStaticRoutes -confirm:$false
+        }
 
-    It "Add Static Route $pester_sr (type reject)" {
-        Add-ArubaCXStaticRoutes -address_family ipv4 -prefix_ip4 $pester_sr_ip4 -prefix_ip4_mask $pester_sr_mask -type reject
-        $sr = Get-ArubaCXStaticRoutes -prefix $pester_sr
-        $sr.prefix | Should -Be $pester_sr
-        $sr.address_family | Should -Be "ipv4"
-        $sr.type | Should -Be "reject"
-        $sr.vrf | Should -Be "default"
-    }
+        It "Add Static Route $pester_sr (type forward)" {
+            Add-ArubaCXStaticRoutes -address_family ipv4 -prefix_ip4 $pester_sr_ip4 -prefix_ip4_mask $pester_sr_mask -type forward -vrf $pester_vrf
+            $sr = Get-ArubaCXStaticRoutes -prefix $pester_sr -vrf $pester_vrf
+            $sr.prefix | Should -Be $pester_sr
+            $sr.address_family | Should -Be "ipv4"
+            $sr.type | Should -Be "forward"
+            $sr.vrf | Should -Be $pester_vrf
+        }
 
-    It "Add Static Route $pester_sr (type blackhole)" {
-        Add-ArubaCXStaticRoutes -address_family ipv4 -prefix_ip4 $pester_sr_ip4 -prefix_ip4_mask $pester_sr_mask -type blackhole
-        $sr = Get-ArubaCXStaticRoutes -prefix $pester_sr
-        $sr.prefix | Should -Be $pester_sr
-        $sr.address_family | Should -Be "ipv4"
-        $sr.type | Should -Be "blackhole"
-        $sr.vrf | Should -Be "default"
-    }
+        It "Add Static Route $pester_sr (type reject)" {
+            Add-ArubaCXStaticRoutes -address_family ipv4 -prefix_ip4 $pester_sr_ip4 -prefix_ip4_mask $pester_sr_mask -type reject -vrf $pester_vrf
+            $sr = Get-ArubaCXStaticRoutes -prefix $pester_sr -vrf $pester_vrf
+            $sr.prefix | Should -Be $pester_sr
+            $sr.address_family | Should -Be "ipv4"
+            $sr.type | Should -Be "reject"
+            $sr.vrf | Should -Be $pester_vrf
+        }
 
-    It "Add Static Route $pester_sr (type forward on $pester_vrf VRF)" {
-        Add-ArubaCXStaticRoutes -address_family ipv4 -prefix_ip4 $pester_sr_ip4 -prefix_ip4_mask $pester_sr_mask -type forward -vrf $pester_vrf
-        $sr = Get-ArubaCXStaticRoutes -prefix $pester_sr
-        $sr.prefix | Should -Be $pester_sr
-        $sr.address_family | Should -Be "ipv4"
-        $sr.type | Should -Be "forward"
-        $sr.vrf | Should -Be $pester_vrf
-    }
+        It "Add Static Route $pester_sr (type blackhole)" {
+            Add-ArubaCXStaticRoutes -address_family ipv4 -prefix_ip4 $pester_sr_ip4 -prefix_ip4_mask $pester_sr_mask -type blackhole -vrf $pester_vrf
+            $sr = Get-ArubaCXStaticRoutes -prefix $pester_sr -vrf $pester_vrf
+            $sr.prefix | Should -Be $pester_sr
+            $sr.address_family | Should -Be "ipv4"
+            $sr.type | Should -Be "blackhole"
+            $sr.vrf | Should -Be $pester_vrf
+        }
 
-    AfterAll {
-        Get-ArubaCXVrfs -name $pester_vrf | Remove-ArubaCXVrfs -confirm:$false
+        AfterAll {
+            Get-ArubaCXVrfs -name $pester_vrf | Remove-ArubaCXVrfs -confirm:$false
+        }
     }
 }
 
