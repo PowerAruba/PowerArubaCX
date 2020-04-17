@@ -198,14 +198,14 @@ function Remove-ArubaCXStaticRoutes {
 
         .EXAMPLE
         $sr = Get-ArubaCXStaticRoutes -prefix 192.0.2.0/24
-        PS C:\>$sr | Remove-ArubaCXStaticRoutes -vrf default
+        PS C:\>$sr | Remove-ArubaCXStaticRoutes
 
-        Remove Static Route with prefix 192.0.2.0/24
+        Remove Static Route with prefix 192.0.2.0/24 (on default vrf)
 
         .EXAMPLE
         Remove-ArubaCXStaticRoutes -prefix 192.0.2.0/24 -confirm:$false -vrf MyVRF
 
-        Remove Static Route 192.0.2.0/24 with no confirmation
+        Remove Static Route 192.0.2.0/24 on MyVRF with no confirmation
     #>
 
     [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'high')]
@@ -234,9 +234,9 @@ function Remove-ArubaCXStaticRoutes {
         }
 
         #replace / by %2F
-        $prefix2 = $prefix -replace '/', '%2F'
+        $uri_prefix = $prefix -replace '/', '%2F'
 
-        $uri = "system/vrfs/$vrf/static_routes/$prefix2"
+        $uri = "system/vrfs/$vrf/static_routes/$uri_prefix"
 
         if ($PSCmdlet.ShouldProcess("Static Route (VRF: ${vrf})", "Remove ${prefix}")) {
             Write-Progress -activity "Remove Static Route"
