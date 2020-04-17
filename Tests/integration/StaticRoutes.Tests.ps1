@@ -326,24 +326,53 @@ Describe "Add Static Route" {
 
 Describe "Remove Static Route" {
 
-    BeforeEach {
-        #Always add Static Route $pester_sr...
-        Add-ArubaCXStaticRoutes -address_family ipv4 -prefix_ip4 $pester_sr_ip4 -prefix_ip4_mask $pester_sr_mask -type blackhole
+    Context "Add Static Route on VRF: default" {
+        BeforeEach {
+            #Always add Static Route $pester_sr...
+            Add-ArubaCXStaticRoutes -address_family ipv4 -prefix_ip4 $pester_sr_ip4 -prefix_ip4_mask $pester_sr_mask -type blackhole
+        }
+
+        It "Remove Static Route $pester_sr by prefix" {
+            Remove-ArubaCXStaticRoutes -prefix $pester_sr -vrf default -confirm:$false
+            $sr = Get-ArubaCXStaticRoutes
+            $sr.$pester_sr | Should -Be $NULL
+        }
+
+        It "Remove Static Route $pester_sr by pipeline" {
+            $sr = Get-ArubaCXStaticRoutes -prefix $pester_sr
+            $sr | Remove-ArubaCXStaticRoutes -confirm:$false
+            $sr = Get-ArubaCXStaticRoutes
+            $sr.$pester_sr | Should -Be $NULL
+        }
     }
 
-    It "Remove Static Route $pester_sr by prefix" {
-        Remove-ArubaCXStaticRoutes -prefix $pester_sr -vrf default -confirm:$false
-        $sr = Get-ArubaCXStaticRoutes
-        $sr.$pester_sr | Should -Be $NULL
-    }
+    Context "Add Static Route on VRF: $pester_vrf" {
+        BeforeAll {
+            #Add Vrf
+            Add-ArubaCXVrfs -name $pester_vrf
+        }
+        BeforeEach {
+            #Always add Static Route $pester_sr...
+            Add-ArubaCXStaticRoutes -address_family ipv4 -prefix_ip4 $pester_sr_ip4 -prefix_ip4_mask $pester_sr_mask -type blackhole -vrf $pester_vrf
+        }
 
-    It "Remove Static Route $pester_sr by pipeline" {
-        $sr = Get-ArubaCXStaticRoutes -prefix $pester_sr
-        $sr | Remove-ArubaCXStaticRoutes -confirm:$false
-        $sr = Get-ArubaCXStaticRoutes
-        $sr.$pester_sr | Should -Be $NULL
-    }
+        It "Remove Static Route $pester_sr by prefix" {
+            Remove-ArubaCXStaticRoutes -prefix $pester_sr -vrf $pester_vrf -confirm:$false
+            $sr = Get-ArubaCXStaticRoutes -vrf $pester_vrf
+            $sr.$pester_sr | Should -Be $NULL
+        }
 
+        It "Remove Static Route $pester_sr by pipeline" {
+            $sr = Get-ArubaCXStaticRoutes  -vrf $pester_vrf -prefix $pester_sr
+            $sr | Remove-ArubaCXStaticRoutes -confirm:$false
+            $sr = Get-ArubaCXStaticRoutes -vrf $pester_vrf
+            $sr.$pester_sr | Should -Be $NULL
+        }
+        AfterAll {
+            #Remove vrf
+            Get-ArubaCXVrfs -name $pester_vrf | Remove-ArubaCXVrfs -confirm:$false
+        }
+    }
 }
 
 Disconnect-ArubaCX -confirm:$false
