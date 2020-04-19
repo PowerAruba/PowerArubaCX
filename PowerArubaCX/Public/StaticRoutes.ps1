@@ -8,7 +8,7 @@ function Add-ArubaCXStaticRoutes {
 
     <#
         .SYNOPSIS
-        Add Aruba CX Static Static Route
+        Add Aruba CX Static Route
 
         .DESCRIPTION
         Add Static Route (address_family, prefix, static_nexthops, type)
@@ -86,19 +86,20 @@ function Add-ArubaCXStaticRoutes {
     End {
     }
 }
+
 function Get-ArubaCXStaticRoutes {
 
     <#
         .SYNOPSIS
-        Get list of all Aruba CX Route
+        Get list of all Aruba CX Routes
 
         .DESCRIPTION
-        Get list of all Aruba CX Static Rout (address_family, prefix, static_nexthops, type)
+        Get list of all Aruba CX Static Route (address_family, prefix, static_nexthops, type)
 
         .EXAMPLE
         Get-ArubaCXStaticRoutes
 
-        Get list of all Static Route information (address_family, prefix, static_nexthops, type)
+        Get list of all Static Routes information (address_family, prefix, static_nexthops, type)
 
         .EXAMPLE
         Get-ArubaCXStaticRoutes -prefix 192.0.2.0/24
@@ -175,7 +176,7 @@ function Get-ArubaCXStaticRoutes {
 
         $response = Invoke-ArubaCXRestMethod -uri $uri -method 'GET' -connection $connection @invokeParams
 
-        #Add vref parameter when use prefix (more easy to remove and also for get vrf source...)
+        #Add vrf parameter when use prefix (more easy to remove and also for get vrf source...)
         if ( $PsBoundParameters.ContainsKey('prefix')  ) {
             $response | add-member -name "vrf" -membertype NoteProperty -Value $vrf
         }
