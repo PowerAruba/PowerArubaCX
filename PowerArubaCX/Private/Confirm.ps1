@@ -40,10 +40,10 @@ function Confirm-ArubaCXStaticRoutes {
     #Check if it looks like an Static Routes element
 
     if ( -not ( $argument | get-member -name address_family -Membertype Properties)) {
-        throw "Element specified does not contain a address_family property."
+        throw "Element specified does not contain an address_family property."
     }
     if ( -not ( $argument | get-member -name prefix -Membertype Properties)) {
-        throw "Element specified does not contain an prefix property."
+        throw "Element specified does not contain a prefix property."
     }
     if ( -not ( $argument | get-member -name static_nexthops -Membertype Properties)) {
         throw "Element specified does not contain a static_nexthops property."
