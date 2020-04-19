@@ -10,7 +10,8 @@ BeforeAll {
 }
 
 Describe "Get Vrf" {
-    BeforeALL {
+
+    BeforeAll {
         Add-ArubaCXVrfs -name $pester_vrf
     }
 
@@ -67,6 +68,7 @@ Describe "Get Vrf" {
                 Get-ArubaCXVrfs $pester_vrf -selector writable
             } | Should -Not -Throw
         }
+
     }
 
     Context "Depth" {
@@ -94,6 +96,7 @@ Describe "Get Vrf" {
                 Get-ArubaCXVrfs -depth 4
             } | Should -Not -Throw
         }
+
     }
 
     Context "Attribute" {
@@ -114,6 +117,7 @@ Describe "Get Vrf" {
     }
 
     Context "Search" {
+
         It "Search Vrf by name ($pester_vrf)" {
             $vrf = Get-ArubaCXVrfs -name $pester_vrf
             @($vrf).count | Should -be 1
@@ -167,9 +171,11 @@ Describe "Add Vrf" {
         $vrf.ssh_enable | Should -Be $true
         $vrf.https_server.enable | Should -Be $true
     }
+
 }
 
 Describe "Configure Vrf" {
+
     BeforeAll {
         Add-ArubaCXVrfs -name $pester_vrf
         #Make a CheckPoint ?
@@ -220,6 +226,7 @@ Describe "Configure Vrf" {
         Get-ArubaCXVrfs -name $pester_vrf | Remove-ArubaCXVrfs -confirm:$false
         #Reverse CheckPoint ?
     }
+
 }
 
 Describe "Remove Vrf" {
