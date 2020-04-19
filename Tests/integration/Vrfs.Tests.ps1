@@ -120,11 +120,6 @@ Describe "Get Vrf" {
             $vrf.name | Should -Be $pester_vrf
         }
 
-        It "Search Vrf by name (pester_vrf)" {
-            $vrf = Get-ArubaCXVrfs -name pester_vrf
-            @($vrf).count | Should -be 1
-            $vrf.name | Should -Be $pester_vrf
-        }
     }
 
     AfterAll {
