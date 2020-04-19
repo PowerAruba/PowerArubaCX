@@ -7,8 +7,8 @@
 
 Describe "Get Static Route" {
 
-
     Context "Get Static Route on VRF: default" {
+
         BeforeAll {
             #Add a blackhole static route on vrf default
             Add-ArubaCXStaticRoutes -address_family ipv4 -prefix_ip4 $pester_sr_ip4 -prefix_ip4_mask $pester_sr_mask -type blackhole
@@ -108,6 +108,7 @@ Describe "Get Static Route" {
         }
 
         Context "Search" {
+
             It "Search Static Route by name ($pester_sr)" {
                 $sr = Get-ArubaCXStaticRoutes -prefix $pester_sr
                 @($sr).count | Should -be 1
@@ -115,13 +116,15 @@ Describe "Get Static Route" {
             }
 
         }
+
         AfterAll {
             Get-ArubaCXStaticRoutes -prefix $pester_sr | Remove-ArubaCXStaticRoutes -confirm:$false
         }
     }
 
     Context "Get Static Route on VRF: $pester_vrf" {
-        BeforeALL {
+
+        BeforeAll {
             #Add Vrf
             Add-ArubaCXVrfs -name $pester_vrf
             #Add a reject static route on vrf $pester_vrf
@@ -203,6 +206,7 @@ Describe "Get Static Route" {
                     Get-ArubaCXStaticRoutes -depth 4 -vrf $pester_vrf
                 } | Should Not Throw
             }
+
         }
 
         Context "Attribute" {
@@ -231,21 +235,19 @@ Describe "Get Static Route" {
                 $sr.prefix | Should -Be $pester_sr
                 $sr.vrf | Should -Be $pester_vrf
             }
-
         }
+
         AfterAll {
             Get-ArubaCXStaticRoutes -prefix $pester_sr -vrf $pester_vrf | Remove-ArubaCXStaticRoutes -confirm:$false
-
             Get-ArubaCXVrfs -name $pester_vrf | Remove-ArubaCXVrfs -confirm:$false
         }
+
     }
 
 
 }
 
 Describe "Add Static Route" {
-
-
 
     Context "Add Static Route on VRF: default" {
 
@@ -279,9 +281,11 @@ Describe "Add Static Route" {
             $sr.type | Should -Be "blackhole"
             $sr.vrf | Should -Be "default"
         }
+
     }
 
     Context "Add Static Route on VRF: $pester_vrf" {
+
         BeforeAll {
             #Add Vrf
             Add-ArubaCXVrfs -name $pester_vrf
@@ -321,12 +325,15 @@ Describe "Add Static Route" {
         AfterAll {
             Get-ArubaCXVrfs -name $pester_vrf | Remove-ArubaCXVrfs -confirm:$false
         }
+
     }
+
 }
 
 Describe "Remove Static Route" {
 
     Context "Add Static Route on VRF: default" {
+
         BeforeEach {
             #Always add Static Route $pester_sr...
             Add-ArubaCXStaticRoutes -address_family ipv4 -prefix_ip4 $pester_sr_ip4 -prefix_ip4_mask $pester_sr_mask -type blackhole
@@ -344,13 +351,16 @@ Describe "Remove Static Route" {
             $sr = Get-ArubaCXStaticRoutes
             $sr.$pester_sr | Should -Be $NULL
         }
+
     }
 
     Context "Add Static Route on VRF: $pester_vrf" {
+
         BeforeAll {
             #Add Vrf
             Add-ArubaCXVrfs -name $pester_vrf
         }
+
         BeforeEach {
             #Always add Static Route $pester_sr...
             Add-ArubaCXStaticRoutes -address_family ipv4 -prefix_ip4 $pester_sr_ip4 -prefix_ip4_mask $pester_sr_mask -type blackhole -vrf $pester_vrf
@@ -368,11 +378,14 @@ Describe "Remove Static Route" {
             $sr = Get-ArubaCXStaticRoutes -vrf $pester_vrf
             $sr.$pester_sr | Should -Be $NULL
         }
+
         AfterAll {
             #Remove vrf
             Get-ArubaCXVrfs -name $pester_vrf | Remove-ArubaCXVrfs -confirm:$false
         }
+
     }
+
 }
 
 Disconnect-ArubaCX -confirm:$false
