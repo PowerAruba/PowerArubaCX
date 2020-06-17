@@ -15,12 +15,12 @@ function Get-ArubaCXConfiguration {
 
     Param(
         [Parameter(Mandatory = $true)]
-        [ValidateSet("running","startup")]
+        [ValidateSet("running", "startup")]
         [string]$local,
         [Parameter(Mandatory = $false)]
         [string]$remote,
         [Parameter(Mandatory = $false)]
-        [ValidateSet("cli","json")]
+        [ValidateSet("cli", "json")]
         [string]$type,
         [Parameter(Mandatory = $false)]
         [string]$vrf,
@@ -34,12 +34,12 @@ function Get-ArubaCXConfiguration {
 
     Process {
 
-        $remote = $remote.Replace(":","%3A")
-        $remote = $remote.Replace("/","%2F")
+        $remote = $remote.Replace(":", "%3A")
+        $remote = $remote.Replace("/", "%2F")
 
         $uri = "fullconfigs/${local}-config/?to=${remote}&type=${type}&vrf=${vrf}"
 
-        $response = Invoke-ArubaCXRestMethod -uri $uri -method 'GET' -connection $connection 
+        $response = Invoke-ArubaCXRestMethod -uri $uri -method 'GET' -connection $connection
         $response
     }
 
