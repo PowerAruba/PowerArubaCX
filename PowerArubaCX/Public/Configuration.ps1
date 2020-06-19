@@ -36,8 +36,48 @@ function Get-ArubaCXConfiguration {
 
         $remote = $remote.Replace(":", "%3A")
         $remote = $remote.Replace("/", "%2F")
+        $remote = $remote.Replace("@", "%40")
 
         $uri = "fullconfigs/${local}-config/?to=${remote}&type=${type}&vrf=${vrf}"
+
+        $response = Invoke-ArubaCXRestMethod -uri $uri -method 'GET' -connection $connection
+        $response
+    }
+
+    End {
+    }
+}
+
+function Get-ArubaCXConfigurationName {
+
+    <#
+        .SYNOPSIS
+        Get Aruba CX running or startup-configuration by the name
+
+        .DESCRIPTION
+        Get the startup-config or running-config
+
+        .EXAMPLE
+        Get-ArubaCXConfigurationName -name running
+
+        Get the running-config
+    #>
+
+    Param(
+        [Parameter(Mandatory = $true)]
+        [ValidateSet("running", "startup")]
+        [string]$name,
+        [Parameter (Mandatory = $False)]
+        [ValidateNotNullOrEmpty()]
+        [PSObject]$connection = $DefaultArubaCXConnection
+    )
+
+    Begin {
+    }
+
+    Process {
+
+        $uri = "fullconfigs/${name}-config"
 
         $response = Invoke-ArubaCXRestMethod -uri $uri -method 'GET' -connection $connection
         $response
