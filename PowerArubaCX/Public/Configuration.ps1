@@ -65,7 +65,7 @@ function Get-ArubaCXConfigurationName {
 
     Param(
         [Parameter(Mandatory = $true)]
-        [ValidateSet("running", "startup")]
+        [ValidateSet("running", "startup", IgnoreCase = $true)]
         [string]$name,
         [Parameter (Mandatory = $False)]
         [ValidateNotNullOrEmpty()]
@@ -77,6 +77,7 @@ function Get-ArubaCXConfigurationName {
 
     Process {
 
+        $name = $name.ToLower()
         $uri = "fullconfigs/${name}-config"
 
         $response = Invoke-ArubaCXRestMethod -uri $uri -method 'GET' -connection $connection
