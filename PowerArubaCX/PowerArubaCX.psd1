@@ -103,7 +103,7 @@
             ProjectUri = 'https://github.com/PowerAruba/PowerArubaCX'
 
             # A URL to an icon representing this module.
-            IconUri    = 'https://raw.githubusercontent.com/alagoutte/PowerArubaCX/readme/Medias/PowerArubaCX.png'
+            IconUri    = 'https://raw.githubusercontent.com/PowerAruba/PowerArubaCX/master/Medias/PowerArubaCX.png'
 
             # ReleaseNotes of this module
             # ReleaseNotes = ''
