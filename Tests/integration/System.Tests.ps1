@@ -5,6 +5,11 @@
 #
 . ../common.ps1
 
+
+BeforeAll {
+    Connect-ArubaCX @invokeParams
+}
+
 Describe "Get System" {
     It "Get System Does not throw an error" {
         {
@@ -129,4 +134,6 @@ Describe "Configure System" {
 }
 
 
-Disconnect-ArubaCX -confirm:$false
+AfterAll {
+    Disconnect-ArubaCX -confirm:$false
+}

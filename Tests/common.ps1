@@ -14,7 +14,16 @@ $script:pester_vrf = "pester_vrf" #interface id for test...
 . ../credential.ps1
 #TODO: Add check if no ipaddress/login/password info...
 
-
 $script:mysecpassword = ConvertTo-SecureString $password -AsPlainText -Force
 
-Connect-ArubaCX -Server $ipaddress -Username $login -password $mysecpassword -SkipCertificateCheck
+$script:invokeParams = @{
+    server               = $ipaddress;
+    username             = $login;
+    password             = $mysecpassword;
+    port                 = $port;
+    SkipCertificateCheck = $true;
+}
+
+if ($null -eq $port) {
+    $invokeParams.port = 443
+}
