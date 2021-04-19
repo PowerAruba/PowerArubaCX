@@ -13,7 +13,7 @@ Describe "Get Vlan" {
     It "Get Vlan Does not throw an error" {
         {
             Get-ArubaCXVlans
-        } | Should Not Throw
+        } | Should -Not -Throw
     }
 
     It "Get ALL Vlan" {
@@ -38,25 +38,25 @@ Describe "Get Vlan" {
         It "Get Vlan with selector equal configuration" {
             {
                 Get-ArubaCXVlans -selector configuration
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
         It "Get Vlan with selector equal statistics" {
             {
                 Get-ArubaCXVlans -selector statistics
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
         It "Get Vlan with selector equal status" {
             {
                 Get-ArubaCXVlans -selector status
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
         It "Get Vlan with selector equal writable" {
             {
                 Get-ArubaCXVlans -selector writable
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
     }
 
@@ -65,25 +65,25 @@ Describe "Get Vlan" {
         It "Get Vlan with depth equal 1" {
             {
                 Get-ArubaCXVlans -depth 1
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
         It "Get Vlan with depth equal 2" {
             {
                 Get-ArubaCXVlans -depth 2
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
         It "Get Vlan with depth equal 3" {
             {
                 Get-ArubaCXVlans -depth 3
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
         It "Get Vlan with depth equal 4" {
             {
                 Get-ArubaCXVlans -depth 4
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
     }
 

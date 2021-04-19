@@ -10,7 +10,7 @@ Describe "Get Interfaces" {
     It "Get Interface Does not throw an error" {
         {
             Get-ArubaCXInterfaces
-        } | Should Not Throw
+        } | Should -Not -Throw
     }
 
     It "Get ALL Interfaces" {
@@ -29,25 +29,25 @@ Describe "Get Interfaces" {
         It "Get Interface with selector equal configuration" {
             {
                 Get-ArubaCXInterfaces -selector configuration
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
         It "Get Interface with selector equal statistics" {
             {
                 Get-ArubaCXInterfaces -selector statistics
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
         It "Get Interface with selector equal status" {
             {
                 Get-ArubaCXInterfaces -selector status
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
         It "Get Interface with selector equal writable" {
             {
                 Get-ArubaCXInterfaces -selector writable
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
     }
 
@@ -56,25 +56,25 @@ Describe "Get Interfaces" {
         It "Get Interface with depth equal 1" {
             {
                 Get-ArubaCXInterfaces -depth 1
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
         It "Get Interface with depth equal 2" {
             {
                 Get-ArubaCXInterfaces -depth 2
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
         It "Get Interface with depth equal 3" {
             {
                 Get-ArubaCXInterfaces -depth 3
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
         It "Get Interface with depth equal 4" {
             {
                 Get-ArubaCXInterfaces -depth 4
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
     }
 
@@ -301,7 +301,7 @@ Describe "Add Vlan trunk on Interface" {
     It "Try to set vlan_trunks on interface with routing" {
         {
             Get-ArubaCXInterfaces -interface $pester_interface | Add-ArubaCXInterfacesVlanTrunks -vlan_trunks $pester_vlan
-        } | Should throw "You need to disable routing mode for use vlan_trunks"
+        } | Should -Throw "You need to disable routing mode for use vlan_trunks"
 
         Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -routing:$false -vlan_mode access
     }
@@ -309,7 +309,7 @@ Describe "Add Vlan trunk on Interface" {
     It "Try to set vlan_trunks on interface with vlan mode access" {
         {
             Get-ArubaCXInterfaces -interface $pester_interface | Add-ArubaCXInterfacesVlanTrunks -vlan_trunks $pester_vlan
-        } | Should throw "You need to use native-(un)tagged vlan mode"
+        } | Should -Throw "You need to use native-(un)tagged vlan mode"
 
         Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -routing:$false -vlan_mode native-untagged
     }
@@ -403,14 +403,14 @@ Describe "Configure IP on Interface" {
     It "Try to set ip4_address without ip4_mask" {
         {
             Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -ip4_address 192.0.2.1
-        } | Should throw "You need to set ip4_mask when use ipv4_address"
+        } | Should -Throw "You need to set ip4_mask when use ipv4_address"
     }
 
     It "Try to set ip4_address on interface with no routing" {
         {
             Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -routing:$false
             Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -ip4_address 192.0.2.1 -ip4_mask 24
-        } | Should throw "You need to enable routing mode for use ipv4_address"
+        } | Should -Throw "You need to enable routing mode for use ipv4_address"
 
         Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -routing:$true
     }
@@ -418,7 +418,7 @@ Describe "Configure IP on Interface" {
     It "Try to set a IPv6 Address on interface" {
         {
             Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -ip4_address 2001:DB8::1 -ip4_mask 24
-        } | Should throw "You need to specify a IPv4 Address"
+        } | Should -Throw "You need to specify a IPv4 Address"
     }
 
     It "Set ip4_address on interface" {

@@ -13,7 +13,7 @@ Describe "Get Vrf" {
     It "Get Vrf Does not throw an error" {
         {
             Get-ArubaCXVrfs
-        } | Should Not Throw
+        } | Should -Not -Throw
     }
 
     It "Get ALL Vrf" {
@@ -37,25 +37,25 @@ Describe "Get Vrf" {
         It "Get Vrf with selector equal configuration" {
             {
                 Get-ArubaCXVrfs -selector configuration
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
         It "Get Vrf with selector equal statistics" {
             {
                 Get-ArubaCXVrfs -selector statistics
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
         It "Get Vrf with selector equal status" {
             {
                 Get-ArubaCXVrfs -selector status
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
         It "Get Vrf with selector equal writable" {
             {
                 Get-ArubaCXVrfs -selector writable
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
     }
 
@@ -64,25 +64,25 @@ Describe "Get Vrf" {
         It "Get Vrf with depth equal 1" {
             {
                 Get-ArubaCXVrfs -depth 1
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
         It "Get Vrf with depth equal 2" {
             {
                 Get-ArubaCXVrfs -depth 2
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
         It "Get Vrf with depth equal 3" {
             {
                 Get-ArubaCXVrfs -depth 3
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
         It "Get Vrf with depth equal 4" {
             {
                 Get-ArubaCXVrfs -depth 4
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
     }
 
