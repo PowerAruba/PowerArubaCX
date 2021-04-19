@@ -19,7 +19,7 @@ Describe "Get Interfaces" {
 
     It "Get ALL Interfaces" {
         $int = Get-ArubaCXInterfaces
-        $int.count | Should not be $NULL
+        $int.count | Should -Not -Be $NULL
     }
 
     It "Get Interface ($pester_interface) and confirm (via Confirm-ArubaCXInterfaces)" {
