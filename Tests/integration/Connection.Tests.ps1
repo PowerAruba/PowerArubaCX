@@ -7,12 +7,8 @@
 
 
 Describe "Connect to a switch (using HTTPS)" {
-    BeforeAll {
-        #Disconnect "default connection"
-        Disconnect-ArubaCX -confirm:$false
-    }
     It "Connect to a switch (using HTTPS and -SkipCertificateCheck) and check global variable" {
-        Connect-ArubaCX $ipaddress -Username $login -password $mysecpassword -SkipCertificateCheck
+        Connect-ArubaCX @invokeParams
         $DefaultArubaCXConnection | Should -Not -BeNullOrEmpty
         $DefaultArubaCXConnection.server | Should -Be $ipaddress
         $DefaultArubaCXConnection.platform_name | Should -Not -BeNullOrEmpty
@@ -26,13 +22,13 @@ Describe "Connect to a switch (using HTTPS)" {
     #This test only work with PowerShell 6 / Core (-SkipCertificateCheck don't change global variable but only Invoke-WebRequest/RestMethod)
     #This test will be fail, if there is valid certificate...
     It "Connect to a switch (using HTTPS) and check global variable" -Skip:("Desktop" -eq $PSEdition) {
-        { Connect-ArubaCX $ipaddress -Username $login -password $mysecpassword } | Should -Throw "Unable to connect (certificate)"
+        { Connect-ArubaCX $invokeParams.server -Username $invokeParams.username -password $invokeParams.password } | Should -Throw "Unable to connect (certificate)"
     }
 }
 
 Describe "Connect to a switch (using multi connection)" {
     It "Connect to a switch (using HTTPS and store on cx variable)" {
-        $script:cx = Connect-ArubaCX $ipaddress -Username $login -password $mysecpassword -SkipCertificate -DefaultConnection:$false
+        $script:cx = Connect-ArubaCX @invokeParams -DefaultConnection:$false
         $DefaultArubaCXConnection | Should -BeNullOrEmpty
         $cx.server | Should -Be $ipaddress
         $cx.platform_name | Should -Not -BeNullOrEmpty
