@@ -26,7 +26,7 @@ Describe "Connect to a switch (using HTTPS)" {
     #This test only work with PowerShell 6 / Core (-SkipCertificateCheck don't change global variable but only Invoke-WebRequest/RestMethod)
     #This test will be fail, if there is valid certificate...
     It "Connect to a switch (using HTTPS) and check global variable" -Skip:("Desktop" -eq $PSEdition) {
-        { Connect-ArubaCX $ipaddress -Username $login -password $mysecpassword } | Should throw "Unable to connect (certificate)"
+        { Connect-ArubaCX $ipaddress -Username $login -password $mysecpassword } | Should -Throw "Unable to connect (certificate)"
     }
 }
 
@@ -41,30 +41,30 @@ Describe "Connect to a switch (using multi connection)" {
     }
 
     It "Throw when try to use Invoke-ArubaCPRestMethod and not connected" {
-        { Invoke-ArubaCXRestMethod -uri "rest/v1/system" } | Should throw "Not Connected. Connect to the Switch with Connect-ArubaCX"
+        { Invoke-ArubaCXRestMethod -uri "rest/v1/system" } | Should -Throw "Not Connected. Connect to the Switch with Connect-ArubaCX"
     }
 
     Context "Use Multi connection for call some (Get) cmdlet (Vlan, System...)" {
         It "Use Multi connection for call Get Firmware" {
-            { Get-ArubaCXFirmware -connection $cx } | Should Not throw
+            { Get-ArubaCXFirmware -connection $cx } | Should -Not -Throw
         }
         It "Use Multi connection for call Get Interfaces" {
-            { Get-ArubaCXInterfaces -connection $cx } | Should Not throw
+            { Get-ArubaCXInterfaces -connection $cx } | Should -Not -Throw
         }
         It "Use Multi connection for call Get LLDP Neighbor" {
-            { Get-ArubaCXLLDPNeighbor 1/1/1 -connection $cx } | Should Not throw
+            { Get-ArubaCXLLDPNeighbor 1/1/1 -connection $cx } | Should -Not -Throw
         }
         It "Use Multi connection for call Get System" {
-            { Get-ArubaCXSystem -connection $cx } | Should Not throw
+            { Get-ArubaCXSystem -connection $cx } | Should -Not -Throw
         }
         It "Use Multi connection for call Get User" {
-            { Get-ArubaCXUser -connection $cx } | Should Not throw
+            { Get-ArubaCXUser -connection $cx } | Should -Not -Throw
         }
         It "Use Multi connection for call Get Vlans" {
-            { Get-ArubaCXVlans -connection $cx } | Should Not throw
+            { Get-ArubaCXVlans -connection $cx } | Should -Not -Throw
         }
         It "Use Multi connection for call Get Vrfs" {
-            { Get-ArubaCXVrfs -connection $cx } | Should Not throw
+            { Get-ArubaCXVrfs -connection $cx } | Should -Not -Throw
         }
     }
 
