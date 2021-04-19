@@ -5,6 +5,10 @@
 #
 . ../common.ps1
 
+BeforeAll {
+    Connect-ArubaCX @invokeParams
+}
+
 Describe "Get Vlan" {
     BeforeALL {
         Add-ArubaCXVlans -id $pester_vlan -name pester_vlan
@@ -258,4 +262,6 @@ Describe "Remove vlan" {
 
 }
 
-Disconnect-ArubaCX -confirm:$false
+AfterAll {
+    Disconnect-ArubaCX -confirm:$false
+}

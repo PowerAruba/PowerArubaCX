@@ -5,6 +5,10 @@
 #
 . ../common.ps1
 
+BeforeAll {
+    Connect-ArubaCX @invokeParams
+}
+
 Describe "Get Interfaces" {
 
     It "Get Interface Does not throw an error" {
@@ -463,4 +467,6 @@ Describe "Configure VRF on Interface" {
     }
 }
 
-Disconnect-ArubaCX -confirm:$false
+AfterAll {
+    Disconnect-ArubaCX -confirm:$false
+}
