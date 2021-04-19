@@ -5,6 +5,10 @@
 #
 . ../common.ps1
 
+BeforeAll {
+    Connect-ArubaCX @invokeParams
+}
+
 Describe "Get Vrf" {
     BeforeALL {
         Add-ArubaCXVrfs -name $pester_vrf
@@ -239,4 +243,6 @@ Describe "Remove Vrf" {
 
 }
 
-Disconnect-ArubaCX -confirm:$false
+AfterAll {
+    Disconnect-ArubaCX -confirm:$false
+}
