@@ -20,6 +20,9 @@ function Get-ArubaCXNeighbors {
 
     #>
     Param(
+        [Parameter (Mandatory = $false, ValueFromPipeline = $true)]
+        [ValidateScript( { Confirm-ArubaCXVrfs $_ })]
+        [psobject]$vrf_pp,
         [Parameter(Mandatory = $false, position = 1)]
         [String]$vrf = "*",
         [Parameter(Mandatory = $false)]
@@ -41,6 +44,11 @@ function Get-ArubaCXNeighbors {
     }
 
     Process {
+
+        #get vrf name from vrf_pp ps object (based by pipeline)
+        if ($vrf_pp) {
+            $vrf = $vrf_pp.name
+        }
 
         $invokeParams = @{ }
         if ( $PsBoundParameters.ContainsKey('depth') ) {
