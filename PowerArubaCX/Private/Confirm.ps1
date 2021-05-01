@@ -17,7 +17,7 @@ function Confirm-ArubaCXInterfaces {
         throw "Element specified does not contain an name property."
     }
     if ( -not ( $argument | get-member -name admin -Membertype Properties)) {
-        throw "Element specified does not contain a admin property."
+        throw "Element specified does not contain a admin_state property."
     }
     if ( -not ( $argument | get-member -name routing -Membertype Properties)) {
         throw "Element specified does not contain a routing property."
