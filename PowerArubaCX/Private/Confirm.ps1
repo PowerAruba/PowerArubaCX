@@ -14,10 +14,10 @@ function Confirm-ArubaCXInterfaces {
     #Check if it looks like an Interface element
 
     if ( -not ( $argument | get-member -name name -Membertype Properties)) {
-        throw "Element specified does not contain an name property."
+        throw "Element specified does not contain a name property."
     }
     if ( -not ( $argument | get-member -name admin -Membertype Properties)) {
-        throw "Element specified does not contain a admin_state property."
+        throw "Element specified does not contain an admin_state property."
     }
     if ( -not ( $argument | get-member -name routing -Membertype Properties)) {
         throw "Element specified does not contain a routing property."
