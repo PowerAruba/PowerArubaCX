@@ -57,9 +57,15 @@ Describe "Get Vlan" {
             } | Should -Not -Throw
         }
 
-        It "Get Vlan with selector equal writable" {
+        It "Get Vlan with selector equal writable without vlan" {
             {
                 Get-ArubaCXVlans -selector writable
+            } | Should -Throw
+        }
+
+        It "Get Vlan with selector equal writable with a vlan" {
+            {
+                Get-ArubaCXVlans -id $pester_vlan -selector writable
             } | Should -Not -Throw
         }
     }
