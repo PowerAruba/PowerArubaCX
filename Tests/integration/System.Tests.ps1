@@ -81,14 +81,14 @@ Describe "Get System" {
 
     Context "Attribute" {
 
-        It "Get system with one attribute (hostname)" {
-            $sys = Get-ArubaCXSystem -attribute hostname
-            $sys.hostname | Should -Not -BeNullOrEmpty
+        It "Get system with one attribute (platform_name)" {
+            $sys = Get-ArubaCXSystem -attribute platform_name
+            $sys.platform_name | Should -Not -BeNullOrEmpty
         }
 
-        It "Get system with two attributes (hostname, timezone)" {
-            $sys = Get-ArubaCXSystem  -attribute hostname, timezone
-            $sys.hostname | Should -Not -BeNullOrEmpty
+        It "Get system with two attributes (platform_name, timezone)" {
+            $sys = Get-ArubaCXSystem  -attribute platform_name, timezone
+            $sys.platform_name | Should -Not -BeNullOrEmpty
             $sys.timezone | Should -Not -BeNullOrEmpty
         }
 
