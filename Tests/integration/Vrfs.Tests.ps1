@@ -56,9 +56,15 @@ Describe "Get Vrf" {
             } | Should -Not -Throw
         }
 
-        It "Get Vrf with selector equal writable" {
+        It "Get Vrf with selector equal writable without vrf" {
             {
                 Get-ArubaCXVrfs -selector writable
+            } | Should  -Throw
+        }
+
+        It "Get Vrf with selector equal writable with a vrf" {
+            {
+                Get-ArubaCXVrfs $pester_vrf -selector writable
             } | Should -Not -Throw
         }
     }
