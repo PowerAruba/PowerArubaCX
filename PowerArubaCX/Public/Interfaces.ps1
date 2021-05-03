@@ -142,6 +142,10 @@ function Get-ArubaCXInterfaces {
             $invokeParams.add( 'depth', $depth )
         }
         if ( $PsBoundParameters.ContainsKey('selector') ) {
+            #You need to speciify an interface for use writable selector (it is not possible to use on collections...)
+            if ( -not $PsBoundParameters.ContainsKey('interface') -and $selector -eq "writable") {
+                Throw "You need to specify an interface to use writable selector"
+            }
             $invokeParams.add( 'selector', $selector )
         }
         if ( $PsBoundParameters.ContainsKey('attributes') ) {
