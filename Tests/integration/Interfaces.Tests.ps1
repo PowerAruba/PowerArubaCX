@@ -48,9 +48,15 @@ Describe "Get Interfaces" {
             } | Should -Not -Throw
         }
 
-        It "Get Interface with selector equal writable" {
+        It "Get Interface with selector equal writable without interface" {
             {
                 Get-ArubaCXInterfaces -selector writable
+            } | Should -Throw
+        }
+
+        It "Get Interface with selector equal writable with interface" {
+            {
+                Get-ArubaCXInterfaces $pester_interface -selector writable
             } | Should -Not -Throw
         }
     }
