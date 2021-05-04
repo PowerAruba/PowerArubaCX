@@ -241,18 +241,18 @@ Describe "Configure Vlan on Interface" {
         Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -vlan_mode native-untagged
         $int = Get-ArubaCXInterfaces -interface $pester_interface
         $int.vlan_mode | Should -Be "native-untagged"
-        ($int.vlan_tag | Get-Member -MemberType NoteProperty -ErrorAction SilentlyContinue).count | Should -Be "0"
-        $int.vlan_tag | Should -Be $null
+        ($int.vlan_tag | Get-Member -MemberType NoteProperty -ErrorAction SilentlyContinue).count | Should -Be "1"
+        $int.vlan_tag.$pester_vlan | Should -Be ("/rest/" + $($DefaultArubaCXConnection.version) + "/system/vlans/" + $pester_vlan)
         ($int.vlan_trunks | Get-Member -MemberType NoteProperty -ErrorAction SilentlyContinue).count | Should -Be "0"
-        $int.vlan_trunks | Should -Be $null
+        $int.vlan_trunks | Should -BeNullOrEmpty
     }
 
     It "Change Interface ($pester_interface) trunks vlan ($pester_vlan)" {
         Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -vlan_trunks $pester_vlan
         $int = Get-ArubaCXInterfaces -interface $pester_interface
         $int.vlan_mode | Should -Be "native-untagged"
-        ($int.vlan_tag | Get-Member -MemberType NoteProperty -ErrorAction SilentlyContinue).count | Should -Be "0"
-        $int.vlan_tag | Should -Be $null
+        ($int.vlan_tag | Get-Member -MemberType NoteProperty -ErrorAction SilentlyContinue).count | Should -Be "1"
+        $int.vlan_tag.$pester_vlan | Should -Be ("/rest/" + $($DefaultArubaCXConnection.version) + "/system/vlans/" + $pester_vlan)
         ($int.vlan_trunks | Get-Member -MemberType NoteProperty).count | Should -Be "1"
         $int.vlan_trunks.$pester_vlan | Should -Be ("/rest/" + $($DefaultArubaCXConnection.version) + "/system/vlans/" + $pester_vlan)
     }
@@ -261,8 +261,8 @@ Describe "Configure Vlan on Interface" {
         Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -vlan_trunks $pester_vlan, $pester_vlan2
         $int = Get-ArubaCXInterfaces -interface $pester_interface
         $int.vlan_mode | Should -Be "native-untagged"
-        ($int.vlan_tag | Get-Member -MemberType NoteProperty -ErrorAction SilentlyContinue).count | Should -Be "0"
-        $int.vlan_tag | Should -Be $null
+        ($int.vlan_tag | Get-Member -MemberType NoteProperty -ErrorAction SilentlyContinue).count | Should -Be "1"
+        $int.vlan_tag.$pester_vlan | Should -Be ("/rest/" + $($DefaultArubaCXConnection.version) + "/system/vlans/" + $pester_vlan)
         ($int.vlan_trunks | Get-Member -MemberType NoteProperty).count | Should -Be "2"
         $int.vlan_trunks.$pester_vlan | Should -Be ("/rest/" + $($DefaultArubaCXConnection.version) + "/system/vlans/" + $pester_vlan)
         $int.vlan_trunks.$pester_vlan2 | Should -Be ("/rest/" + $($DefaultArubaCXConnection.version) + "/system/vlans/" + $pester_vlan2)
