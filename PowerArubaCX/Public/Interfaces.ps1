@@ -76,7 +76,7 @@ function Add-ArubaCXInterfacesVlanTrunks {
         $trunks = @()
         #Add new vlan
         foreach ($trunk in $vlan_trunks) {
-            $trunks += "/rest/" + $($connection.version) + "/system/vlans/" + $trunk
+            $trunks += "/rest/" + $($connection.api_version) + "/system/vlans/" + $trunk
         }
         $_interface.vlan_trunks = $trunks
 
@@ -354,13 +354,13 @@ function Set-ArubaCXInterfaces {
         }
 
         if ( $PsBoundParameters.ContainsKey('vlan_tag') ) {
-            $_interface.vlan_tag = "/rest/" + $($connection.version) + "/system/vlans/" + $vlan_tag
+            $_interface.vlan_tag = "/rest/" + $($connection.api_version) + "/system/vlans/" + $vlan_tag
         }
 
         if ( $PsBoundParameters.ContainsKey('vlan_trunks') ) {
             $trunks = @()
             foreach ($trunk in $vlan_trunks) {
-                $trunks += "/rest/" + $($connection.version) + "/system/vlans/" + $trunk
+                $trunks += "/rest/" + $($connection.api_version) + "/system/vlans/" + $trunk
             }
             $_interface.vlan_trunks = $trunks
         }
@@ -426,7 +426,7 @@ function Set-ArubaCXInterfaces {
         }
 
         if ( $PsBoundParameters.ContainsKey('vrf') ) {
-            $_interface.vrf = "/rest/" + $($connection.version) + "/system/vrfs/" + $vrf
+            $_interface.vrf = "/rest/" + $($connection.api_version) + "/system/vrfs/" + $vrf
         }
 
         if ($PSCmdlet.ShouldProcess($interface, 'Configure interface Settings')) {
@@ -501,7 +501,7 @@ function Remove-ArubaCXInterfacesVlanTrunks {
                 if ($vlan_trunks -contains $v) {
                     continue
                 }
-                $trunks += "/rest/" + $($connection.version) + "/system/vlans/" + $v
+                $trunks += "/rest/" + $($connection.api_version) + "/system/vlans/" + $v
             }
         }
 
