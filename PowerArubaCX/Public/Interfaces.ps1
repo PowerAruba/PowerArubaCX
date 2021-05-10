@@ -62,6 +62,8 @@ function Add-ArubaCXInterfaces {
         [Parameter(Mandatory = $false)]
         [ValidateRange(8, 31)]
         [int]$ip4_mask,
+        [Parameter(Mandatory = $false)]
+        [string]$vrf = "default",
         [Parameter (Mandatory = $False)]
         [ValidateNotNullOrEmpty()]
         [PSObject]$connection = $DefaultArubaCXConnection
@@ -80,38 +82,25 @@ function Add-ArubaCXInterfaces {
 
         $_interface | Add-Member -name "type" -membertype NoteProperty -Value "vlan"
 
-        $vlan = "/rest/" + $($connection.version) + "/system/vlans/" + $vlan_id
+        $vlan = "/rest/" + $($connection.api_version) + "/system/vlans/" + $vlan_id
         $_interface | Add-Member -name "vlan_tag" -membertype NoteProperty -Value $vlan
 
-        $user_config = New-Object -TypeName PSObject
-        $user_config | Add-member -name "admin" -membertype NoteProperty -Value "up"
-        #$_interface | Add-Member -name "user_config" -membertype NoteProperty -Value $user_config
+        if ( $PsBoundParameters.ContainsKey('admin') ) {
+            $user_config = New-Object -TypeName PSObject
+            $user_config | Add-member -name "admin" -membertype NoteProperty -Value $admin
+            $_interface | Add-Member -name "user_config" -membertype NoteProperty -Value $user_config
+        }
 
-        $vrf = "/rest/" + $($connection.version) + "/system/vrfs/default"
-        #"vrf": "/rest/v10.04/system/vrfs/%s" % vrf_name,
+        $vrf = "/rest/" + $($connection.api_version) + "/system/vrfs/" + $vrf
         $_interface | Add-Member -name "vrf" -membertype NoteProperty -Value $vrf
 
         if ( $PsBoundParameters.ContainsKey('description') ) {
-            $_interface.description = $description
-        }
-        #$_interface.user_config | Add-member -name "admin" -membertype NoteProperty -Value ""
-
-        if ( $PsBoundParameters.ContainsKey('admin') ) {
-            $_interface.user_config.admin = $admin
-        }
-
-        if ( $PsBoundParameters.ContainsKey('routing') ) {
-            if ($routing) {
-                $_interface.routing = $true
-            }
-            else {
-                $_interface.routing = $false
-            }
+            $_interface | Add-Member -name "description" -membertype NoteProperty -Value $description
         }
 
         if ( $PsBoundParameters.ContainsKey('ip4_address') ) {
             if ($ip4_address -eq $null ) {
-                $_interface.ip4_address = $null
+                $_interface | Add-Member -name "ip4_address" -membertype NoteProperty -Value $null
             }
             else {
                 if ($ip4_mask -eq "0" ) {
@@ -121,7 +110,7 @@ function Add-ArubaCXInterfaces {
                 } if ( -not ($ip4_address.AddressFamily -eq "InterNetwork" )) {
                     Throw "You need to specify a IPv4 Address"
                 }
-                $_interface.ip4_address = $ip4_address.ToString() + "/" + $ip4_mask
+                $_interface | Add-Member -name "ip4_address" -membertype NoteProperty -Value ($ip4_address.ToString() + "/" + $ip4_mask)
             }
         }
 
