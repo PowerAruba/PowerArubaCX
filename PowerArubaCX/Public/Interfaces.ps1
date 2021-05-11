@@ -10,32 +10,22 @@ function Add-ArubaCXInterfaces {
       Add Aruba CX Interfaces (lag, vlan...)
 
       .DESCRIPTION
-      Add Aruba CX Interfaces (lag, vlan... with name, IP Address, description)
+      Add Aruba CX Interfaces (lag, vlan... with IP Address, description)
 
       .EXAMPLE
-      Add-ArubaCXInterfaces -description "Changed by PowerArubaCX"
+      Add-ArubaCXInterfaces -vlan_id 23 -description "Add by PowerArubaCX"
 
-      Set the description for the Interface 1/1/1
-
-      .EXAMPLE
-      Get-ArubaCXInterfaces -interface 1/1/1 | Set-ArubaCXInterfaces -admin up
-
-      Set the admin status to up for the Interface 1/1/1
+      Add interface vlan 23 with a description
 
       .EXAMPLE
-      Get-ArubaCXInterfaces -interface 1/1/1 | Set-ArubaCXInterfaces -routing:$false
+      Add-ArubaCXInterfaces -vlan_id 23 -ip4_address 192.0.2.1 -ip4_mask 24
 
-      Set the routing to disable for the Interface 1/1/1
-
-      .EXAMPLE
-      Get-ArubaCXInterfaces -interface 1/1/1 | Set-ArubaCXInterfaces -vlan_mode access -vlan_tag 85
-
-      Set the interface 1/1/1 on access mode with vlan 85
+      Add interface vlan 23 with IPv4 Address 192.0.2.1/24
 
       .EXAMPLE
-      Get-ArubaCXInterfaces -interface 1/1/1 | Set-ArubaCXInterfaces -vlan_mode native-untagged -vlan_tag 85 -vlan_trunks 44,45
+      Add-ArubaCXInterfaces -vlan_id 23 -admin down
 
-      Set the interface 1/1/1 on native-untagged mode with vlan 85 and tagged vlan 45 and 45
+      Add interface vlan 23 with admin status to down
 
       #>
     Param(
