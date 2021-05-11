@@ -31,22 +31,26 @@ function Add-ArubaCXInterfaces {
     Param(
         [Parameter (Mandatory = $true, ParameterSetName = "vlan")]
         [string]$vlan_id,
+        [Parameter (Mandatory = $true, ParameterSetName = "lag")]
+        [string]$lag_id,
         [Parameter(Mandatory = $false)]
         [ValidateSet('up', 'down')]
         [string]$admin,
         [Parameter(Mandatory = $false)]
         [string]$description,
-        [Parameter(Mandatory = $false)]
+        [Parameter(Mandatory = $false, ParameterSetName = "lag")]
         [switch]$routing,
-        [Parameter(Mandatory = $false)]
+        [Parameter(Mandatory = $false, ParameterSetName = "lag")]
         [ValidateSet('access', 'native-untagged', 'native-tagged', IgnoreCase = $false)]
         [string]$vlan_mode,
-        [Parameter(Mandatory = $false)]
+        [Parameter(Mandatory = $false, ParameterSetName = "lag")]
         [ValidateRange(1, 4096)]
         [int]$vlan_tag,
-        [Parameter(Mandatory = $false)]
+        [Parameter(Mandatory = $false, ParameterSetName = "lag")]
         #[ValidateRange(1, 4096)]
         [int[]]$vlan_trunks,
+        [Parameter(Mandatory = $true, ParameterSetName = "lag")]
+        [string[]]$interfaces,
         [Parameter(Mandatory = $false)]
         [ipaddress]$ip4_address,
         [Parameter(Mandatory = $false)]
@@ -64,21 +68,41 @@ function Add-ArubaCXInterfaces {
     Process {
         $uri = "system/interfaces"
 
-        $name = "vlan" + $vlan_id
+        switch ( $PSCmdlet.ParameterSetName ) {
+            "vlan" {
+                $name = "vlan" + $vlan_id
+                $vlan_tag = $vlan_id
+            }
+            "lag" {
+                $name = "lag" + $lag_id
+            }
+        }
 
         $_interface = New-Object -TypeName PSObject
 
         $_interface | Add-Member -name "name" -membertype NoteProperty -Value $name
 
-        $_interface | Add-Member -name "type" -membertype NoteProperty -Value "vlan"
+        $_interface | Add-Member -name "type" -membertype NoteProperty -Value $PSCmdlet.ParameterSetName
 
-        $vlan = "/rest/" + $($connection.api_version) + "/system/vlans/" + $vlan_id
-        $_interface | Add-Member -name "vlan_tag" -membertype NoteProperty -Value $vlan
+        if ( $PsBoundParameters.ContainsKey('interfaces') ) {
+            $intf = @()
+            foreach ($interface in $interfaces) {
+                $intf += "/rest/" + $($connection.api_version) + "/system/interfaces/" + ($interface -replace '/', '%2F')
+            }
+            $_interface | Add-Member -name "interfaces" -membertype NoteProperty -Value $intf
+        }
 
         if ( $PsBoundParameters.ContainsKey('admin') ) {
-            $user_config = New-Object -TypeName PSObject
-            $user_config | Add-member -name "admin" -membertype NoteProperty -Value $admin
-            $_interface | Add-Member -name "user_config" -membertype NoteProperty -Value $user_config
+            switch ( $PSCmdlet.ParameterSetName ) {
+                "vlan" {
+                    $user_config = New-Object -TypeName PSObject
+                    $user_config | Add-member -name "admin" -membertype NoteProperty -Value $admin
+                    $_interface | Add-Member -name "user_config" -membertype NoteProperty -Value $user_config
+                }
+                "lag" {
+                    $_interface | Add-Member -name "admin" -membertype NoteProperty -Value $admin
+                }
+            }
         }
 
         $vrf = "/rest/" + $($connection.api_version) + "/system/vrfs/" + $vrf
@@ -86,6 +110,31 @@ function Add-ArubaCXInterfaces {
 
         if ( $PsBoundParameters.ContainsKey('description') ) {
             $_interface | Add-Member -name "description" -membertype NoteProperty -Value $description
+        }
+
+        if ( $PsBoundParameters.ContainsKey('routing') ) {
+            if ($routing) {
+                $_interface | Add-Member -name "routing" -membertype NoteProperty -Value $true
+            }
+            else {
+                $_interface | Add-Member -name "routing" -membertype NoteProperty -Value $false
+            }
+        }
+
+        if ( $PsBoundParameters.ContainsKey('vlan_mode') ) {
+            $_interface | Add-Member -name "routvlan_modeing" -membertype NoteProperty -Value $vlan_mode
+        }
+
+        if ($vlan_tag) {
+            $_interface | Add-Member -name "vlan_tag" -membertype NoteProperty -Value ("/rest/" + $($connection.api_version) + "/system/vlans/" + $vlan_tag)
+        }
+
+        if ( $PsBoundParameters.ContainsKey('vlan_trunks') ) {
+            $trunks = @()
+            foreach ($trunk in $vlan_trunks) {
+                $trunks += "/rest/" + $($connection.api_version) + "/system/vlans/" + $trunk
+            }
+            $_interface | Add-Member -name "vlan_trunks" -membertype NoteProperty -Value $trunks
         }
 
         if ( $PsBoundParameters.ContainsKey('ip4_address') ) {
