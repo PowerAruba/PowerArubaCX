@@ -547,6 +547,59 @@ function Set-ArubaCXInterfaces {
     }
 }
 
+function Remove-ArubaCXInterfaces {
+
+    <#
+      .SYNOPSIS
+      Remove an interface
+
+      .DESCRIPTION
+      Remove an interface (vlan or lag)
+
+      .EXAMPLE
+      Get-ArubaCXInterfaces -interface vlan23 | Remove-ArubaCXInterfaces
+
+      Remove vlan 23
+
+      .EXAMPLE
+      Get-ArubaCXInterfaces -interface lag2 | Remove-ArubaCXInterfaces -confirm:$false
+
+      Remove lag 2 without confirmation
+
+    #>
+    [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'high')]
+    Param(
+        [Parameter (Mandatory = $true, ValueFromPipeline = $true, Position = 1)]
+        [ValidateScript( { Confirm-ArubaCXInterfaces $_ })]
+        [psobject]$int,
+        [Parameter (Mandatory = $False)]
+        [ValidateNotNullOrEmpty()]
+        [PSObject]$connection = $DefaultArubaCXConnection
+    )
+
+    Begin {
+    }
+
+    Process {
+
+        $uri = "system/interfaces"
+
+        #get interface name from int ps object
+        $interface = $int.name
+
+        #Add interface to $uri
+        $interface = $interface -replace '/', '%2F'
+        $uri += "/$interface"
+
+        if ($PSCmdlet.ShouldProcess($interface, 'Remove interface')) {
+            Invoke-ArubaCXRestMethod -uri $uri -method 'DELETE' -connection $connection
+        }
+    }
+
+    End {
+    }
+}
+
 function Remove-ArubaCXInterfacesVlanTrunks {
 
     <#
