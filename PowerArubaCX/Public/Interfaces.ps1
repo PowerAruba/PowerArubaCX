@@ -27,6 +27,16 @@ function Add-ArubaCXInterfaces {
 
       Add interface vlan 23 with admin status to down
 
+      .EXAMPLE
+      Add-ArubaCXInterfaces -lag_id 2 -admin up -interfaces 1/1/1 ip4_address 192.0.2.1 -ip4_mask 24
+
+      Add interface lag 2 with admin status to up and interfaces 1/1/1 with IPv4 Address 192.0.2.1/24
+
+      .EXAMPLE
+      Add-ArubaCXInterfaces -lag_id 2 -admin up -interfaces 1/1/2, 1/1/3 -routing:$false -vlan_tag 23
+
+      Add interface lag 2 with admin status to up and interfaces 1/1/2 and 1/1/3 with no routing and vlan acces 23
+
       #>
     Param(
         [Parameter (Mandatory = $true, ParameterSetName = "vlan")]
