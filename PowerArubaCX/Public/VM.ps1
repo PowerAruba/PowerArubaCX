@@ -138,7 +138,7 @@ function Deploy-ArubaCXVm {
 
         #Set NetworkAdapter 1 (OOBM MGMT) to enable
         Get-VM $name_vm | Get-NetworkAdapter -name "Network adapter 1" | Set-NetworkAdapter -StartConnected $true -Confirm:$false | Out-Null
-        
+
         if ( $StartVM ) {
             Get-VM $name_vm | Start-VM | Out-Null
             Write-Output "$name_vm is started and ready to use"
