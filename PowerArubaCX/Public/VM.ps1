@@ -152,3 +152,80 @@ function Deploy-ArubaCXVm {
     End {
     }
 }
+
+function Set-ArubaCXVMFirtBootPassword {
+
+    <#
+        .SYNOPSIS
+        Configure Password
+
+        .DESCRIPTION
+        Configure initial Password for Aruba CX OVA
+
+        .EXAMPLE
+        Set-ArubaCXVMFirtBootPassword -vmname ArubaCX -mdp toulouse
+
+        Configure password (using console) for the first connection
+
+        .EXAMPLE
+        $cxConfParams = @{
+            vmname                  = "ArubaCX"
+            new_password            = "MyNewPassword"
+            write_memory            = $true
+            exit                    = $true
+        }
+        PS>Set-ArubaCXVMFirtBootPassword @cxConfParams
+
+        Configure password (using console) for the first connection, save configuration and exit
+    #>
+
+    Param(
+        [Parameter (Mandatory = $true)]
+        [string]$vmname,
+        [Parameter (Mandatory = $true)]
+        [string]$new_password,
+        [Parameter (Mandatory = $false)]
+        [switch]$write_memory,
+        [Parameter (Mandatory = $false)]
+        [switch]$exit
+    )
+
+    Begin {
+    }
+
+    Process {
+        if (-not (Get-Command -name Set-VMKeystrokes -ErrorAction SilentlyContinue)) {
+            Throw "You need to install/import Set-VMKeystrokes script (Install-Script -Name VMKeystrokes)"
+        }
+        #Connection
+        Set-VMKeystrokes -VMName $vmname -StringInput admin -ReturnCarriage $true
+        Start-Sleep 1
+        Set-VMKeystrokes -VMName $vmname -SpecialKeyInput "KeyEnter"
+        Start-Sleep 10
+
+        #Change Password (First Connection)
+        Set-VMKeystrokes -VMName $vmname -StringInput $new_password -ReturnCarriage $true
+        Start-Sleep 1
+        Set-VMKeystrokes -VMName $vmname -StringInput $new_password -ReturnCarriage $true
+        Start-Sleep 1
+
+        #Save configuration
+        if ( $PsBoundParameters.ContainsKey('write_memory') ) {
+            if ( $write_memory ) {
+                Set-VMKeystrokes -VMName $vmname -StringInput "write memory" -ReturnCarriage $true
+                Start-Sleep 2
+            }
+        }
+
+        #Exit ?
+        if ( $PsBoundParameters.ContainsKey('exit') ) {
+            if ( $exit ) {
+                Set-VMKeystrokes -VMName $vmname -StringInput "exit" -ReturnCarriage $true
+                Start-Sleep 1
+            }
+        }
+    }
+
+    End {
+    }
+}
