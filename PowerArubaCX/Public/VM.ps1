@@ -229,3 +229,111 @@ function Set-ArubaCXVMFirtBootPassword {
     End {
     }
 }
+
+function Set-ArubaCXVMMgmtOobm {
+
+    <#
+        .SYNOPSIS
+        Configure MGMT Interface
+
+        .DESCRIPTION
+        Configure IP Address on OOBM Interface
+
+        .EXAMPLE
+        Set-VMArubaCXMgmtOob -vmname ArubaCX -mgmt_ip 192.0.2.1 -mgmt_mask 24
+
+        Configure IP Address 192.0.2.1(/24) to mgmt interface of Aruba CX OVA
+
+        .EXAMPLE
+        $cxConfMgmtParams = @{
+            vmname                  = "ArubaCX"
+            password                = "MyPassword"
+            mgmt_ip                 = "192.0.2.1"
+            mgmt_mask               = "24"
+            mgmt_gateway            = "192.0.2.254"
+            write_memory            = $true
+            exit                    = $true
+        }
+        Set-ArubaCXVMMgmtOobm @cxConfMgmtParams
+
+        Configure IP Address 192.0.2.1(/24)  with gateway to mgmt interface of Aruba CX OVA
+        Also reconnect to the switch and save the configuration and exit!
+    #>
+
+    Param(
+        [Parameter (Mandatory = $true)]
+        [string]$vmname,
+        [Parameter (Mandatory = $false)]
+        [string]$password,
+        [Parameter (Mandatory = $false)]
+        [switch]$write_memory,
+        [Parameter (Mandatory = $false)]
+        [switch]$exit,
+        [Parameter (Mandatory = $true)]
+        [ipaddress]$mgmt_ip,
+        [Parameter (Mandatory = $true)]
+        [ValidateRange(0, 32)]
+        [int]$mgmt_mask,
+        [Parameter (Mandatory = $false)]
+        [ipaddress]$mgmt_gateway
+    )
+
+    Begin {
+    }
+
+    Process {
+
+        if (-not (Get-Command -name Set-VMKeystrokes -ErrorAction SilentlyContinue)) {
+            Throw "You need to install/import Set-VMKeystrokes script (Install-Script -Name VMKeystrokes)"
+        }
+
+        #Connection ?
+        if ( $PsBoundParameters.ContainsKey('password') ) {
+
+            Set-VMKeystrokes -VMName $vmname -StringInput admin -ReturnCarriage $true
+            Start-Sleep 1
+            Set-VMKeystrokes -VMName $vmname -StringInput $password -ReturnCarriage $true
+            Start-Sleep 5
+        }
+
+        Set-VMKeystrokes -VMName $vmname -StringInput "conf t" -ReturnCarriage $true
+        Start-Sleep 1
+
+        #Configuration OOBM (mgmt) interface
+        Set-VMKeystrokes -VMName $vmname -StringInput "interface mgmt" -ReturnCarriage $true
+        Start-Sleep 1
+        Set-VMKeystrokes -VMName $vmname -StringInput "no shutdown" -ReturnCarriage $true
+        Start-Sleep 1
+        Set-VMKeystrokes -VMName $vmname -StringInput "ip static $mgmt_ip/$mgmt_mask" -ReturnCarriage $true
+        Start-Sleep 1
+        if ( $PsBoundParameters.ContainsKey('mgmt_gateway') ) {
+            Set-VMKeystrokes -VMName $vmname -StringInput "default-gateway $mgmt_gateway" -ReturnCarriage $true
+        }
+        Start-Sleep 1
+        #Exit Configure interface mgmt context
+        Set-VMKeystrokes -VMName $vmname -StringInput "exit" -ReturnCarriage $true
+        Start-Sleep 1
+        #Exit Configure terminal (conf t mode)
+        Set-VMKeystrokes -VMName $vmname -StringInput "exit" -ReturnCarriage $true
+        Start-Sleep 1
+
+        #Save configuration
+        if ( $PsBoundParameters.ContainsKey('write_memory') ) {
+            if ( $write_memory ) {
+                Set-VMKeystrokes -VMName $vmname -StringInput "write memory" -ReturnCarriage $true
+                Start-Sleep 2
+            }
+        }
+
+        #Exit ?
+        if ( $PsBoundParameters.ContainsKey('exit') ) {
+            if ( $exit ) {
+                Set-VMKeystrokes -VMName $vmname -StringInput "exit" -ReturnCarriage $true
+                Start-Sleep 1
+            }
+        }
+    }
+
+    End {
+    }
+}
