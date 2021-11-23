@@ -117,3 +117,35 @@ function Confirm-ArubaCXVrfs {
     }
     $true
 }
+
+function Confirm-ArubaCXTacacsServer {
+
+    Param (
+        [Parameter (Mandatory = $true)]
+        [object]$argument
+    )
+    #Check if it looks like a tacacs server element
+
+    if ( -not ( $argument | get-member -name auth_type -Membertype Properties)) {
+        throw "Element specified does not contain an auth_type property."
+    }
+    if ( -not ( $argument | get-member -name default_group_priority -Membertype Properties)) {
+        throw "Element specified does not contain a default_group_priority property."
+    }
+    if ( -not ( $argument | get-member -name group -Membertype Properties)) {
+        throw "Element specified does not contain a group property."
+    }
+    if ( -not ( $argument | get-member -name passkey -Membertype Properties)) {
+        throw "Element specified does not contain a passkey property."
+    }
+    if ( -not ( $argument | get-member -name timeout -Membertype Properties)) {
+        throw "Element specified does not contain a timeout property."
+    }
+    if ( -not ( $argument | get-member -name tracking_enable -Membertype Properties)) {
+        throw "Element specified does not contain a tracking_enable property."
+    }
+    if ( -not ( $argument | get-member -name user_group_priority -Membertype Properties)) {
+        throw "Element specified does not contain a user_group_priority property."
+    }
+    $true
+}
