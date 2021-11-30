@@ -18,7 +18,7 @@ Describe "Get Tacacs Server" {
 
     It "Get ALL Tacacs Server" {
         $tacacs = Get-ArubaCXTacacsServer
-        $tacacs.count | Should -Not -Be $NULL
+        @($tacacs).count | Should -Not -Be $NULL
     }
 
     It "Get Tacacs Server ($pester_tacacs_address)" {
@@ -37,25 +37,25 @@ Describe "Get Tacacs Server" {
 
         It "Get Tacacs Server with selector equal configuration" {
             {
-                Get-ArubaCXTacacsServer -selector configuration
+                Get-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port -selector configuration
             } | Should Not Throw
         }
 
         It "Get Tacacs Server with selector equal statistics" {
             {
-                Get-ArubaCXTacacsServer -selector statistics
+                Get-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port -selector statistics
             } | Should Not Throw
         }
 
         It "Get Tacacs Server with selector equal status" {
             {
-                Get-ArubaCXTacacsServer -selector status
+                Get-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port -selector status
             } | Should Not Throw
         }
 
         It "Get Tacacs Server with selector equal writable" {
             {
-                Get-ArubaCXTacacsServer -selector writable
+                Get-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port -selector writable
             } | Should Not Throw
         }
     }
@@ -93,16 +93,15 @@ Describe "Get Tacacs Server" {
             $tacacs = Get-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port -attribute auth_type
             @($tacacs).count | Should -be 1
             $tacacs.address | Should -BeNullOrEmpty
-            $tacacs.port | Should -Not -BeNullOrEmpty
+            $tacacs.auth_type | Should -Not -BeNullOrEmpty
         }
 
         It "Get Tacacs Server with two attributes (auth_type, timeout)" {
             $tacacs = Get-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port -attribute auth_type,timeout
             @($tacacs).count | Should -be 1
             $tacacs.address | Should -BeNullOrEmpty
-            $tacacs.port | Should -Not -BeNullOrEmpty
             $tacacs.auth_type | Should -Be "pap"
-            $tacacs.timeour | Should -Be 15
+            $tacacs.timeout | Should -Be 15
         }
 
     }
@@ -112,7 +111,7 @@ Describe "Get Tacacs Server" {
             $tacacs = Get-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port
             @($tacacs).count | Should -be 1
             $tacacs.address | Should -Be $pester_tacacs_address
-            $tacacs.port | Should -Be $pester_tacacs_port
+            $tacacs.tcp_port | Should -Be $pester_tacacs_port
         }
     }
 
@@ -131,8 +130,8 @@ Describe "Add Tacacs Server" {
         Add-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port -group tacacs -default_group_priority 1
         $tacacs = Get-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port
         $tacacs.address | Should -Be $pester_tacacs_address
-        $tacacs.port | Should -Be $pester_tacacs_port
-        $tacacs.group.tacacs | Should -Be "/rest/v10.04/system/aaa_server_groups/tacacs"
+        $tacacs.tcp_port | Should -Be $pester_tacacs_port
+        $tacacs.group.tacacs | Should -Be "@{group_name=tacacs; group_type=tacacs; origin=built-in}"
         $tacacs.default_group_priority | Should -Be 1
         $tacacs.timeout | Should -Be $null
         $tacacs.passkey | Should -Be $null
@@ -140,11 +139,11 @@ Describe "Add Tacacs Server" {
     }
 
     It "Add Tacacs Server $pester_tacacs_address (with only an address and a port, a group and a default priority for the group, and a timeout)" {
-        Add-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port -group tacacs -default_group_priority -timeout 10
+        Add-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port -group tacacs -default_group_priority 1 -timeout 10
         $tacacs = Get-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port
         $tacacs.address | Should -Be $pester_tacacs_address
-        $tacacs.port | Should -Be $pester_tacacs_port
-        $tacacs.group.tacacs | Should -Be "/rest/v10.04/system/aaa_server_groups/tacacs"
+        $tacacs.tcp_port | Should -Be $pester_tacacs_port
+        $tacacs.group.tacacs | Should -Be "@{group_name=tacacs; group_type=tacacs; origin=built-in}"
         $tacacs.default_group_priority | Should -Be 1
         $tacacs.timeout | Should -Be 10
         $tacacs.passkey | Should -Be $null
@@ -155,8 +154,8 @@ Describe "Add Tacacs Server" {
         Add-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port -group tacacs -default_group_priority 1 -timeout 10 -passkey PowerArubaCX -tracking_enable
         $tacacs = Get-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port
         $tacacs.address | Should -Be $pester_tacacs_address
-        $tacacs.port | Should -Be $pester_tacacs_port
-        $tacacs.group.tacacs | Should -Be "/rest/v10.04/system/aaa_server_groups/tacacs"
+        $tacacs.tcp_port | Should -Be $pester_tacacs_port
+        $tacacs.group.tacacs | Should -Be "@{group_name=tacacs; group_type=tacacs; origin=built-in}"
         $tacacs.default_group_priority | Should -Be 1
         $tacacs.timeout | Should -Be 10
         $tacacs.passkey | Should -Not -BeNullOrEmpty
