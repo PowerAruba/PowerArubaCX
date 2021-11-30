@@ -5,29 +5,29 @@
 #
 . ../common.ps1
 
-Describe "Get Tacacs Server" {
+Describe "Get TACACS Server" {
     BeforeALL {
         Add-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port -group tacacs -default_group_priority 1 -auth_type pap -timeout 15
     }
 
-    It "Get Tacacs Server Does not throw an error" {
+    It "Get TACACS Server Does not throw an error" {
         {
             Get-ArubaCXTacacsServer
-        } | Should Not Throw
+        } | Should -Not -Throw
     }
 
-    It "Get ALL Tacacs Server" {
+    It "Get ALL TACACS Server" {
         $tacacs = Get-ArubaCXTacacsServer
         @($tacacs).count | Should -Not -Be $NULL
     }
 
-    It "Get Tacacs Server ($pester_tacacs_address)" {
+    It "Get TACACS Server ($pester_tacacs_address)" {
         $tacacs = Get-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port
         $tacacs.address | Should -Be $pester_tacacs_address
         $tacacs.tcp_port | Should -Be $pester_tacacs_port
     }
 
-    It "Get Tacacs Server ($pester_tacacs_address) and confirm (via Confirm-ArubaCXVlans)" {
+    It "Get TACACS Server ($pester_tacacs_address) and confirm (via Confirm-ArubaCXTacacsServer)" {
         $tacacs = Get-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port
         Confirm-ArubaCXTacacsServer ($tacacs) | Should -Be $true
     }
@@ -35,68 +35,68 @@ Describe "Get Tacacs Server" {
     #Get with attribute, depth...
     Context "Selector" {
 
-        It "Get Tacacs Server with selector equal configuration" {
+        It "Get TACACS Server with selector equal configuration" {
             {
                 Get-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port -selector configuration
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
-        It "Get Tacacs Server with selector equal statistics" {
+        It "Get TACACS Server with selector equal statistics" {
             {
                 Get-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port -selector statistics
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
-        It "Get Tacacs Server with selector equal status" {
+        It "Get TACACS Server with selector equal status" {
             {
                 Get-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port -selector status
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
-        It "Get Tacacs Server with selector equal writable" {
+        It "Get TACACS Server with selector equal writable" {
             {
                 Get-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port -selector writable
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
     }
 
     Context "Depth" {
 
-        It "Get Tacacs Server with depth equal 1" {
+        It "Get TACACS Server with depth equal 1" {
             {
                 Get-ArubaCXTacacsServer -depth 1
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
-        It "Get Tacacs Server with depth equal 2" {
+        It "Get TACACS Server with depth equal 2" {
             {
                 Get-ArubaCXTacacsServer -depth 2
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
-        It "Get Tacacs Server with depth equal 3" {
+        It "Get TACACS Server with depth equal 3" {
             {
                 Get-ArubaCXTacacsServer -depth 3
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
-        It "Get Tacacs Server with depth equal 4" {
+        It "Get TACACS Server with depth equal 4" {
             {
                 Get-ArubaCXTacacsServer -depth 4
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
     }
 
     Context "Attribute" {
 
-        It "Get Tacacs Server with one attribute (auth_type)" {
+        It "Get TACACS Server with one attribute (auth_type)" {
             $tacacs = Get-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port -attribute auth_type
             @($tacacs).count | Should -be 1
             $tacacs.address | Should -BeNullOrEmpty
             $tacacs.auth_type | Should -Not -BeNullOrEmpty
         }
 
-        It "Get Tacacs Server with two attributes (auth_type, timeout)" {
+        It "Get TACACS Server with two attributes (auth_type, timeout)" {
             $tacacs = Get-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port -attribute auth_type,timeout
             @($tacacs).count | Should -be 1
             $tacacs.address | Should -BeNullOrEmpty
@@ -107,7 +107,7 @@ Describe "Get Tacacs Server" {
     }
 
     Context "Search" {
-        It "Search Tacacs Server by address ($pester_tacacs_address)" {
+        It "Search TACACS Server by address ($pester_tacacs_address)" {
             $tacacs = Get-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port
             @($tacacs).count | Should -be 1
             $tacacs.address | Should -Be $pester_tacacs_address
@@ -120,13 +120,13 @@ Describe "Get Tacacs Server" {
     }
 }
 
-Describe "Add Tacacs Server" {
+Describe "Add TACACS Server" {
 
     AfterEach {
         Get-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port | Remove-ArubaCXTacacsServer -confirm:$false -ErrorAction SilentlyContinue
     }
 
-    It "Add Tacacs Server $pester_tacacs_address (with only an address and a port, a group and a default priority for the group)" {
+    It "Add TACACS Server $pester_tacacs_address (with only an address and a port, a group and a default priority for the group)" {
         Add-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port -group tacacs -default_group_priority 1
         $tacacs = Get-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port
         $tacacs.address | Should -Be $pester_tacacs_address
@@ -138,7 +138,7 @@ Describe "Add Tacacs Server" {
         $tacacs.tracking_enable | Should -Be $false
     }
 
-    It "Add Tacacs Server $pester_tacacs_address (with only an address and a port, a group and a default priority for the group, and a timeout)" {
+    It "Add TACACS Server $pester_tacacs_address (with only an address and a port, a group and a default priority for the group, and a timeout)" {
         Add-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port -group tacacs -default_group_priority 1 -timeout 10
         $tacacs = Get-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port
         $tacacs.address | Should -Be $pester_tacacs_address
@@ -150,7 +150,7 @@ Describe "Add Tacacs Server" {
         $tacacs.tracking_enable | Should -Be $false
     }
 
-    It "Add Tacacs Server $pester_tacacs_address (with only an address and a port, a group and a default priority for the group, a timeout, a passkey and tracking_enable)" {
+    It "Add TACACS Server $pester_tacacs_address (with only an address and a port, a group and a default priority for the group, a timeout, a passkey and tracking_enable)" {
         Add-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port -group tacacs -default_group_priority 1 -timeout 10 -passkey PowerArubaCX -tracking_enable
         $tacacs = Get-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port
         $tacacs.address | Should -Be $pester_tacacs_address
@@ -163,30 +163,30 @@ Describe "Add Tacacs Server" {
     }
 }
 
-Describe "Configure Tacacs Server" {
+Describe "Configure TACACS Server" {
     BeforeAll {
         Add-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port -group tacacs -default_group_priority 1
     }
 
-    It "Change Tacacs Server default_group_priority" {
+    It "Change TACACS Server default_group_priority" {
         Get-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port | Set-ArubaCXTacacsServer -default_group_priority 10
         $tacacs = Get-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port
         $tacacs.default_group_priority | Should -Be 10
     }
 
-    It "Change Tacacs Server timeout" {
+    It "Change TACACS Server timeout" {
         Get-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port | Set-ArubaCXTacacsServer -timeout 10
         $tacacs = Get-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port
         $tacacs.timeout | Should -Be 10
     }
 
-    It "Change Tacacs Server tracking_enable (enable)" {
+    It "Change TACACS Server tracking_enable (enable)" {
         Get-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port | Set-ArubaCXTacacsServer -tracking_enable:$true
         $tacacs = Get-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port
         $tacacs.tracking_enable | Should -Be $true
     }
 
-    It "Change Tacacs Server tracking_enable (disable)" {
+    It "Change TACACS Server tracking_enable (disable)" {
         Get-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port | Set-ArubaCXTacacsServer -tracking_enable:$false
         $tacacs = Get-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port
         $tacacs.tracking_enable | Should -Be $false
@@ -197,19 +197,19 @@ Describe "Configure Tacacs Server" {
     }
 }
 
-Describe "Remove Tacacs Server" {
+Describe "Remove TACACS Server" {
 
     BeforeEach {
         Add-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port -group tacacs -default_group_priority 1
     }
 
-    It "Remove Tacacs Server $pester_tacacs_address by address and port" {
+    It "Remove TACACS Server $pester_tacacs_address by address and port" {
         Remove-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port -confirm:$false
         $tacacs = Get-ArubaCXTacacsServer
         $tacacs.$pester_tacacs_address | Should -Be $NULL
     }
 
-    It "Remove Tacacs Server $pester_tacacs_address by pipeline" {
+    It "Remove TACACS Server $pester_tacacs_address by pipeline" {
         $tacacs = Get-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port
         $tacacs | Remove-ArubaCXTacacsServer -confirm:$false
         $tacacs = Get-ArubaCXTacacsServer
