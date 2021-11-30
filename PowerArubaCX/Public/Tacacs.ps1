@@ -135,7 +135,7 @@ function Get-ArubaCXTacacsServer {
         [Parameter(Mandatory = $false)]
         [ValidateRange(1, 4)]
         [Int]$depth,
-        [Parameter(Mandatory = $false)]
+        [Parameter(Mandatory = $false, ParameterSetName = "address")]
         [ValidateSet("configuration", "status", "statistics", "writable")]
         [String]$selector,
         [Parameter(Mandatory = $false)]
@@ -198,17 +198,22 @@ function Set-ArubaCXTacacsServer {
         Configure Tacacs Server (Timeout, port...)
 
         .EXAMPLE
-        Set-ArubaCXTacacsServer -timeout 15 -address 192.2.0.1  -tcp_port
+        Set-ArubaCXTacacsServer -timeout 15 -address 192.2.0.1 -port 49
 
         Configure timeout on tacacs server
 
         .EXAMPLE
-        Set-ArubaCXTacacsServer -group tacacs -address 192.2.0.1  -tcp_port
+        Set-ArubaCXTacacsServer -group tacacs -address 192.2.0.1 -port 49
 
         Configure group on tacacs server
 
         .EXAMPLE
-        Set-ArubaCXTacacsServer -passkey ExampleRadius -address 192.2.0.1  -tcp_port
+        Set-ArubaCXTacacsServer -passkey ExampleTacacs -address 192.2.0.1 -port 49
+
+        Configure passkey on tacacs server
+
+        .EXAMPLE
+        Get-ArubaCXTacacsServer -address 192.2.0.1 -port 49 | Set-ArubaCXTacacsServer -default_group_priority 10 -group PowerArubaCX -passkey ExampleTacacs -timeout 15 -tacking_enable -user_group_priority 1
 
         Configure passkey on tacacs server
     #>
@@ -228,15 +233,15 @@ function Set-ArubaCXTacacsServer {
         [ValidateRange(1, 9223372036854775807)]
         [int]$default_group_priority,
         [Parameter (Mandatory = $false)]
-        [string]$group,
+        [string]$group = "tacacs",
         [Parameter (Mandatory = $false)]
         [string]$passkey,
         [Parameter (Mandatory = $false)]
-        [int]$timeout,
+        [int]$timeout = 10,
         [Parameter (Mandatory = $false)]
         [switch]$tracking_enable,
         [Parameter (Mandatory = $false)]
-        [int]$user_group_priority,
+        [int]$user_group_priority = 1,
         [Parameter (Mandatory = $false)]
         [string]$vrf = "default",
         [Parameter (Mandatory = $False)]
@@ -250,6 +255,8 @@ function Set-ArubaCXTacacsServer {
 
     Process {
 
+        $_tacacs = @{ }
+
         if ($tacacs) {
             $address = $tacacs.address
             $port = $tacacs.tcp_port
@@ -257,43 +264,37 @@ function Set-ArubaCXTacacsServer {
 
         $uri = "system/vrfs/${vrf}/tacacs_servers/${address},${port}"
 
-        if ($tacacs) {
-            $_tacacs = $tacacs
-            $_tacacs.PSObject.Properties.Remove('address')
-            $_tacacs.PSObject.Properties.Remove('tcp_port')
-        }
-        else {
-            $_tacacs = Get-ArubaCXTacacsServer -address $address -port $port -selector writable -connection $connection
-        }
+        $_tacacs = Get-ArubaCXTacacsServer -address $address -port $port -selector writable
 
         if ( $PsBoundParameters.ContainsKey('auth_type') ) {
-            $_tacacs.auth_type = $auth_type
+            $_tacacs | add-member -name "auth_type" -membertype NoteProperty -Value $auth_type -Force
         }
         if ( $PsBoundParameters.ContainsKey('default_group_priority') ) {
-            $_tacacs.default_group_priority = $default_group_priority
+            $_tacacs | add-member -name "default_group_priority" -membertype NoteProperty -Value $default_group_priority -Force
         }
-        if ( $PsBoundParameters.ContainsKey('group') ) {
-            $_group = @()
 
-            $_group += "/rest/" + $($connection.version) + "/system/aaa_server_groups/" + $group
+        $_group = @()
 
-            $_tacacs.group = $_group
-        }
+        $_group += "/rest/" + $($connection.version) + "/system/aaa_server_groups/" + $group
+
+        $_tacacs | add-member -name "group" -membertype NoteProperty -Value $_group -Force
+
         if ( $PsBoundParameters.ContainsKey('passkey') ) {
-            $_tacacs.passkey = $passkey
+            $_tacacs | add-member -name "passkey" -membertype NoteProperty -Value $passkey -Force
         }
-        if ( $PsBoundParameters.ContainsKey('timeout') ) {
-            $_tacacs.timeout = $timeout
-        }
+
+        $_tacacs | add-member -name "timeout" -membertype NoteProperty -Value $timeout -Force
+
         if ( $PsBoundParameters.ContainsKey('tracking_enable') ) {
-            $_tacacs.tracking_enable = $true
+            if ($tracking_enable) {
+                $_tacacs | add-member -name "tracking_enable" -membertype NoteProperty -Value $true -Force
+            }
+            else {
+                $_tacacs | add-member -name "tracking_enable" -membertype NoteProperty -Value $false -Force
+            }
         }
-        else {
-            $_tacacs.tracking_enable = $false
-        }
-        if ( $PsBoundParameters.ContainsKey('user_group_priority') ) {
-            $_tacacs.user_group_priority = $user_group_priority
-        }
+
+        $_tacacs | add-member -name "user_group_priority" -membertype NoteProperty -Value $user_group_priority -Force
 
         if ($PSCmdlet.ShouldProcess($_tacacs.address, 'Configure Tacacs Server')) {
             Invoke-ArubaCXRestMethod -method "PUT" -body $_tacacs -uri $uri -connection $connection
