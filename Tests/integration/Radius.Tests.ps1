@@ -172,7 +172,8 @@ Describe "Add RADIUS Server" {
     }
 
     It "Add RADIUS Server $pester_radius_address (with only an address and a port, a group and a default priority for the group, a timeout, a passkey, tracking_enable, and clearpass username)" {
-        Add-ArubaCXRadiusServer -address $pester_radius_address -port $pester_radius_port -group radius -default_group_priority 1 -timeout 10 -passkey PowerArubaCX -tracking_enable -cppm_user_id PowerArubaCX -cppm_password Example
+        $password = ConvertTo-SecureString Example -AsPlainText -Force
+        Add-ArubaCXRadiusServer -address $pester_radius_address -port $pester_radius_port -group radius -default_group_priority 1 -timeout 10 -passkey PowerArubaCX -tracking_enable -cppm_user_id PowerArubaCX -cppm_password $password
         $radius = Get-ArubaCXRadiusServer -address $pester_radius_address -port $pester_radius_port -depth 2
         $radius.address | Should -Be $pester_radius_address
         $radius.port | Should -Be $pester_radius_port
@@ -222,7 +223,8 @@ Describe "Configure RADIUS Server" {
     }
 
     It "Change RADIUS ClearPass account" {
-        Get-ArubaCXRadiusServer -address $pester_radius_address -port $pester_radius_port | Set-ArubaCXRadiusServer -cppm_user_id PowerArubaCX -cppm_password Example
+        $password = ConvertTo-SecureString Example -AsPlainText -Force
+        Get-ArubaCXRadiusServer -address $pester_radius_address -port $pester_radius_port | Set-ArubaCXRadiusServer -cppm_user_id PowerArubaCX -cppm_password $password
         $radius = Get-ArubaCXRadiusServer -address $pester_radius_address -port $pester_radius_port
         $radius.clearpass.user_id | Should -Be "PowerArubaCX"
         $radius.clearpass.password | Should -Not -BeNullOrEmpty

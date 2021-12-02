@@ -23,6 +23,7 @@ function Add-ArubaCXRadiusServer {
 
         Add RADIUS Server with ip 192.2.0.1 and port 1812 in RADIUS group PowerArubaCX with timeout set to 10 and passkey as ExampleRADIUS
     #>
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingUsernameAndPasswordParams", "")]
     Param(
         [Parameter (Mandatory = $true)]
         [string]$address,
@@ -45,7 +46,7 @@ function Add-ArubaCXRadiusServer {
         [Parameter (Mandatory = $false)]
         [string]$cppm_user_id,
         [Parameter (Mandatory = $false)]
-        [SecureString]$cppm_password,
+        [String]$cppm_password,
         [Parameter (Mandatory = $false)]
         [int]$timeout,
         [Parameter (Mandatory = $false)]
@@ -247,6 +248,7 @@ function Set-ArubaCXRadiusServer {
         Configure passkey, timeout, tacking enable and user group priority on RADIUS Server
     #>
     [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'medium')]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingUsernameAndPasswordParams", "")]
     Param(
         [Parameter (Mandatory = $true, ValueFromPipeline = $true, Position = 1, ParameterSetName = "ID")]
         [ValidateScript( { Confirm-ArubaCXRadiusServer $_ })]
@@ -271,7 +273,7 @@ function Set-ArubaCXRadiusServer {
         [Parameter (Mandatory = $false)]
         [string]$cppm_user_id,
         [Parameter (Mandatory = $false)]
-        [SecureString]$cppm_password,
+        [String]$cppm_password,
         [Parameter (Mandatory = $false)]
         [int]$timeout = 10,
         [Parameter (Mandatory = $false)]
