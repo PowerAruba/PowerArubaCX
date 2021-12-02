@@ -26,7 +26,7 @@ function Add-ArubaCXTacacsServer {
     Param(
         [Parameter (Mandatory = $true)]
         [string]$address,
-        [Parameter (Mandatory = $true)]
+        [Parameter (Mandatory = $false)]
         [ValidateRange(1, 65535)]
         [int]$port = 49,
         [Parameter (Mandatory = $false)]
@@ -336,7 +336,7 @@ function Remove-ArubaCXTacacsServer {
     Param(
         [Parameter (Mandatory = $true, ParameterSetName = "address")]
         [string]$address,
-        [Parameter (Mandatory = $true, ParameterSetName = "address")]
+        [Parameter (Mandatory = $false, ParameterSetName = "address")]
         [int]$port = 49,
         [Parameter (Mandatory = $true, ValueFromPipeline = $true, Position = 1, ParameterSetName = "ID")]
         [ValidateScript( { Confirm-ArubaCXTacacsServer $_ })]
