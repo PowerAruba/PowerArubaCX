@@ -14,6 +14,7 @@ $script:pester_tacacs_address = "192.2.0.1"
 $script:pester_tacacs_port = "49"
 $script:pester_radius_address = "192.2.0.1"
 $script:pester_radius_port = "1812"
+$script:pester_radius_group = "PowerArubaCX"
 
 . ../credential.ps1
 #TODO: Add check if no ipaddress/login/password info...
