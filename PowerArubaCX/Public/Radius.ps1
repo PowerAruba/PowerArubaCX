@@ -1,4 +1,4 @@
-#
+﻿#
 # Copyright 2021, Cédric Moreau <moreaucedric0 at gmail dot com>
 #
 # SPDX-License-Identifier: Apache-2.0
@@ -45,7 +45,7 @@ function Add-ArubaCXRadiusServer {
         [Parameter (Mandatory = $false)]
         [string]$cppm_user_id,
         [Parameter (Mandatory = $false)]
-        [string]$cppm_password,
+        [SecureString]$cppm_password,
         [Parameter (Mandatory = $false)]
         [int]$timeout,
         [Parameter (Mandatory = $false)]
@@ -75,7 +75,7 @@ function Add-ArubaCXRadiusServer {
         $_radius | add-member -name "port" -membertype NoteProperty -Value $port
 
         $_radius | add-member -name "vrf" -membertype NoteProperty -Value ("/rest/" + $($connection.version) + "/system/vrfs/" + $vrf)
-    
+
         $_radius | add-member -name "default_group_priority" -membertype NoteProperty -Value $default_group_priority
 
         $_group = @()
@@ -271,7 +271,7 @@ function Set-ArubaCXRadiusServer {
         [Parameter (Mandatory = $false)]
         [string]$cppm_user_id,
         [Parameter (Mandatory = $false)]
-        [string]$cppm_password,
+        [SecureString]$cppm_password,
         [Parameter (Mandatory = $false)]
         [int]$timeout = 10,
         [Parameter (Mandatory = $false)]
@@ -424,4 +424,4 @@ function Remove-ArubaCXRadiusServer {
 
     End {
     }
-} 
+}
