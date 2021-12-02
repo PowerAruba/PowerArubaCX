@@ -6,7 +6,7 @@
 . ../common.ps1
 
 Describe "Get TACACS Server" {
-    BeforeALL {
+    BeforeAll {
         Add-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port -group tacacs -default_group_priority 1 -auth_type pap -timeout 15
     }
 
@@ -91,14 +91,14 @@ Describe "Get TACACS Server" {
 
         It "Get TACACS Server with one attribute (auth_type)" {
             $tacacs = Get-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port -attribute auth_type
-            @($tacacs).count | Should -be 1
+            @($tacacs).count | Should -Be 1
             $tacacs.address | Should -BeNullOrEmpty
             $tacacs.auth_type | Should -Not -BeNullOrEmpty
         }
 
         It "Get TACACS Server with two attributes (auth_type, timeout)" {
             $tacacs = Get-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port -attribute auth_type,timeout
-            @($tacacs).count | Should -be 1
+            @($tacacs).count | Should -Be 1
             $tacacs.address | Should -BeNullOrEmpty
             $tacacs.auth_type | Should -Be "pap"
             $tacacs.timeout | Should -Be 15
@@ -109,7 +109,7 @@ Describe "Get TACACS Server" {
     Context "Search" {
         It "Search TACACS Server by address ($pester_tacacs_address)" {
             $tacacs = Get-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port
-            @($tacacs).count | Should -be 1
+            @($tacacs).count | Should -Be 1
             $tacacs.address | Should -Be $pester_tacacs_address
             $tacacs.tcp_port | Should -Be $pester_tacacs_port
         }
@@ -128,7 +128,7 @@ Describe "Add TACACS Server" {
 
     It "Add TACACS Server $pester_tacacs_address (with only an address and a port, a group and a default priority for the group)" {
         Add-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port -group tacacs -default_group_priority 1
-        $tacacs = Get-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port
+        $tacacs = Get-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port -depth 2
         $tacacs.address | Should -Be $pester_tacacs_address
         $tacacs.tcp_port | Should -Be $pester_tacacs_port
         $tacacs.group.tacacs | Should -Be "@{group_name=tacacs; group_type=tacacs; origin=built-in}"
@@ -140,7 +140,7 @@ Describe "Add TACACS Server" {
 
     It "Add TACACS Server $pester_tacacs_address (with only an address and a port, a group and a default priority for the group, and a timeout)" {
         Add-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port -group tacacs -default_group_priority 1 -timeout 10
-        $tacacs = Get-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port
+        $tacacs = Get-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port -depth 2
         $tacacs.address | Should -Be $pester_tacacs_address
         $tacacs.tcp_port | Should -Be $pester_tacacs_port
         $tacacs.group.tacacs | Should -Be "@{group_name=tacacs; group_type=tacacs; origin=built-in}"
@@ -152,7 +152,7 @@ Describe "Add TACACS Server" {
 
     It "Add TACACS Server $pester_tacacs_address (with only an address and a port, a group and a default priority for the group, a timeout, a passkey and tracking_enable)" {
         Add-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port -group tacacs -default_group_priority 1 -timeout 10 -passkey PowerArubaCX -tracking_enable
-        $tacacs = Get-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port
+        $tacacs = Get-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port -depth 2
         $tacacs.address | Should -Be $pester_tacacs_address
         $tacacs.tcp_port | Should -Be $pester_tacacs_port
         $tacacs.group.tacacs | Should -Be "@{group_name=tacacs; group_type=tacacs; origin=built-in}"

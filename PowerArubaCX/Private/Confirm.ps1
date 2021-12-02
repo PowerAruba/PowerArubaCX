@@ -145,7 +145,7 @@ function Confirm-ArubaCXTacacsServer {
         throw "Element specified does not contain a tracking_enable property."
     }
     if ( -not ( $argument | Get-Member -name user_group_priority -Membertype Properties)) {
-        throw "Element specified does not contain a user_group_priority property."
+        throw "Element specified does not contain an user_group_priority property."
     }
     $true
 }

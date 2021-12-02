@@ -32,11 +32,11 @@ function Add-ArubaCXTacacsServer {
         [Parameter (Mandatory = $false)]
         [ValidateSet('pap')]
         [string]$auth_type = "pap",
-        [Parameter (Mandatory = $true)]
+        [Parameter (Mandatory = $false)]
         [ValidateRange(1, 9223372036854775807)]
         [int64]$default_group_priority = 10,
-        [Parameter (Mandatory = $true)]
-        [string]$group,
+        [Parameter (Mandatory = $false)]
+        [string]$group = "tacacs",
         [Parameter (Mandatory = $false)]
         [string]$passkey,
         [Parameter (Mandatory = $false)]
@@ -133,7 +133,7 @@ function Get-ArubaCXTacacsServer {
     Param(
         [Parameter (Mandatory = $true, ParameterSetName = "address")]
         [ipaddress]$address,
-        [Parameter (Mandatory = $true, ParameterSetName = "address")]
+        [Parameter (Mandatory = $false)]
         [int]$port = 49,
         [Parameter (Mandatory = $false)]
         [string]$vrf = "default",
@@ -161,10 +161,6 @@ function Get-ArubaCXTacacsServer {
         $invokeParams = @{ }
         if ( $PsBoundParameters.ContainsKey('depth') ) {
             $invokeParams.add( 'depth', $depth )
-        }
-        else {
-            #by default set depth to 2 to show items
-            $invokeParams.add( 'depth', 2 )
         }
         if ( $PsBoundParameters.ContainsKey('selector') ) {
             $invokeParams.add( 'selector', $selector )
@@ -203,17 +199,17 @@ function Set-ArubaCXTacacsServer {
         Configure TACACS Server (Timeout, port...)
 
         .EXAMPLE
-        Set-ArubaCXTacacsServer -timeout 15 -address 192.2.0.1 -port 49
+        Get-ArubaCXTacacsServer -address 192.2.0.1 -port 49 | Set-ArubaCXTacacsServer -timeout 15
 
         Configure timeout on TACACS server
 
         .EXAMPLE
-        Set-ArubaCXTacacsServer -group tacacs -address 192.2.0.1 -port 49
+        Get-ArubaCXTacacsServer -address 192.2.0.1 -port 49 | Set-ArubaCXTacacsServer -group tacacs
 
         Configure group on TACACS server
 
         .EXAMPLE
-        Set-ArubaCXTacacsServer -passkey ExampleTacacs -address 192.2.0.1 -port 49
+        Get-ArubaCXTacacsServer -address 192.2.0.1 -port 49 | Set-ArubaCXTacacsServer -passkey ExampleTacacs
 
         Configure passkey on TACACS server
 
@@ -330,6 +326,7 @@ function Remove-ArubaCXTacacsServer {
         PS C:\>$ts | Remove-ArubaCXTacacsServer
 
         Remove TACACS server with address 192.0.2.1 and port 49
+
         .EXAMPLE
         Remove-ArubaCXTacacsServer -address 192.2.0.1 -confirm:$false -vrf default
         Remove TACACS server 192.0.2.1 on default vrf with no confirmation
@@ -366,7 +363,6 @@ function Remove-ArubaCXTacacsServer {
 
         if ($PSCmdlet.ShouldProcess("Tacacs Server (VRF: ${vrf})", "Remove ${address},${port}")) {
             Invoke-ArubaCXRestMethod -method "DELETE" -uri $uri -connection $connection
-            Write-Progress -activity "Remove Tacacs Server" -completed
         }
     }
 
