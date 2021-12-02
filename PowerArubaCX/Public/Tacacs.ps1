@@ -1,4 +1,4 @@
-#
+﻿#
 # Copyright 2021, Cédric Moreau <moreaucedric0 at gmail dot com>
 #
 # SPDX-License-Identifier: Apache-2.0
@@ -66,7 +66,7 @@ function Add-ArubaCXTacacsServer {
         $_tacacs | add-member -name "tcp_port" -membertype NoteProperty -Value $port
 
         $_tacacs | add-member -name "vrf" -membertype NoteProperty -Value ("/rest/" + $($connection.version) + "/system/vrfs/" + $vrf)
-    
+
         $_tacacs | add-member -name "default_group_priority" -membertype NoteProperty -Value $default_group_priority
 
         $_group = @()
@@ -368,4 +368,4 @@ function Remove-ArubaCXTacacsServer {
 
     End {
     }
-} 
+}

@@ -1,4 +1,4 @@
-#
+﻿#
 # Copyright 2020, Cédric Moreau <moreaucedric0 at gmail dot com>
 #
 # SPDX-License-Identifier: Apache-2.0
