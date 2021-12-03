@@ -4,24 +4,24 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-function Add-ArubaCXRadiusServerGroup {
+function Add-ArubaCXAAAServerGroup {
 
     <#
         .SYNOPSIS
-        Add Aruba CX RADIUS Server Group
+        Add Aruba CX AAA Server Group
 
         .DESCRIPTION
-        Add RADIUS Server Group (group_name, group_type)
+        Add AAA Server Group (group_name, group_type)
 
         .EXAMPLE
-        Add-ArubaCXRadiusServerGroup -group_name PowerArubaCX
+        Add-ArubaCXAAAServerGroup -group_name PowerArubaCX
 
-        Add RADIUS Server Group with name PowerArubaCX
+        Add AAA Server Group with name PowerArubaCX
 
         .EXAMPLE
-        Add-ArubaCXRadiusServerGroup -group_name PowerArubaCX -group_type radius
+        Add-ArubaCXAAAServerGroup -group_name PowerArubaCX -group_type radius
 
-        Add RADIUS Server Group with name PowerArubaCX and group type radius
+        Add AAA Server Group with name PowerArubaCX and group type radius
     #>
 
     Param(
@@ -51,7 +51,7 @@ function Add-ArubaCXRadiusServerGroup {
         $response = Invoke-ArubaCXRestMethod -uri $uri -method 'POST' -body $_radius_group -connection $connection
         $response
 
-        Get-ArubaCXRadiusServerGroup -group_name $group_name -connection $connection
+        Get-ArubaCXAAAServerGroup -group_name $group_name -connection $connection
 
     }
 
@@ -59,24 +59,24 @@ function Add-ArubaCXRadiusServerGroup {
     }
 }
 
-function Get-ArubaCXRadiusServerGroup {
+function Get-ArubaCXAAAServerGroup {
 
     <#
         .SYNOPSIS
-        Get list of RADIUS Server Group configured
+        Get list of AAA Server Group configured
 
         .DESCRIPTION
-        Get list of RADIUS Server Group configured (group_type, group_name ...)
+        Get list of AAA Server Group configured (group_type, group_name ...)
 
         .EXAMPLE
-        Get-ArubaCXRadiusServerGroup
+        Get-ArubaCXAAAServerGroup
 
-        Get list of RADIUS Server Group configured (group_type, group_name ...)
+        Get list of AAA Server Group configured (group_type, group_name ...)
 
         .EXAMPLE
-        Get-ArubaCXRadiusServerGroup -group_name RADIUS
+        Get-ArubaCXAAAServerGroup -group_name RADIUS
 
-        Get RADIUS Server Group with name RADIUS
+        Get AAA Server Group with name RADIUS
     #>
 
     Param(
@@ -134,24 +134,24 @@ function Get-ArubaCXRadiusServerGroup {
     }
 }
 
-function Set-ArubaCXRadiusServerGroup {
+function Set-ArubaCXAAAServerGroup {
 
     <#
         .SYNOPSIS
-        Configure RADIUS Server Group ArubaCX Switch
+        Configure AAA Server Group ArubaCX Switch
 
         .DESCRIPTION
-        Configure RADIUS Server Group (Group type)
+        Configure AAA Server Group (Group type)
 
         .EXAMPLE
-        Get-ArubaCXRadiusServerGroup -group_name PowerArubaCX | Set-ArubaCXRadiusServerGroup -group_type radius
+        Get-ArubaCXAAAServerGroup -group_name PowerArubaCX | Set-ArubaCXAAAServerGroup -group_type radius
 
-        Configure radius as group type on RADIUS Server Group
+        Configure radius as group type on AAA Server Group
     #>
     [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'medium')]
     Param(
         [Parameter (Mandatory = $true, ValueFromPipeline = $true, Position = 1, ParameterSetName = "ID")]
-        [ValidateScript( { Confirm-ArubaCXRadiusServerGroup $_ })]
+        [ValidateScript( { Confirm-ArubaCXAAAServerGroup $_ })]
         [psobject]$radius_group,
         [Parameter (Mandatory = $false, ParameterSetName = "Name")]
         [String]$group_name,
@@ -176,39 +176,39 @@ function Set-ArubaCXRadiusServerGroup {
 
         $uri = "system/aaa_server_groups/${group_name}"
 
-        $_radius_group = Get-ArubaCXRadiusServerGroup -group_name $group_name -selector writable
+        $_radius_group = Get-ArubaCXAAAServerGroup -group_name $group_name -selector writable
 
         $_radius_group.group_type = $group_type
 
-        if ($PSCmdlet.ShouldProcess($_radius_group.group_name, 'Configure RADIUS Server Group')) {
+        if ($PSCmdlet.ShouldProcess($_radius_group.group_name, 'Configure AAA Server Group')) {
             Invoke-ArubaCXRestMethod -method "PUT" -body $_radius_group -uri $uri -connection $connection
         }
 
-        Get-ArubaCXRadiusServerGroup -group_name $group_name -connection $connection
+        Get-ArubaCXAAAServerGroup -group_name $group_name -connection $connection
     }
 
     End {
     }
 }
 
-function Remove-ArubaCXRadiusServerGroup {
+function Remove-ArubaCXAAAServerGroup {
 
     <#
         .SYNOPSIS
-        Remove a RADIUS Server Group on Aruba CX Switch
+        Remove a AAA Server Group on Aruba CX Switch
 
         .DESCRIPTION
-        Remove a RADIUS Server Group on Aruba CX Switch
+        Remove a AAA Server Group on Aruba CX Switch
 
         .EXAMPLE
-        $rsg = Get-ArubaCXArubaCXRadiusServerGroup -group_name PowerArubaCX
-        PS C:\>$rsg | Remove-ArubaCXRadiusServerGroup
+        $rsg = Get-ArubaCXArubaCXAAAServerGroup -group_name PowerArubaCX
+        PS C:\>$rsg | Remove-ArubaCXAAAServerGroup
 
-        Remove RADIUS Server Group with name PowerArubaCX
+        Remove AAA Server Group with name PowerArubaCX
 
         .EXAMPLE
-        Remove-ArubaCXRadiusServerGroup -group_name PowerArubaCX -confirm:$false
-        Remove RADIUS Server Group PowerArubaCX with no confirmation
+        Remove-ArubaCXAAAServerGroup -group_name PowerArubaCX -confirm:$false
+        Remove AAA Server Group PowerArubaCX with no confirmation
     #>
 
     [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'high')]
@@ -216,7 +216,7 @@ function Remove-ArubaCXRadiusServerGroup {
         [Parameter (Mandatory = $true, ParameterSetName = "Name")]
         [string]$group_name,
         [Parameter (Mandatory = $true, ValueFromPipeline = $true, Position = 1, ParameterSetName = "ID")]
-        [ValidateScript( { Confirm-ArubaCXRadiusServerGroup $_ })]
+        [ValidateScript( { Confirm-ArubaCXAAAServerGroup $_ })]
         [psobject]$rsg,
         [Parameter (Mandatory = $False)]
         [ValidateNotNullOrEmpty()]
@@ -234,7 +234,7 @@ function Remove-ArubaCXRadiusServerGroup {
 
         $uri = "system/aaa_server_groups/${group_name}"
 
-        if ($PSCmdlet.ShouldProcess("RADIUS Server Group)", "Remove ${group_name}")) {
+        if ($PSCmdlet.ShouldProcess("AAA Server Group)", "Remove ${group_name}")) {
             Invoke-ArubaCXRestMethod -method "DELETE" -uri $uri -connection $connection
         }
     }

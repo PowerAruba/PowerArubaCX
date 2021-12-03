@@ -188,13 +188,13 @@ function Confirm-ArubaCXRadiusServer {
     $true
 }
 
-function Confirm-ArubaCXRadiusServerGroup {
+function Confirm-ArubaCXAAAServerGroup {
 
     Param (
         [Parameter (Mandatory = $true)]
         [object]$argument
     )
-    #Check if it looks like a RADIUS server group element
+    #Check if it looks like a AAA server group element
 
     if ( -not ( $argument | Get-Member -name group_type -Membertype Properties)) {
         throw "Element specified does not contain an auth_type property."
