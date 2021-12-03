@@ -43,6 +43,8 @@ function Add-ArubaCXInterfaces {
         [string]$vlan_id,
         [Parameter (Mandatory = $true, ParameterSetName = "lag")]
         [string]$lag_id,
+        [Parameter (Mandatory = $true, ParameterSetName = "loopback")]
+        [string]$loopback_id,
         [Parameter(Mandatory = $false)]
         [ValidateSet('up', 'down')]
         [string]$admin,
@@ -86,6 +88,9 @@ function Add-ArubaCXInterfaces {
             "lag" {
                 $name = "lag" + $lag_id
             }
+            "loopback" {
+                $name = "loopback" + $loopback_id
+            }
         }
 
         $_interface = New-Object -TypeName PSObject
@@ -110,6 +115,9 @@ function Add-ArubaCXInterfaces {
                     $_interface | Add-Member -name "user_config" -membertype NoteProperty -Value $user_config
                 }
                 "lag" {
+                    $_interface | Add-Member -name "admin" -membertype NoteProperty -Value $admin
+                }
+                "loopback" {
                     $_interface | Add-Member -name "admin" -membertype NoteProperty -Value $admin
                 }
             }
