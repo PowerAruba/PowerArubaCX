@@ -22,7 +22,7 @@ Describe "Get Vlan" {
 
     It "Get ALL Vlan" {
         $vlan = Get-ArubaCXVlans
-        $vlan.count | Should -Not -Be $NULL
+        @($vlan).count | Should -Not -Be $NULL
     }
 
     It "Get Vlan ($pester_vlan)" {

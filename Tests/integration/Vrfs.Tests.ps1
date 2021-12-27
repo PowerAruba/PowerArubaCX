@@ -22,7 +22,7 @@ Describe "Get Vrf" {
 
     It "Get ALL Vrf" {
         $vrf = Get-ArubaCXVrfs
-        $vrf.count | Should -Not -Be $NULL
+        @($vrf).count | Should -Not -Be $NULL
     }
 
     It "Get Vrf ($pester_vrf)" {

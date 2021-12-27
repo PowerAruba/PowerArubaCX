@@ -19,7 +19,7 @@ Describe "Get Interfaces" {
 
     It "Get ALL Interfaces" {
         $int = Get-ArubaCXInterfaces
-        $int.count | Should -Not -Be $NULL
+        @($int).count | Should -Not -Be $NULL
     }
 
     It "Get Interface ($pester_interface) and confirm (via Confirm-ArubaCXInterfaces)" {
@@ -276,9 +276,9 @@ Describe "Configure Vlan on Interface" {
         Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -vlan_mode native-tagged -vlan_tag $pester_vlan -vlan_trunks $pester_vlan
         $int = Get-ArubaCXInterfaces -interface $pester_interface
         $int.vlan_mode | Should -Be "native-tagged"
-        ($int.vlan_tag).count | Should -Be "1"
+        @($int.vlan_tag).count | Should -Be "1"
         $int.vlan_tag.$pester_vlan | Should -Be ("/rest/" + $($DefaultArubaCXConnection.version) + "/system/vlans/" + $pester_vlan)
-        ($int.vlan_trunks).count | Should -Be "1"
+        @($int.vlan_trunks).count | Should -Be "1"
         $int.vlan_trunks.$pester_vlan | Should -Be ("/rest/" + $($DefaultArubaCXConnection.version) + "/system/vlans/" + $pester_vlan)
     }
 
@@ -287,7 +287,7 @@ Describe "Configure Vlan on Interface" {
         Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -vlan_mode access -vlan_tag $pester_vlan2 -vlan_trunks $null
         $int = Get-ArubaCXInterfaces -interface $pester_interface
         $int.vlan_mode | Should -Be "access"
-        ($int.vlan_tag).count | Should -Be "1"
+        @($int.vlan_tag).count | Should -Be "1"
         $int.vlan_tag.$pester_vlan2 | Should -Be ("/rest/" + $($DefaultArubaCXConnection.version) + "/system/vlans/" + $pester_vlan2)
     }
 
