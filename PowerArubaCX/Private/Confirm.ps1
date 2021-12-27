@@ -6,6 +6,7 @@
 
 function Confirm-ArubaCXInterfaces {
 
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "")]
     Param (
         [Parameter (Mandatory = $true)]
         [object]$argument
@@ -62,6 +63,7 @@ function Confirm-ArubaCXSystem {
 
 function Confirm-ArubaCXVlans {
 
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "")]
     Param (
         [Parameter (Mandatory = $true)]
         [object]$argument
@@ -91,6 +93,7 @@ function Confirm-ArubaCXVlans {
 
 function Confirm-ArubaCXVrfs {
 
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "")]
     Param (
         [Parameter (Mandatory = $true)]
         [object]$argument
