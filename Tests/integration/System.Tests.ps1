@@ -65,14 +65,16 @@ Describe "Get System" {
         }
 
         #Bug with ArubaCX 10.04.x (Tested with OVA 10.04.0001 and 8320 with 10.04.0030)
-        It "Get System with depth equal 3" -Skip:$true {
+        #No longer bug with > 10.06.xxx
+        It "Get System with depth equal 3" {
             {
                 Get-ArubaCXSystem -depth 3
             } | Should -Not -Throw
         }
 
         #Bug with ArubaCX 10.04.x (Tested with OVA 10.04.0001 and 8320 with 10.04.0030)
-        It "Get System with depth equal 4" -Skip:$true {
+        #No longer bug with > 10.06.xxx
+        It "Get System with depth equal 4" {
             {
                 Get-ArubaCXSystem -depth 4
             } | Should -Not -Throw
