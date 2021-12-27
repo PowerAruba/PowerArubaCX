@@ -5,11 +5,16 @@
 #
 . ../common.ps1
 
+
+BeforeAll {
+    Connect-ArubaCX @invokeParams
+}
+
 Describe "Get System" {
-    It "Get System Does not throw an error" {
+    It "Get System Does Not Throw an error" {
         {
             Get-ArubaCXSystem
-        } | Should Not Throw
+        } | Should -Not -Throw
     }
 
     It "Get System ($pester_vlan) and confirm (via Confirm-ArubaCXSystem)" {
@@ -23,25 +28,25 @@ Describe "Get System" {
         It "Get System with selector equal configuration" {
             {
                 Get-ArubaCXSystem -selector configuration
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
         It "Get System with selector equal statistics" {
             {
                 Get-ArubaCXSystem -selector statistics
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
         It "Get System with selector equal status" {
             {
                 Get-ArubaCXSystem -selector status
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
         It "Get System with selector equal writable" {
             {
                 Get-ArubaCXSystem -selector writable
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
     }
 
@@ -50,40 +55,42 @@ Describe "Get System" {
         It "Get System with depth equal 1" {
             {
                 Get-ArubaCXSystem -depth 1
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
         It "Get System with depth equal 2" {
             {
                 Get-ArubaCXSystem -depth 2
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
         #Bug with ArubaCX 10.04.x (Tested with OVA 10.04.0001 and 8320 with 10.04.0030)
-        It "Get System with depth equal 3" -Skip:$true {
+        #No longer bug with > 10.06.xxx
+        It "Get System with depth equal 3" {
             {
                 Get-ArubaCXSystem -depth 3
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
         #Bug with ArubaCX 10.04.x (Tested with OVA 10.04.0001 and 8320 with 10.04.0030)
-        It "Get System with depth equal 4" -Skip:$true {
+        #No longer bug with > 10.06.xxx
+        It "Get System with depth equal 4" {
             {
                 Get-ArubaCXSystem -depth 4
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
     }
 
     Context "Attribute" {
 
-        It "Get system with one attribute (hostname)" {
-            $sys = Get-ArubaCXSystem -attribute hostname
-            $sys.hostname | Should -Not -BeNullOrEmpty
+        It "Get system with one attribute (platform_name)" {
+            $sys = Get-ArubaCXSystem -attribute platform_name
+            $sys.platform_name | Should -Not -BeNullOrEmpty
         }
 
-        It "Get system with two attributes (hostname, timezone)" {
-            $sys = Get-ArubaCXSystem  -attribute hostname, timezone
-            $sys.hostname | Should -Not -BeNullOrEmpty
+        It "Get system with two attributes (platform_name, timezone)" {
+            $sys = Get-ArubaCXSystem  -attribute platform_name, timezone
+            $sys.platform_name | Should -Not -BeNullOrEmpty
             $sys.timezone | Should -Not -BeNullOrEmpty
         }
 
@@ -128,5 +135,6 @@ Describe "Configure System" {
     }
 }
 
-
-Disconnect-ArubaCX -confirm:$false
+AfterAll {
+    Disconnect-ArubaCX -confirm:$false
+}

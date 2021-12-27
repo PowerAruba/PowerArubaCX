@@ -5,6 +5,10 @@
 #
 . ../common.ps1
 
+BeforeAll {
+    Connect-ArubaCX @invokeParams
+}
+
 Describe "Get Vrf" {
     BeforeALL {
         Add-ArubaCXVrfs -name $pester_vrf
@@ -13,12 +17,12 @@ Describe "Get Vrf" {
     It "Get Vrf Does not throw an error" {
         {
             Get-ArubaCXVrfs
-        } | Should Not Throw
+        } | Should -Not -Throw
     }
 
     It "Get ALL Vrf" {
         $vrf = Get-ArubaCXVrfs
-        $vrf.count | Should -Not -Be $NULL
+        @($vrf).count | Should -Not -Be $NULL
     }
 
     It "Get Vrf ($pester_vrf)" {
@@ -37,25 +41,31 @@ Describe "Get Vrf" {
         It "Get Vrf with selector equal configuration" {
             {
                 Get-ArubaCXVrfs -selector configuration
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
         It "Get Vrf with selector equal statistics" {
             {
                 Get-ArubaCXVrfs -selector statistics
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
         It "Get Vrf with selector equal status" {
             {
                 Get-ArubaCXVrfs -selector status
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
-        It "Get Vrf with selector equal writable" {
+        It "Get Vrf with selector equal writable without vrf" {
             {
                 Get-ArubaCXVrfs -selector writable
-            } | Should Not Throw
+            } | Should  -Throw
+        }
+
+        It "Get Vrf with selector equal writable with a vrf" {
+            {
+                Get-ArubaCXVrfs $pester_vrf -selector writable
+            } | Should -Not -Throw
         }
     }
 
@@ -64,25 +74,25 @@ Describe "Get Vrf" {
         It "Get Vrf with depth equal 1" {
             {
                 Get-ArubaCXVrfs -depth 1
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
         It "Get Vrf with depth equal 2" {
             {
                 Get-ArubaCXVrfs -depth 2
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
         It "Get Vrf with depth equal 3" {
             {
                 Get-ArubaCXVrfs -depth 3
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
         It "Get Vrf with depth equal 4" {
             {
                 Get-ArubaCXVrfs -depth 4
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
     }
 
@@ -239,4 +249,6 @@ Describe "Remove Vrf" {
 
 }
 
-Disconnect-ArubaCX -confirm:$false
+AfterAll {
+    Disconnect-ArubaCX -confirm:$false
+}

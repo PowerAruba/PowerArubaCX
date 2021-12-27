@@ -5,17 +5,21 @@
 #
 . ../common.ps1
 
+BeforeAll {
+    Connect-ArubaCX @invokeParams
+}
+
 Describe "Get Interfaces" {
 
     It "Get Interface Does not throw an error" {
         {
             Get-ArubaCXInterfaces
-        } | Should Not Throw
+        } | Should -Not -Throw
     }
 
     It "Get ALL Interfaces" {
         $int = Get-ArubaCXInterfaces
-        $int.count | Should not be $NULL
+        @($int).count | Should -Not -Be $NULL
     }
 
     It "Get Interface ($pester_interface) and confirm (via Confirm-ArubaCXInterfaces)" {
@@ -29,25 +33,31 @@ Describe "Get Interfaces" {
         It "Get Interface with selector equal configuration" {
             {
                 Get-ArubaCXInterfaces -selector configuration
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
         It "Get Interface with selector equal statistics" {
             {
                 Get-ArubaCXInterfaces -selector statistics
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
         It "Get Interface with selector equal status" {
             {
                 Get-ArubaCXInterfaces -selector status
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
-        It "Get Interface with selector equal writable" {
+        It "Get Interface with selector equal writable without interface" {
             {
                 Get-ArubaCXInterfaces -selector writable
-            } | Should Not Throw
+            } | Should -Throw
+        }
+
+        It "Get Interface with selector equal writable with interface" {
+            {
+                Get-ArubaCXInterfaces $pester_interface -selector writable
+            } | Should -Not -Throw
         }
     }
 
@@ -56,45 +66,48 @@ Describe "Get Interfaces" {
         It "Get Interface with depth equal 1" {
             {
                 Get-ArubaCXInterfaces -depth 1
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
         It "Get Interface with depth equal 2" {
             {
                 Get-ArubaCXInterfaces -depth 2
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
         It "Get Interface with depth equal 3" {
             {
                 Get-ArubaCXInterfaces -depth 3
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
         It "Get Interface with depth equal 4" {
             {
                 Get-ArubaCXInterfaces -depth 4
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
     }
 
     Context "Attribute" {
 
         #Bug with ArubaCX 10.04.x (Tested with OVA 10.04.0001 and 8320 with 10.04.0030)
-        It "Get Interface with one attribute (admin)" -skip:$true {
-            $int = Get-ArubaCXInterfaces -interface $pester_interface -attribute status
+        #No longer bug with >= 10.06.000x and good attribute...
+        It "Get Interface with one attribute (admin)" {
+            $int = Get-ArubaCXInterfaces -interface $pester_interface -attribute type
             @($int).count | Should -be 1
             $int.name | Should -BeNullOrEmpty
-            $int.status | Should -Not -BeNullOrEmpty
+            $int.type | Should -Not -BeNullOrEmpty
         }
 
         #Bug with ArubaCX 10.04.x (Tested with OVA 10.04.0001 and 8320 with 10.04.0030)
-        It "Get Interface with two attributes (admin, name)" -skip:$true {
-            $int = Get-ArubaCXInterfaces -interface $pester_interface -attribute admin, name
+        #No longer bug with >= 10.06.000x and good attribute...
+        It "Get Interface with two attributes (admin, name)" {
+            $int = Get-ArubaCXInterfaces -interface $pester_interface -attribute name, type
             @($int).count | Should -be 1
             $int.id | Should -BeNullOrEmpty
-            $int.status | Should -Not -BeNullOrEmpty
             $int.name | Should -Be $pester_interface
+            $int.type | Should -Not -BeNullOrEmpty
+
         }
 
     }
@@ -231,18 +244,18 @@ Describe "Configure Vlan on Interface" {
         Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -vlan_mode native-untagged
         $int = Get-ArubaCXInterfaces -interface $pester_interface
         $int.vlan_mode | Should -Be "native-untagged"
-        ($int.vlan_tag | Get-Member -MemberType NoteProperty -ErrorAction SilentlyContinue).count | Should -Be "0"
-        $int.vlan_tag | Should -Be $null
+        ($int.vlan_tag | Get-Member -MemberType NoteProperty -ErrorAction SilentlyContinue).count | Should -Be "1"
+        $int.vlan_tag.$pester_vlan | Should -Be ("/rest/" + $($DefaultArubaCXConnection.version) + "/system/vlans/" + $pester_vlan)
         ($int.vlan_trunks | Get-Member -MemberType NoteProperty -ErrorAction SilentlyContinue).count | Should -Be "0"
-        $int.vlan_trunks | Should -Be $null
+        $int.vlan_trunks | Should -BeNullOrEmpty
     }
 
     It "Change Interface ($pester_interface) trunks vlan ($pester_vlan)" {
         Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -vlan_trunks $pester_vlan
         $int = Get-ArubaCXInterfaces -interface $pester_interface
         $int.vlan_mode | Should -Be "native-untagged"
-        ($int.vlan_tag | Get-Member -MemberType NoteProperty -ErrorAction SilentlyContinue).count | Should -Be "0"
-        $int.vlan_tag | Should -Be $null
+        ($int.vlan_tag | Get-Member -MemberType NoteProperty -ErrorAction SilentlyContinue).count | Should -Be "1"
+        $int.vlan_tag.$pester_vlan | Should -Be ("/rest/" + $($DefaultArubaCXConnection.version) + "/system/vlans/" + $pester_vlan)
         ($int.vlan_trunks | Get-Member -MemberType NoteProperty).count | Should -Be "1"
         $int.vlan_trunks.$pester_vlan | Should -Be ("/rest/" + $($DefaultArubaCXConnection.version) + "/system/vlans/" + $pester_vlan)
     }
@@ -251,8 +264,8 @@ Describe "Configure Vlan on Interface" {
         Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -vlan_trunks $pester_vlan, $pester_vlan2
         $int = Get-ArubaCXInterfaces -interface $pester_interface
         $int.vlan_mode | Should -Be "native-untagged"
-        ($int.vlan_tag | Get-Member -MemberType NoteProperty -ErrorAction SilentlyContinue).count | Should -Be "0"
-        $int.vlan_tag | Should -Be $null
+        ($int.vlan_tag | Get-Member -MemberType NoteProperty -ErrorAction SilentlyContinue).count | Should -Be "1"
+        $int.vlan_tag.$pester_vlan | Should -Be ("/rest/" + $($DefaultArubaCXConnection.version) + "/system/vlans/" + $pester_vlan)
         ($int.vlan_trunks | Get-Member -MemberType NoteProperty).count | Should -Be "2"
         $int.vlan_trunks.$pester_vlan | Should -Be ("/rest/" + $($DefaultArubaCXConnection.version) + "/system/vlans/" + $pester_vlan)
         $int.vlan_trunks.$pester_vlan2 | Should -Be ("/rest/" + $($DefaultArubaCXConnection.version) + "/system/vlans/" + $pester_vlan2)
@@ -263,9 +276,9 @@ Describe "Configure Vlan on Interface" {
         Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -vlan_mode native-tagged -vlan_tag $pester_vlan -vlan_trunks $pester_vlan
         $int = Get-ArubaCXInterfaces -interface $pester_interface
         $int.vlan_mode | Should -Be "native-tagged"
-        ($int.vlan_tag).count | Should -Be "1"
+        @($int.vlan_tag).count | Should -Be "1"
         $int.vlan_tag.$pester_vlan | Should -Be ("/rest/" + $($DefaultArubaCXConnection.version) + "/system/vlans/" + $pester_vlan)
-        ($int.vlan_trunks).count | Should -Be "1"
+        @($int.vlan_trunks).count | Should -Be "1"
         $int.vlan_trunks.$pester_vlan | Should -Be ("/rest/" + $($DefaultArubaCXConnection.version) + "/system/vlans/" + $pester_vlan)
     }
 
@@ -274,7 +287,7 @@ Describe "Configure Vlan on Interface" {
         Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -vlan_mode access -vlan_tag $pester_vlan2 -vlan_trunks $null
         $int = Get-ArubaCXInterfaces -interface $pester_interface
         $int.vlan_mode | Should -Be "access"
-        ($int.vlan_tag).count | Should -Be "1"
+        @($int.vlan_tag).count | Should -Be "1"
         $int.vlan_tag.$pester_vlan2 | Should -Be ("/rest/" + $($DefaultArubaCXConnection.version) + "/system/vlans/" + $pester_vlan2)
     }
 
@@ -301,7 +314,7 @@ Describe "Add Vlan trunk on Interface" {
     It "Try to set vlan_trunks on interface with routing" {
         {
             Get-ArubaCXInterfaces -interface $pester_interface | Add-ArubaCXInterfacesVlanTrunks -vlan_trunks $pester_vlan
-        } | Should throw "You need to disable routing mode for use vlan_trunks"
+        } | Should -Throw "You need to disable routing mode for use vlan_trunks"
 
         Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -routing:$false -vlan_mode access
     }
@@ -309,7 +322,7 @@ Describe "Add Vlan trunk on Interface" {
     It "Try to set vlan_trunks on interface with vlan mode access" {
         {
             Get-ArubaCXInterfaces -interface $pester_interface | Add-ArubaCXInterfacesVlanTrunks -vlan_trunks $pester_vlan
-        } | Should throw "You need to use native-(un)tagged vlan mode"
+        } | Should -Throw "You need to use native-(un)tagged vlan mode"
 
         Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -routing:$false -vlan_mode native-untagged
     }
@@ -380,7 +393,7 @@ Describe "Remove Vlan trunk on Interface" {
         Get-ArubaCXInterfaces -interface $pester_interface | Remove-ArubaCXInterfacesVlanTrunks -vlan_trunks $pester_vlan, $pester_vlan2
         $int = Get-ArubaCXInterfaces -interface $pester_interface
         $int.vlan_tag | Should -Be $null
-        $int.vlan_trunks | Should -Be $null
+        $int.vlan_trunks | Should -BeNullOrEmpty
     }
 
     AfterAll {
@@ -403,14 +416,14 @@ Describe "Configure IP on Interface" {
     It "Try to set ip4_address without ip4_mask" {
         {
             Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -ip4_address 192.0.2.1
-        } | Should throw "You need to set ip4_mask when use ipv4_address"
+        } | Should -Throw "You need to set ip4_mask when use ipv4_address"
     }
 
     It "Try to set ip4_address on interface with no routing" {
         {
             Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -routing:$false
             Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -ip4_address 192.0.2.1 -ip4_mask 24
-        } | Should throw "You need to enable routing mode for use ipv4_address"
+        } | Should -Throw "You need to enable routing mode for use ipv4_address"
 
         Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -routing:$true
     }
@@ -418,7 +431,7 @@ Describe "Configure IP on Interface" {
     It "Try to set a IPv6 Address on interface" {
         {
             Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -ip4_address 2001:DB8::1 -ip4_mask 24
-        } | Should throw "You need to specify a IPv4 Address"
+        } | Should -Throw "You need to specify a IPv4 Address"
     }
 
     It "Set ip4_address on interface" {
@@ -463,4 +476,6 @@ Describe "Configure VRF on Interface" {
     }
 }
 
-Disconnect-ArubaCX -confirm:$false
+AfterAll {
+    Disconnect-ArubaCX -confirm:$false
+}
