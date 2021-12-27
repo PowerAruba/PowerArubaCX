@@ -148,7 +148,7 @@ function Get-ArubaCXVrfs {
             $invokeParams.add( 'depth', $depth )
         }
         if ( $PsBoundParameters.ContainsKey('selector') ) {
-            #You need to speciify a vrf for use writable selector (it is not possible to use on collections...)
+            #You need to specify a vrf for use writable selector (it is not possible to use on collections...)
             if ($PSCmdlet.ParameterSetName -eq "Default" -and $selector -eq "writable") {
                 Throw "You need to specify a vrf to use writable selector"
             }

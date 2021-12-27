@@ -158,8 +158,8 @@ function Get-ArubaCXVlans {
             $invokeParams.add( 'depth', $depth )
         }
         if ( $PsBoundParameters.ContainsKey('selector') ) {
-            #You need to speciify a vlan for use writable selector (it is not possible to use on collections...)
-            if ($PSCmdlet.ParameterSetName -eq "Default" -and $selector -eq "writable"){
+            #You need to specify a vlan for use writable selector (it is not possible to use on collections...)
+            if ($PSCmdlet.ParameterSetName -eq "Default" -and $selector -eq "writable") {
                 Throw "You need to specify a vlan (id or name) to use writable selector"
             }
             $invokeParams.add( 'selector', $selector )
