@@ -25,6 +25,7 @@ function Add-ArubaCXInterfacesVlanTrunks {
       Add vlan 44 and 45 to vlan trunks on interface 1/1/1
 
     #>
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "")]
     Param(
         [Parameter (Mandatory = $true, ValueFromPipeline = $true, Position = 1)]
         [ValidateScript( { Confirm-ArubaCXInterfaces $_ })]
@@ -112,6 +113,7 @@ function Get-ArubaCXInterfaces {
       Get interface vlan 85 info
 
     #>
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "")]
     Param(
         [Parameter(Mandatory = $false, position = 1)]
         [String]$interface,
@@ -243,6 +245,7 @@ function Set-ArubaCXInterfaces {
 
       Configure some interfacevariable (description) no available on parameter using pipeline (can be only with selector equal writable)
     #>
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "")]
     [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'medium')]
     Param(
         [Parameter (Mandatory = $true, ParameterSetName = "interface")]
@@ -452,6 +455,7 @@ function Remove-ArubaCXInterfacesVlanTrunks {
       Remove vlan 44 and 45 to vlan trunks on interface 1/1/1
 
     #>
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "")]
     [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'medium')]
     Param(
         [Parameter (Mandatory = $true, ValueFromPipeline = $true, Position = 1)]

@@ -29,6 +29,7 @@ function Add-ArubaCXVrfs {
 
         Add Vrf named MyVRF with ssh, snmp and https enable
     #>
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "")]
     Param(
         [Parameter (Mandatory = $true, Position = 1)]
         [string]$name,
@@ -117,6 +118,7 @@ function Get-ArubaCXVrfs {
     #>
 
     [CmdletBinding(DefaultParametersetname = "Default")]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "")]
     Param(
         [Parameter (Mandatory = $false, ParameterSetName = "name", position = "1")]
         [string]$name,
@@ -203,6 +205,7 @@ function Set-ArubaCXVrfs {
         Configure Vrf myVRF name using pipeline (can be only with selector equal writable)
     #>
     [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'medium')]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "")]
     Param(
         [Parameter (Mandatory = $true, ParameterSetName = "name")]
         [string]$name,
@@ -311,6 +314,7 @@ function Remove-ArubaCXVrfs {
     #>
 
     [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'high')]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "")]
     Param(
         [Parameter (Mandatory = $true, ParameterSetName = "name")]
         [string]$name,

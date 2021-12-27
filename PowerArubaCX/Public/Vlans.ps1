@@ -29,6 +29,7 @@ function Add-ArubaCXVlans {
 
         Add Vlan with a VSX Sync and admin down
     #>
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "")]
     Param(
         [Parameter (Mandatory = $true)]
         [ValidateRange(1, 4096)]
@@ -124,6 +125,7 @@ function Get-ArubaCXVlans {
     #>
 
     [CmdletBinding(DefaultParametersetname = "Default")]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "")]
     Param(
         [Parameter (Mandatory = $false, ParameterSetName = "id")]
         [ValidateRange(1, 4096)]
@@ -231,6 +233,7 @@ function Set-ArubaCXVlans {
         Configure Vlan 44 name using pipeline (can be only with selector equal writable)
     #>
     [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'medium')]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "")]
     Param(
         [Parameter (Mandatory = $true, ParameterSetName = "id")]
         [ValidateRange(1, 4096)]
@@ -341,6 +344,7 @@ function Remove-ArubaCXVlans {
     #>
 
     [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'high')]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "")]
     Param(
         [Parameter (Mandatory = $true, ParameterSetName = "id")]
         [int]$id,
