@@ -5,6 +5,10 @@
 #
 . ../common.ps1
 
+BeforeAll {
+    Connect-ArubaCX @invokeParams
+}
+
 Describe "Get TACACS Server" {
     BeforeAll {
         Add-ArubaCXTacacsServer -address $pester_tacacs_address -port $pester_tacacs_port -group tacacs -default_group_priority 1 -auth_type pap -timeout 15
@@ -218,4 +222,6 @@ Describe "Remove TACACS Server" {
 
 }
 
-Disconnect-ArubaCX -confirm:$false
+AfterAll {
+    Disconnect-ArubaCX -confirm:$false
+}
