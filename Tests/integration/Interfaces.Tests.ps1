@@ -91,20 +91,23 @@ Describe "Get Interfaces" {
     Context "Attribute" {
 
         #Bug with ArubaCX 10.04.x (Tested with OVA 10.04.0001 and 8320 with 10.04.0030)
-        It "Get Interface with one attribute (admin)" -skip:$true {
-            $int = Get-ArubaCXInterfaces -interface $pester_interface -attribute status
+        #No longer bug with >= 10.06.000x and good attribute...
+        It "Get Interface with one attribute (admin)" {
+            $int = Get-ArubaCXInterfaces -interface $pester_interface -attribute type
             @($int).count | Should -be 1
             $int.name | Should -BeNullOrEmpty
-            $int.status | Should -Not -BeNullOrEmpty
+            $int.type | Should -Not -BeNullOrEmpty
         }
 
         #Bug with ArubaCX 10.04.x (Tested with OVA 10.04.0001 and 8320 with 10.04.0030)
-        It "Get Interface with two attributes (admin, name)" -skip:$true {
-            $int = Get-ArubaCXInterfaces -interface $pester_interface -attribute admin, name
+        #No longer bug with >= 10.06.000x and good attribute...
+        It "Get Interface with two attributes (admin, name)" {
+            $int = Get-ArubaCXInterfaces -interface $pester_interface -attribute name, type
             @($int).count | Should -be 1
             $int.id | Should -BeNullOrEmpty
-            $int.status | Should -Not -BeNullOrEmpty
             $int.name | Should -Be $pester_interface
+            $int.type | Should -Not -BeNullOrEmpty
+
         }
 
     }
