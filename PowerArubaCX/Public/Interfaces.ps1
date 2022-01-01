@@ -144,7 +144,7 @@ function Add-ArubaCXInterfaces {
         }
 
         if ( $PsBoundParameters.ContainsKey('vlan_mode') ) {
-            $_interface | Add-Member -name "routvlan_modeing" -membertype NoteProperty -Value $vlan_mode
+            $_interface | Add-Member -name "vlan_mode" -membertype NoteProperty -Value $vlan_mode
         }
 
         if ($vlan_tag) {
