@@ -28,7 +28,7 @@ function Add-ArubaCXInterfaces {
       Add interface vlan 23 with admin status to down
 
       .EXAMPLE
-      Add-ArubaCXInterfaces -lag_id 2 -admin up -interfaces 1/1/1 ip4_address 192.0.2.1 -ip4_mask 24
+      Add-ArubaCXInterfaces -lag_id 2 -admin up -interfaces 1/1/1 -ip4_address 192.0.2.1 -ip4_mask 24
 
       Add interface lag 2 with admin status to up and interfaces 1/1/1 with IPv4 Address 192.0.2.1/24
 
