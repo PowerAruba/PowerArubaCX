@@ -66,7 +66,7 @@ function Add-ArubaCXInterfaces {
         [Parameter(Mandatory = $false)]
         [ipaddress]$ip4_address,
         [Parameter(Mandatory = $false)]
-        [ValidateRange(8, 31)]
+        [ValidateRange(8, 32)]
         [int]$ip4_mask,
         [Parameter(Mandatory = $false)]
         [string]$vrf = "default",
