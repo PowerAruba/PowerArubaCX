@@ -476,6 +476,87 @@ Describe "Configure VRF on Interface" {
     }
 }
 
+Describe "Add Interface" {
+
+    Context "Vlan" {
+        BeforeAll {
+            Add-ArubaCXVlans -id $pester_vlan -name PowerArubaCX
+            #Make a CheckPoint ?
+
+            #Create the vrf
+            Add-ArubaCXVrfs -name $pester_vrf
+        }
+
+        AfterEach {
+            Get-ArubaCXInterfaces -interface "vlan$pester_vlan" | Remove-ArubaCXInterfaces -confirm:$false
+        }
+
+        It "Add Interface Vlan $pester_vlan (with only an id)" {
+            Add-ArubaCXInterfaces -vlan_id $pester_vlan
+            $int_vlan = Get-ArubaCXInterfaces -interface "vlan$pester_vlan"
+            $int_vlan.name | Should -Be "vlan$pester_vlan"
+            $int_vlan.description | Should -Be $null
+            $int_vlan.type | Should -Be "vlan"
+            $int_vlan.admin_state | Should -Be "up"
+            $int_vlan.ip4_address | Should -Be $null
+            $int_vlan.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+        }
+
+        It "Add Interface Vlan $pester_vlan (with an id, description)" {
+            Add-ArubaCXInterfaces -vlan_id $pester_vlan -description "Add via PowerArubaCX"
+            $int_vlan = Get-ArubaCXInterfaces -interface "vlan$pester_vlan"
+            $int_vlan.name | Should -Be "vlan$pester_vlan"
+            $int_vlan.description | Should -Be "Add via PowerArubaCX"
+            $int_vlan.type | Should -Be "vlan"
+            $int_vlan.admin_state | Should -Be "up"
+            $int_vlan.ip4_address | Should -Be $null
+            $int_vlan.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+        }
+
+        It "Add Interface Vlan $pester_vlan (with an id and status down)" {
+            Add-ArubaCXInterfaces -vlan_id $pester_vlan -admin down
+            $int_vlan = Get-ArubaCXInterfaces -interface "vlan$pester_vlan"
+            $int_vlan.name | Should -Be "vlan$pester_vlan"
+            $int_vlan.description | Should -Be $null
+            $int_vlan.type | Should -Be "vlan"
+            $int_vlan.admin_state | Should -Be "down"
+            $int_vlan.ip4_address | Should -Be $null
+            $int_vlan.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+        }
+
+        It "Add Interface Vlan $pester_vlan (with an id and IP4 Address (and mask))" {
+            Add-ArubaCXInterfaces -vlan_id $pester_vlan -ip4_address 192.0.2.1 -ip4_mask 24
+            $int_vlan = Get-ArubaCXInterfaces -interface "vlan$pester_vlan"
+            $int_vlan.name | Should -Be "vlan$pester_vlan"
+            $int_vlan.description | Should -Be $null
+            $int_vlan.type | Should -Be "vlan"
+            $int_vlan.admin_state | Should -Be "up"
+            $int_vlan.ip4_address | Should -Be "192.0.2.1/24"
+            $int_vlan.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+        }
+
+
+        It "Add Interface Vlan $pester_vlan (with an id and a vrf)" {
+            Add-ArubaCXInterfaces -vlan_id $pester_vlan -vrf $pester_vrf
+            $int_vlan = Get-ArubaCXInterfaces -interface "vlan$pester_vlan"
+            $int_vlan.name | Should -Be "vlan$pester_vlan"
+            $int_vlan.description | Should -Be $null
+            $int_vlan.type | Should -Be "vlan"
+            #$int_vlan.admin | Should -Be "up"
+            $int_vlan.ip4_address | Should -Be $null
+            $int_vlan.vrf.$pester_vrf | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + $pester_vrf)
+        }
+
+        AfterAll {
+            Get-ArubaCXVlans -id $pester_vlan | Remove-ArubaCXVlans -confirm:$false
+            #Reverse CheckPoint ?
+
+            #Remove vrf
+            Get-ArubaCXVrfs -name $pester_vrf | Remove-ArubaCXVrfs -confirm:$false
+        }
+    }
+}
+
 AfterAll {
     Disconnect-ArubaCX -confirm:$false
 }
