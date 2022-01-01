@@ -37,6 +37,10 @@ function Add-ArubaCXInterfaces {
 
       Add interface lag 2 with admin status to up and interfaces 1/1/2 and 1/1/3 with no routing and vlan acces 23
 
+      .EXAMPLE
+      Add-ArubaCXInterfaces -loopback 1 -ip4_address 198.51.100.1 -ip4_mask 32
+
+      Add interface loopback 1 with IPv4 Address 198.51.100.1/32 (and admin up)
       #>
     Param(
         [Parameter (Mandatory = $true, ParameterSetName = "vlan")]
