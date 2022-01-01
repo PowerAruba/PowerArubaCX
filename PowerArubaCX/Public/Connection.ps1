@@ -60,7 +60,7 @@ function Connect-ArubaCX {
     Process {
 
 
-        $connection = @{server = ""; session = ""; invokeParams = ""; port = $port; version = ""; platform_name = "" }
+        $connection = @{server = ""; session = ""; invokeParams = ""; port = $port; api_version = ""; version = ""; platform_name = "" }
         $invokeParams = @{DisableKeepAlive = $false; UseBasicParsing = $true; SkipCertificateCheck = $SkipCertificateCheck }
 
         #If there is a password (and a user), create a credential
@@ -113,7 +113,9 @@ function Connect-ArubaCX {
         $connection.server = $server
         $connection.session = $arubacx
         $connection.invokeParams = $invokeParams
-        $connection.version = $rest.latest.version
+        $connection.api_version = $rest.latest.version
+        $current_version = (Get-ArubaCXFirmware -connection $connection).current_version.split(".")
+        $connection.version = [version]"$($current_version[1]).$($current_version[2]).$($current_version[3])"
         $connection.platform_name = (Get-ArubaCXSystem -attributes platform_name -connection $connection).platform_name
 
         if ( $DefaultConnection ) {

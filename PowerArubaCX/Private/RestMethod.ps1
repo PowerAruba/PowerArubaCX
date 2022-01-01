@@ -87,7 +87,7 @@ function Invoke-ArubaCXRestMethod {
         $headers = $connection.headers
         $invokeParams = $connection.invokeParams
         $sessionvariable = $connection.session
-        $rest = 'rest/' + $connection.version + '/'
+        $rest = 'rest/' + $connection.api_version + '/'
 
         #Remove rest/version on uri
         if ($noapiversion) {

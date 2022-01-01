@@ -14,6 +14,11 @@ Describe "Connect to a switch (using HTTPS)" {
         $DefaultArubaCXConnection.platform_name | Should -Not -BeNullOrEmpty
         $DefaultArubaCXConnection.port | Should -Be "443"
         $DefaultArubaCXConnection.session | Should -Not -BeNullOrEmpty
+        $DefaultArubaCXConnection.api_version | Should -Not -BeNullOrEmpty
+        $DefaultArubaCXConnection.version | Should -Not -BeNullOrEmpty
+        $DefaultArubaCXConnection.version.major | Should -Be "10"
+        $DefaultArubaCXConnection.version.minor | Should -BeIn (4..10)
+        $DefaultArubaCXConnection.version.revision | Should -Not -BeNullOrEmpty
     }
     It "Disconnect to a switch (using HTTPS) and check global variable" {
         Disconnect-ArubaCX -confirm:$false
@@ -34,6 +39,11 @@ Describe "Connect to a switch (using multi connection)" {
         $cx.platform_name | Should -Not -BeNullOrEmpty
         $cx.port | Should -Be "443"
         $cx.session | Should -Not -BeNullOrEmpty
+        $cx.api_version | Should -Not -BeNullOrEmpty
+        $cx.version | Should -Not -BeNullOrEmpty
+        $cx.version.major | Should -Be "10"
+        $cx.version.minor | Should -BeIn (4..10)
+        $cx.version.revision | Should -Not -BeNullOrEmpty
     }
 
     It "Throw when try to use Invoke-ArubaCPRestMethod and not connected" {
