@@ -500,6 +500,7 @@ Describe "Add Interface" {
             $int_vlan.admin_state | Should -Be "up"
             $int_vlan.ip4_address | Should -Be $null
             $int_vlan.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+            $int_vlan.routing | Should -Be $true
         }
 
         It "Add Interface Vlan $pester_vlan (with an id, description)" {
@@ -511,6 +512,7 @@ Describe "Add Interface" {
             $int_vlan.admin_state | Should -Be "up"
             $int_vlan.ip4_address | Should -Be $null
             $int_vlan.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+            $int_vlan.routing | Should -Be $true
         }
 
         It "Add Interface Vlan $pester_vlan (with an id and status down)" {
@@ -522,6 +524,7 @@ Describe "Add Interface" {
             $int_vlan.admin_state | Should -Be "down"
             $int_vlan.ip4_address | Should -Be $null
             $int_vlan.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+            $int_vlan.routing | Should -Be $true
         }
 
         It "Add Interface Vlan $pester_vlan (with an id and IP4 Address (and mask))" {
@@ -533,6 +536,7 @@ Describe "Add Interface" {
             $int_vlan.admin_state | Should -Be "up"
             $int_vlan.ip4_address | Should -Be "192.0.2.1/24"
             $int_vlan.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+            $int_vlan.routing | Should -Be $true
         }
 
 
@@ -545,6 +549,7 @@ Describe "Add Interface" {
             #$int_vlan.admin | Should -Be "up"
             $int_vlan.ip4_address | Should -Be $null
             $int_vlan.vrf.$pester_vrf | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + $pester_vrf)
+            $int_vlan.routing | Should -Be $true
         }
 
         AfterAll {
