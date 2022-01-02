@@ -564,6 +564,7 @@ Describe "Add Interface" {
     Context "lag" {
         BeforeAll {
             Add-ArubaCXVlans -id $pester_vlan -name PowerArubaCX
+            Add-ArubaCXVlans -id $pester_vlan2 -name PowerArubaCX2
             #Make a CheckPoint ?
 
             #Create the vrf
@@ -675,8 +676,161 @@ Describe "Add Interface" {
             $int_lag.interfaces | Should -BeNullOrEmpty
         }
 
+        It "Add Interface lag $pester_lag (with an id, status up and routing disable)" {
+            Add-ArubaCXInterfaces -lag_id $pester_lag -admin up -routing:$false
+            $int_lag = Get-ArubaCXInterfaces -interface "lag$pester_lag"
+            $int_lag.name | Should -Be "lag$pester_lag"
+            $int_lag.description | Should -Be $null
+            #$int_lag.type | Should -Be "lag"
+            $int_lag.bond_status | Should -Be -Not $null
+            $int_lag.admin | Should -Be "up"
+            $int_lag.ip4_address | Should -Be $null
+            $int_lag.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+            $int_lag.routing | Should -Be $false
+            $int_lag.interfaces | Should -BeNullOrEmpty
+        }
+
+        It "Add Interface lag $pester_lag (with an id, status up, routing disable and vlan_mode access)" {
+            Add-ArubaCXInterfaces -lag_id $pester_lag -admin up -routing:$false -vlan_mode access
+            $int_lag = Get-ArubaCXInterfaces -interface "lag$pester_lag"
+            $int_lag.name | Should -Be "lag$pester_lag"
+            $int_lag.description | Should -Be $null
+            #$int_lag.type | Should -Be "lag"
+            $int_lag.bond_status | Should -Be -Not $null
+            $int_lag.admin | Should -Be "up"
+            $int_lag.ip4_address | Should -Be $null
+            $int_lag.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+            $int_lag.routing | Should -Be $false
+            $int_lag.interfaces | Should -BeNullOrEmpty
+            $int_lag.vlan_mode | Should -Be "access"
+        }
+
+        It "Add Interface lag $pester_lag (with an id, status up, routing disable and vlan_mode native-untagged)" {
+            Add-ArubaCXInterfaces -lag_id $pester_lag -admin up -routing:$false -vlan_mode native-untagged
+            $int_lag = Get-ArubaCXInterfaces -interface "lag$pester_lag"
+            $int_lag.name | Should -Be "lag$pester_lag"
+            $int_lag.description | Should -Be $null
+            #$int_lag.type | Should -Be "lag"
+            $int_lag.bond_status | Should -Be -Not $null
+            $int_lag.admin | Should -Be "up"
+            $int_lag.ip4_address | Should -Be $null
+            $int_lag.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+            $int_lag.routing | Should -Be $false
+            $int_lag.interfaces | Should -BeNullOrEmpty
+            $int_lag.vlan_mode | Should -Be "native-untagged"
+        }
+
+        It "Add Interface lag $pester_lag (with an id, status up, routing disable and vlan_mode native-tagged)" {
+            Add-ArubaCXInterfaces -lag_id $pester_lag -admin up -routing:$false -vlan_mode native-tagged
+            $int_lag = Get-ArubaCXInterfaces -interface "lag$pester_lag"
+            $int_lag.name | Should -Be "lag$pester_lag"
+            $int_lag.description | Should -Be $null
+            #$int_lag.type | Should -Be "lag"
+            $int_lag.bond_status | Should -Be -Not $null
+            $int_lag.admin | Should -Be "up"
+            $int_lag.ip4_address | Should -Be $null
+            $int_lag.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+            $int_lag.routing | Should -Be $false
+            $int_lag.interfaces | Should -BeNullOrEmpty
+            $int_lag.vlan_mode | Should -Be "native-tagged"
+        }
+
+        It "Add Interface lag $pester_lag (with an id, status up, routing disable and vlan_mode access on vlan $pester_vlan)" {
+            Add-ArubaCXInterfaces -lag_id $pester_lag -admin up -routing:$false -vlan_mode access -vlan_tag $pester_vlan
+            $int_lag = Get-ArubaCXInterfaces -interface "lag$pester_lag"
+            $int_lag.name | Should -Be "lag$pester_lag"
+            $int_lag.description | Should -Be $null
+            #$int_lag.type | Should -Be "lag"
+            $int_lag.bond_status | Should -Be -Not $null
+            $int_lag.admin | Should -Be "up"
+            $int_lag.ip4_address | Should -Be $null
+            $int_lag.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+            $int_lag.routing | Should -Be $false
+            $int_lag.interfaces | Should -BeNullOrEmpty
+            $int_lag.vlan_mode | Should -Be "access"
+            @($int_lag.vlan_tag).count | Should -Be "1"
+            $int_lag.vlan_tag.$pester_vlan | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vlans/" + $pester_vlan)
+        }
+
+        It "Add Interface lag $pester_lag (with an id, status up, routing disable and vlan_mode native-untagged on vlan $pester_vlan (native) and $pester_vlan2 (tagged))" {
+            Add-ArubaCXInterfaces -lag_id $pester_lag -admin up -routing:$false -vlan_mode native-untagged -vlan_tag $pester_vlan -vlan_trunks $pester_vlan2
+            $int_lag = Get-ArubaCXInterfaces -interface "lag$pester_lag"
+            $int_lag.name | Should -Be "lag$pester_lag"
+            $int_lag.description | Should -Be $null
+            #$int_lag.type | Should -Be "lag"
+            $int_lag.bond_status | Should -Be -Not $null
+            $int_lag.admin | Should -Be "up"
+            $int_lag.ip4_address | Should -Be $null
+            $int_lag.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+            $int_lag.routing | Should -Be $false
+            $int_lag.interfaces | Should -BeNullOrEmpty
+            $int_lag.vlan_mode | Should -Be "native-untagged"
+            @($int_lag.vlan_tag.psobject.properties.name).count | Should -Be "1"
+            $int_lag.vlan_tag.$pester_vlan | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vlans/" + $pester_vlan)
+            @($int_lag.vlan_trunks.psobject.properties.name).count | Should -Be "1"
+            $int_lag.vlan_trunks.$pester_vlan2 | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vlans/" + $pester_vlan2)
+        }
+
+        It "Add Interface lag $pester_lag (with an id, status up, routing disable and vlan_mode native-untagged on vlan $pester_vlan (native and tagged) and $pester_vlan2 (tagged))" {
+            Add-ArubaCXInterfaces -lag_id $pester_lag -admin up -routing:$false -vlan_mode native-untagged -vlan_trunks $pester_vlan, $pester_vlan2
+            $int_lag = Get-ArubaCXInterfaces -interface "lag$pester_lag"
+            $int_lag.name | Should -Be "lag$pester_lag"
+            $int_lag.description | Should -Be $null
+            #$int_lag.type | Should -Be "lag"
+            $int_lag.bond_status | Should -Be -Not $null
+            $int_lag.admin | Should -Be "up"
+            $int_lag.ip4_address | Should -Be $null
+            $int_lag.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+            $int_lag.routing | Should -Be $false
+            $int_lag.interfaces | Should -BeNullOrEmpty
+            $int_lag.vlan_mode | Should -Be "native-untagged"
+            @($int_lag.vlan_tag.psobject.properties.name).count | Should -Be "1"
+            @($int_lag.vlan_trunks.psobject.properties.name).count | Should -Be "2"
+            $int_lag.vlan_trunks.$pester_vlan | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vlans/" + $pester_vlan)
+            $int_lag.vlan_trunks.$pester_vlan2 | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vlans/" + $pester_vlan2)
+        }
+
+        It "Add Interface lag $pester_lag (with an id, status up, routing disable and vlan_mode native-tagged on vlan $pester_vlan (native) and $pester_vlan2 (tagged))" {
+            Add-ArubaCXInterfaces -lag_id $pester_lag -admin up -routing:$false -vlan_mode native-tagged -vlan_tag $pester_vlan -vlan_trunks $pester_vlan2
+            $int_lag = Get-ArubaCXInterfaces -interface "lag$pester_lag"
+            $int_lag.name | Should -Be "lag$pester_lag"
+            $int_lag.description | Should -Be $null
+            #$int_lag.type | Should -Be "lag"
+            $int_lag.bond_status | Should -Be -Not $null
+            $int_lag.admin | Should -Be "up"
+            $int_lag.ip4_address | Should -Be $null
+            $int_lag.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+            $int_lag.routing | Should -Be $false
+            $int_lag.interfaces | Should -BeNullOrEmpty
+            $int_lag.vlan_mode | Should -Be "native-tagged"
+            @($int_lag.vlan_tag.psobject.properties.name).count | Should -Be "1"
+            $int_lag.vlan_tag.$pester_vlan | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vlans/" + $pester_vlan)
+            @($int_lag.vlan_trunks.psobject.properties.name).count | Should -Be "1"
+            $int_lag.vlan_trunks.$pester_vlan2 | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vlans/" + $pester_vlan2)
+        }
+
+        It "Add Interface lag $pester_lag (with an id, status up, routing disable and vlan_mode native-tagged on vlan $pester_vlan (native and tagged) and $pester_vlan2 (tagged))" {
+            Add-ArubaCXInterfaces -lag_id $pester_lag -admin up -routing:$false -vlan_mode native-tagged -vlan_trunks $pester_vlan, $pester_vlan2
+            $int_lag = Get-ArubaCXInterfaces -interface "lag$pester_lag"
+            $int_lag.name | Should -Be "lag$pester_lag"
+            $int_lag.description | Should -Be $null
+            #$int_lag.type | Should -Be "lag"
+            $int_lag.bond_status | Should -Be -Not $null
+            $int_lag.admin | Should -Be "up"
+            $int_lag.ip4_address | Should -Be $null
+            $int_lag.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+            $int_lag.routing | Should -Be $false
+            $int_lag.interfaces | Should -BeNullOrEmpty
+            $int_lag.vlan_mode | Should -Be "native-tagged"
+            @($int_lag.vlan_tag.psobject.properties.name).count | Should -Be "1"
+            @($int_lag.vlan_trunks.psobject.properties.name).count | Should -Be "2"
+            $int_lag.vlan_trunks.$pester_vlan | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vlans/" + $pester_vlan)
+            $int_lag.vlan_trunks.$pester_vlan2 | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vlans/" + $pester_vlan2)
+        }
+
         AfterAll {
             Get-ArubaCXVlans -id $pester_vlan | Remove-ArubaCXVlans -confirm:$false
+            Get-ArubaCXVlans -id $pester_vlan2 | Remove-ArubaCXVlans -confirm:$false
             #Reverse CheckPoint ?
 
             #Remove vrf
