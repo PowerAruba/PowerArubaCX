@@ -65,7 +65,7 @@ function Add-ArubaCXInterfaces {
         [Parameter(Mandatory = $false, ParameterSetName = "lag")]
         #[ValidateRange(1, 4096)]
         [int[]]$vlan_trunks,
-        [Parameter(Mandatory = $true, ParameterSetName = "lag")]
+        [Parameter(Mandatory = $false, ParameterSetName = "lag")]
         [string[]]$interfaces,
         [Parameter(Mandatory = $false)]
         [ipaddress]$ip4_address,
