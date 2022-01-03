@@ -126,98 +126,117 @@ Describe "Get Interfaces" {
     }
 }
 
+$inttypel3 = @(
+    @{ "name" = $pester_interface }
+    @{ "name" = "vlan" + $pester_vlan }
+)
 
 Describe "Configure Interface" {
 
-    Context "Vlan" {
-        BeforeAll {
-            $script:default_int = Get-ArubaCXInterfaces $pester_interface -selector writable
-            #Make a CheckPoint ?
-        }
+    BeforeAll {
+        $script:default_int = Get-ArubaCXInterfaces $pester_interface -selector writable
+        #Make a CheckPoint ?
 
-        It "Change interface description" {
-            Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -description "Modified by PowerArubaCX"
-            $int = Get-ArubaCXInterfaces -interface $pester_interface
-            $int.name | Should -Be "$pester_interface"
-            $int.description | Should -Be "Modified by PowerArubaCX"
-        }
+        # Add Vlan
+        Add-ArubaCXVlans -id $pester_vlan -name pester_PowerArubaCX
+        # and interface vlan
+        Add-ArubaCXInterfaces -vlan_id $pester_vlan
+    }
 
-        It "Change interface status (up)" {
-            Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -admin up
-            $int = Get-ArubaCXInterfaces -interface $pester_interface
-            $int.user_config.admin | Should -Be "up"
-        }
 
-        It "Change interface status (down)" {
-            Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -admin down
-            $int = Get-ArubaCXInterfaces -interface $pester_interface
-            $int.user_config.admin | Should -Be "down"
-        }
+    $inttypel3.ForEach{
+        Context "Interface $($_.name)" {
 
-        It "Change interface routing (disable)" {
-            Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -routing:$false
-            $int = Get-ArubaCXInterfaces -interface $pester_interface
-            $int.routing | Should -Be $false
-        }
+            It "Change interface description" -TestCases $_ {
+                Get-ArubaCXInterfaces -interface $_.name | Set-ArubaCXInterfaces -description "Modified by PowerArubaCX"
+                $int = Get-ArubaCXInterfaces -interface $_.name
+                $int.name | Should -Be $_.name
+                $int.description | Should -Be "Modified by PowerArubaCX"
+            }
 
-        It "Change interface routing (enable)" {
-            Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -routing:$true
-            $int = Get-ArubaCXInterfaces -interface $pester_interface
-            $int.routing | Should -Be $true
-        }
+            It "Change interface status (up)" -TestCases $_ {
+                Get-ArubaCXInterfaces -interface $_.name | Set-ArubaCXInterfaces -admin up
+                $int = Get-ArubaCXInterfaces -interface $_.name
+                $int.user_config.admin | Should -Be "up"
+            }
 
-        It "Change interface MTU (9198)" {
-            Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -mtu 9198
-            $int = Get-ArubaCXInterfaces -interface $pester_interface
-            $int.user_config.mtu | Should -Be "9198"
-        }
+            It "Change interface status (down)" -TestCases $_ {
+                Get-ArubaCXInterfaces -interface $_.name | Set-ArubaCXInterfaces -admin down
+                $int = Get-ArubaCXInterfaces -interface $_.name
+                $int.user_config.admin | Should -Be "down"
+            }
 
-        It "Change interface IP MTU (9198)" {
-            Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -ip_mtu 9198
-            $int = Get-ArubaCXInterfaces -interface $pester_interface
-            $int.ip_mtu | Should -Be "9198"
-        }
+            It "Change interface routing (disable)" -TestCases $_ {
+                Get-ArubaCXInterfaces -interface $_.name | Set-ArubaCXInterfaces -routing:$false
+                $int = Get-ArubaCXInterfaces -interface $_.name
+                $int.routing | Should -Be $false
+            }
 
-        It "Change interface routing (Set enable for tx and tx)" {
-            Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -l3_counters_tx:$true -l3_counters_rx:$true
-            $int = Get-ArubaCXInterfaces -interface $pester_interface
-            $int.l3_counters_enable.rx | Should -Be $true
-            $int.l3_counters_enable.tx | Should -Be $true
-        }
+            It "Change interface routing (enable)" -TestCases $_ {
+                Get-ArubaCXInterfaces -interface $_.name | Set-ArubaCXInterfaces -routing:$true
+                $int = Get-ArubaCXInterfaces -interface $_.name
+                $int.routing | Should -Be $true
+            }
 
-        It "Change interface l3 counters (Set disable for tx and tx)" {
-            Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -l3_counters_tx:$false -l3_counters_rx:$false
-            $int = Get-ArubaCXInterfaces -interface $pester_interface
-            $int.l3_counters_enable.rx | Should -Be $false
-            $int.l3_counters_enable.tx | Should -Be $false
-        }
+            It "Change interface MTU (9198)" -TestCases $_ {
+                Get-ArubaCXInterfaces -interface $_.name | Set-ArubaCXInterfaces -mtu 9198
+                $int = Get-ArubaCXInterfaces -interface $_.name
+                $int.user_config.mtu | Should -Be "9198"
+            }
 
-        #it is set on interface (1/1/x) but don't work for the moment (10.04.0030) with Vlan (get internal error)
-        It "Change Active Gateway (vsx_virtual_gw_mac_v4) MAC" {
-            Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -vsx_virtual_gw_mac_v4 00:01:02:03:04:05
-            $int = Get-ArubaCXInterfaces -interface $pester_interface
-            $int.vsx_virtual_gw_mac_v4 | Should -Be "00:01:02:03:04:05"
-        }
+            It "Change interface IP MTU (9198)" -TestCases $_ {
+                Get-ArubaCXInterfaces -interface $_.name | Set-ArubaCXInterfaces -ip_mtu 9198
+                $int = Get-ArubaCXInterfaces -interface $_.name
+                $int.ip_mtu | Should -Be "9198"
+            }
 
-        It "Change Active Gateway (vsx_virtual_ip4) IP" {
-            Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -vsx_virtual_ip4 192.0.2.254
-            $int = Get-ArubaCXInterfaces -interface $pester_interface
-            ($int.vsx_virtual_ip4).count | should -Be "1"
-            $int.vsx_virtual_ip4 | Should -Be "192.0.2.254"
+            It "Change interface routing (Set enable for tx and tx)" -TestCases $_ {
+                Get-ArubaCXInterfaces -interface $_.name | Set-ArubaCXInterfaces -l3_counters_tx:$true -l3_counters_rx:$true
+                $int = Get-ArubaCXInterfaces -interface $_.name
+                $int.l3_counters_enable.rx | Should -Be $true
+                $int.l3_counters_enable.tx | Should -Be $true
+            }
 
-        }
+            It "Change interface l3 counters (Set disable for tx and tx)" -TestCases $_ {
+                Get-ArubaCXInterfaces -interface $_.name | Set-ArubaCXInterfaces -l3_counters_tx:$false -l3_counters_rx:$false
+                $int = Get-ArubaCXInterfaces -interface $_.name
+                $int.l3_counters_enable.rx | Should -Be $false
+                $int.l3_counters_enable.tx | Should -Be $false
+            }
 
-        It "Change Active Gateway (vsx_virtual_ip4) IP and a secondary" {
-            Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -vsx_virtual_ip4 192.0.2.1, 192.0.2.2
-            $int = Get-ArubaCXInterfaces -interface $pester_interface
-            ($int.vsx_virtual_ip4).count | should -Be "2"
-            $int.vsx_virtual_ip4[0] | Should -Be "192.0.2.1"
-            $int.vsx_virtual_ip4[1] | Should -Be "192.0.2.2"
+            #it is set on interface (1/1/x) but don't work for the moment (10.04.0030) with Vlan (get internal error)
+            It "Change Active Gateway (vsx_virtual_gw_mac_v4) MAC" -TestCases $_ {
+                Get-ArubaCXInterfaces -interface $_.name | Set-ArubaCXInterfaces -vsx_virtual_gw_mac_v4 00:01:02:03:04:05
+                $int = Get-ArubaCXInterfaces -interface $_.name
+                $int.vsx_virtual_gw_mac_v4 | Should -Be "00:01:02:03:04:05"
+            }
+
+            It "Change Active Gateway (vsx_virtual_ip4) IP" -TestCases $_ {
+                Get-ArubaCXInterfaces -interface $_.name | Set-ArubaCXInterfaces -vsx_virtual_ip4 192.0.2.254
+                $int = Get-ArubaCXInterfaces -interface $_.name
+                ($int.vsx_virtual_ip4).count | should -Be "1"
+                $int.vsx_virtual_ip4 | Should -Be "192.0.2.254"
+
+            }
+
+            It "Change Active Gateway (vsx_virtual_ip4) IP and a secondary" -TestCases $_ {
+                Get-ArubaCXInterfaces -interface $_.name | Set-ArubaCXInterfaces -vsx_virtual_ip4 192.0.2.1, 192.0.2.2
+                $int = Get-ArubaCXInterfaces -interface $_.name
+                ($int.vsx_virtual_ip4).count | should -Be "2"
+                $int.vsx_virtual_ip4[0] | Should -Be "192.0.2.1"
+                $int.vsx_virtual_ip4[1] | Should -Be "192.0.2.2"
+            }
+
         }
 
         AfterAll {
             $default_int | Set-ArubaCXInterfaces -use_pipeline
             #Reverse CheckPoint ?
+
+            #Remove Vlan Interface
+            Get-ArubaCXInterfaces -interface "vlan$pester_vlan" | Remove-ArubaCXInterfaces -confirm:$false
+            #Remove vlan
+            Get-ArubaCXVlans -id $pester_vlan | Remove-ArubaCXVlans -confirm:$false
         }
     }
 }
