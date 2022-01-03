@@ -129,6 +129,7 @@ Describe "Get Interfaces" {
 $inttypel3 = @(
     @{ "name" = $pester_interface }
     @{ "name" = "vlan" + $pester_vlan }
+    @{ "name" = "loopback" + $pester_loopback }
 )
 
 Describe "Configure Interface" {
@@ -141,6 +142,9 @@ Describe "Configure Interface" {
         Add-ArubaCXVlans -id $pester_vlan -name pester_PowerArubaCX
         # and interface vlan
         Add-ArubaCXInterfaces -vlan_id $pester_vlan
+
+        #Add Loopback interface
+        Add-ArubaCXInterfaces -loopback_id $pester_loopback
     }
 
 
@@ -237,6 +241,9 @@ Describe "Configure Interface" {
             Get-ArubaCXInterfaces -interface "vlan$pester_vlan" | Remove-ArubaCXInterfaces -confirm:$false
             #Remove vlan
             Get-ArubaCXVlans -id $pester_vlan | Remove-ArubaCXVlans -confirm:$false
+
+            #Remove Loopback interface
+            Get-ArubaCXInterfaces -interface "loopback$pester_loopback" | Remove-ArubaCXInterfaces -confirm:$false
         }
     }
 }
