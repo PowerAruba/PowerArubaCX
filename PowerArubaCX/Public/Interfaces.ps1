@@ -42,6 +42,7 @@ function Add-ArubaCXInterfaces {
 
       Add interface loopback 1 with IPv4 Address 198.51.100.1/32 (and admin up)
       #>
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "")]
     Param(
         [Parameter (Mandatory = $true, ParameterSetName = "vlan")]
         [string]$vlan_id,
@@ -638,6 +639,7 @@ function Remove-ArubaCXInterfaces {
       Remove lag 2 without confirmation
 
     #>
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "")]
     [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'high')]
     Param(
         [Parameter (Mandatory = $true, ValueFromPipeline = $true, Position = 1)]
