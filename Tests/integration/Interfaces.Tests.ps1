@@ -198,7 +198,7 @@ Describe "Configure Interface" {
                 $int.ip_mtu | Should -Be "9198"
             }
 
-            It "Change interface routing (Set enable for tx and tx)" -TestCases $_ {
+            It "Change interface l3 counters (Set enable for tx and tx)" -TestCases $_ {
                 Get-ArubaCXInterfaces -interface $_.name | Set-ArubaCXInterfaces -l3_counters_tx:$true -l3_counters_rx:$true
                 $int = Get-ArubaCXInterfaces -interface $_.name
                 $int.l3_counters_enable.rx | Should -Be $true
