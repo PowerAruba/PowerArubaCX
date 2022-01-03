@@ -130,6 +130,7 @@ $inttypel3 = @(
     @{ "name" = $pester_interface }
     @{ "name" = "vlan" + $pester_vlan }
     @{ "name" = "loopback" + $pester_loopback }
+    @{ "name" = "lag" + $pester_lag }
 )
 
 Describe "Configure Interface" {
@@ -145,6 +146,9 @@ Describe "Configure Interface" {
 
         #Add Loopback interface
         Add-ArubaCXInterfaces -loopback_id $pester_loopback
+
+        #Add Lag interface
+        Add-ArubaCXInterfaces -lag_id $pester_lag
     }
 
 
@@ -244,6 +248,9 @@ Describe "Configure Interface" {
 
             #Remove Loopback interface
             Get-ArubaCXInterfaces -interface "loopback$pester_loopback" | Remove-ArubaCXInterfaces -confirm:$false
+
+            #Remove Lag interface
+            Get-ArubaCXInterfaces -interface "lag$pester_lag" | Remove-ArubaCXInterfaces -confirm:$false
         }
     }
 }
