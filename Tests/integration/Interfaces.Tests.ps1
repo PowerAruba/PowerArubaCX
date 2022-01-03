@@ -202,7 +202,7 @@ Describe "Configure Interface" {
         It "Change Active Gateway (vsx_virtual_ip4) IP" {
             Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -vsx_virtual_ip4 192.0.2.254
             $int = Get-ArubaCXInterfaces -interface $pester_interface
-        ($int.vsx_virtual_ip4).count | should -Be "1"
+            ($int.vsx_virtual_ip4).count | should -Be "1"
             $int.vsx_virtual_ip4 | Should -Be "192.0.2.254"
 
         }
@@ -210,7 +210,7 @@ Describe "Configure Interface" {
         It "Change Active Gateway (vsx_virtual_ip4) IP and a secondary" {
             Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -vsx_virtual_ip4 192.0.2.1, 192.0.2.2
             $int = Get-ArubaCXInterfaces -interface $pester_interface
-        ($int.vsx_virtual_ip4).count | should -Be "2"
+            ($int.vsx_virtual_ip4).count | should -Be "2"
             $int.vsx_virtual_ip4[0] | Should -Be "192.0.2.1"
             $int.vsx_virtual_ip4[1] | Should -Be "192.0.2.2"
         }
