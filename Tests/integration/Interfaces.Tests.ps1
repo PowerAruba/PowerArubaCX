@@ -837,6 +837,83 @@ Describe "Add Interface" {
             Get-ArubaCXVrfs -name $pester_vrf | Remove-ArubaCXVrfs -confirm:$false
         }
     }
+
+    Context "loopback" {
+        BeforeAll {
+            #Create the vrf
+            Add-ArubaCXVrfs -name $pester_vrf
+        }
+
+        AfterEach {
+            Get-ArubaCXInterfaces -interface "loopback$pester_loopback" | Remove-ArubaCXInterfaces -confirm:$false
+        }
+
+        It "Add Interface loopback $pester_loopback (with only an id)" {
+            Add-ArubaCXInterfaces -loopback_id $pester_loopback
+            $int_loopback = Get-ArubaCXInterfaces -interface "loopback$pester_loopback"
+            $int_loopback.name | Should -Be "loopback$pester_loopback"
+            $int_loopback.description | Should -Be $null
+            $int_loopback.type | Should -Be "loopback"
+            $int_loopback.admin_state | Should -Be "up"
+            $int_loopback.ip4_address | Should -Be $null
+            $int_loopback.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+            $int_loopback.routing | Should -Be $true
+        }
+
+        It "Add Interface loopback $pester_loopback (with an id, description)" {
+            Add-ArubaCXInterfaces -loopback_id $pester_loopback -description "Add via PowerArubaCX"
+            $int_loopback = Get-ArubaCXInterfaces -interface "loopback$pester_loopback"
+            $int_loopback.name | Should -Be "loopback$pester_loopback"
+            $int_loopback.description | Should -Be "Add via PowerArubaCX"
+            $int_loopback.type | Should -Be "loopback"
+            $int_loopback.admin_state | Should -Be "up"
+            $int_loopback.ip4_address | Should -Be $null
+            $int_loopback.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+            $int_loopback.routing | Should -Be $true
+        }
+
+        It "Add Interface loopback $pester_loopback (with an id and status down)" {
+            Add-ArubaCXInterfaces -loopback_id $pester_loopback -admin down
+            $int_loopback = Get-ArubaCXInterfaces -interface "loopback$pester_loopback"
+            $int_loopback.name | Should -Be "loopback$pester_loopback"
+            $int_loopback.description | Should -Be $null
+            $int_loopback.type | Should -Be "loopback"
+            $int_loopback.admin_state | Should -Be "down"
+            $int_loopback.ip4_address | Should -Be $null
+            $int_loopback.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+            $int_loopback.routing | Should -Be $true
+        }
+
+        It "Add Interface loopback $pester_loopback (with an id and IP4 Address (and mask))" {
+            Add-ArubaCXInterfaces -loopback_id $pester_loopback -ip4_address 192.0.2.1 -ip4_mask 24
+            $int_loopback = Get-ArubaCXInterfaces -interface "loopback$pester_loopback"
+            $int_loopback.name | Should -Be "loopback$pester_loopback"
+            $int_loopback.description | Should -Be $null
+            $int_loopback.type | Should -Be "loopback"
+            $int_loopback.admin_state | Should -Be "up"
+            $int_loopback.ip4_address | Should -Be "192.0.2.1/24"
+            $int_loopback.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+            $int_loopback.routing | Should -Be $true
+        }
+
+
+        It "Add Interface loopback $pester_loopback (with an id and a vrf)" {
+            Add-ArubaCXInterfaces -loopback_id $pester_loopback -vrf $pester_vrf
+            $int_loopback = Get-ArubaCXInterfaces -interface "loopback$pester_loopback"
+            $int_loopback.name | Should -Be "loopback$pester_loopback"
+            $int_loopback.description | Should -Be $null
+            $int_loopback.type | Should -Be "loopback"
+            #$int_loopback.admin | Should -Be "up"
+            $int_loopback.ip4_address | Should -Be $null
+            $int_loopback.vrf.$pester_vrf | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + $pester_vrf)
+            $int_loopback.routing | Should -Be $true
+        }
+
+        AfterAll {
+            #Remove vrf
+            Get-ArubaCXVrfs -name $pester_vrf | Remove-ArubaCXVrfs -confirm:$false
+        }
+    }
 }
 
 AfterAll {
