@@ -186,7 +186,8 @@ Describe "Configure Interface" {
                 $int.routing | Should -Be $true
             }
 
-            It "Change interface MTU (9198)" -TestCases $_ {
+            #Disable MTU change for LAG (can no be change...)
+            It "Change interface MTU (9198)" -TestCases $_ -Skip:($_.name -eq "lag$pester_lag") {
                 Get-ArubaCXInterfaces -interface $_.name | Set-ArubaCXInterfaces -mtu 9198
                 $int = Get-ArubaCXInterfaces -interface $_.name
                 $int.user_config.mtu | Should -Be "9198"
