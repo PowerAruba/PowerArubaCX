@@ -165,13 +165,22 @@ Describe "Configure Interface" {
             It "Change interface status (up)" -TestCases $_ {
                 Get-ArubaCXInterfaces -interface $_.name | Set-ArubaCXInterfaces -admin up
                 $int = Get-ArubaCXInterfaces -interface $_.name
-                $int.user_config.admin | Should -Be "up"
+                #With lag, there is no user_config but directly admin...
+                if ($_.name -like "lag*") {
+                    $int.admin | Should -Be "up"
+                }
+                else {
+                    $int.user_config.admin | Should -Be "up"
+                }
             }
 
             It "Change interface status (down)" -TestCases $_ {
                 Get-ArubaCXInterfaces -interface $_.name | Set-ArubaCXInterfaces -admin down
                 $int = Get-ArubaCXInterfaces -interface $_.name
-                $int.user_config.admin | Should -Be "down"
+                #With lag, there is nothings ..
+                if ($_.name -notlike "lag*") {
+                    $int.user_config.admin | Should -Be "down"
+                }
             }
 
             It "Change interface routing (disable)" -TestCases $_ {

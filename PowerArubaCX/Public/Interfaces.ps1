@@ -514,10 +514,15 @@ function Set-ArubaCXInterfaces {
         }
 
         if ( $PsBoundParameters.ContainsKey('admin') ) {
-            if ($null -eq $_interface.user_config.admin) {
-                $_interface.user_config | Add-member -name "admin" -membertype NoteProperty -Value ""
+            if ($interface -like "lag*") {
+                $_interface.admin = $admin
             }
-            $_interface.user_config.admin = $admin
+            else {
+                if ($null -eq $_interface.user_config.admin) {
+                    $_interface.user_config | Add-member -name "admin" -membertype NoteProperty -Value ""
+                }
+                $_interface.user_config.admin = $admin
+            }
         }
 
         if ( $PsBoundParameters.ContainsKey('routing') ) {
