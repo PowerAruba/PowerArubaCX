@@ -222,7 +222,6 @@ Describe "Configure Interface" {
                 $int.l3_counters_enable.tx | Should -Be $false
             }
 
-            #it is set on interface (1/1/x) but don't work for the moment (10.04.0030) with Vlan (get internal error)
             It "Change Active Gateway (vsx_virtual_gw_mac_v4) MAC" -TestCases $_ {
                 Get-ArubaCXInterfaces -interface $_.name | Set-ArubaCXInterfaces -vsx_virtual_gw_mac_v4 00:01:02:03:04:05
                 $int = Get-ArubaCXInterfaces -interface $_.name
@@ -234,7 +233,6 @@ Describe "Configure Interface" {
                 $int = Get-ArubaCXInterfaces -interface $_.name
                 ($int.vsx_virtual_ip4).count | should -Be "1"
                 $int.vsx_virtual_ip4 | Should -Be "192.0.2.254"
-
             }
 
             It "Change Active Gateway (vsx_virtual_ip4) IP and a secondary" -TestCases $_ {
