@@ -366,52 +366,60 @@ Describe "Add Vlan trunk on Interface" {
         #Set interface to mode routing
         Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -routing:$true
         #Make a CheckPoint ?
+
+        #Add Lag interface
+        Add-ArubaCXInterfaces -lag_id $pester_lag -vlan_mode access
     }
 
-    It "Try to set vlan_trunks on interface with routing" {
-        {
-            Get-ArubaCXInterfaces -interface $pester_interface | Add-ArubaCXInterfacesVlanTrunks -vlan_trunks $pester_vlan
-        } | Should -Throw "You need to disable routing mode for use vlan_trunks"
+    $inttypel2.ForEach{
+        Context "Interface $($_.name)" {
 
-        Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -routing:$false -vlan_mode access
-    }
+            It "Try to set vlan_trunks on interface with routing" -TestCases $_ {
+                {
+                    Get-ArubaCXInterfaces -interface $_.name | Add-ArubaCXInterfacesVlanTrunks -vlan_trunks $pester_vlan
+                } | Should -Throw "You need to disable routing mode for use vlan_trunks"
 
-    It "Try to set vlan_trunks on interface with vlan mode access" {
-        {
-            Get-ArubaCXInterfaces -interface $pester_interface | Add-ArubaCXInterfacesVlanTrunks -vlan_trunks $pester_vlan
-        } | Should -Throw "You need to use native-(un)tagged vlan mode"
+                Get-ArubaCXInterfaces -interface $_.name | Set-ArubaCXInterfaces -routing:$false -vlan_mode access
+            }
 
-        Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -routing:$false -vlan_mode native-untagged
-    }
+            It "Try to set vlan_trunks on interface with vlan mode access" -TestCases $_ {
+                {
+                    Get-ArubaCXInterfaces -interface $_.name | Add-ArubaCXInterfacesVlanTrunks -vlan_trunks $pester_vlan
+                } | Should -Throw "You need to use native-(un)tagged vlan mode"
 
-    It "Add Vlan ($pester_vlan) trunks to an interface ($pester_interface)" {
-        Get-ArubaCXInterfaces -interface $pester_interface | Add-ArubaCXInterfacesVlanTrunks -vlan_trunks $pester_vlan
-        $int = Get-ArubaCXInterfaces -interface $pester_interface
-        $int.vlan_tag | Should -Be $null
-        ($int.vlan_trunks | Get-Member -MemberType NoteProperty).count | Should -Be "1"
-        $int.vlan_trunks.$pester_vlan | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vlans/" + $pester_vlan)
-    }
+                Get-ArubaCXInterfaces -interface $_.name | Set-ArubaCXInterfaces -routing:$false -vlan_mode native-untagged
+            }
 
-    It "Add Second Vlan ($pester_vlan2) trunks to an interface ($pester_interface)" {
-        Get-ArubaCXInterfaces -interface $pester_interface | Add-ArubaCXInterfacesVlanTrunks -vlan_trunks $pester_vlan2
-        $int = Get-ArubaCXInterfaces -interface $pester_interface
-        $int.vlan_tag | Should -Be $null
-        ($int.vlan_trunks | Get-Member -MemberType NoteProperty).count | Should -Be "2"
-        $int.vlan_trunks.$pester_vlan | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vlans/" + $pester_vlan)
-        $int.vlan_trunks.$pester_vlan2 | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vlans/" + $pester_vlan2)
-    }
+            It "Add Vlan ($pester_vlan) trunks to an interface $($_.name)" -TestCases $_ {
+                Get-ArubaCXInterfaces -interface $_.name | Add-ArubaCXInterfacesVlanTrunks -vlan_trunks $pester_vlan
+                $int = Get-ArubaCXInterfaces -interface $_.name
+                $int.vlan_tag | Should -Be $null
+                ($int.vlan_trunks | Get-Member -MemberType NoteProperty).count | Should -Be "1"
+                $int.vlan_trunks.$pester_vlan | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vlans/" + $pester_vlan)
+            }
 
-    It "Add Vlans ($pester_vlan and $pester_vlan2) trunks to an interface ($pester_interface)" {
-        #reset vlan trunks
-        Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -vlan_mode access -vlan_trunks $null
-        #Set now to native-tagged
-        Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -vlan_mode native-untagged
-        Get-ArubaCXInterfaces -interface $pester_interface | Add-ArubaCXInterfacesVlanTrunks -vlan_trunks $pester_vlan, $pester_vlan2
-        $int = Get-ArubaCXInterfaces -interface $pester_interface
-        $int.vlan_tag | Should -Be $null
-        ($int.vlan_trunks | Get-Member -MemberType NoteProperty).count | Should -Be "2"
-        $int.vlan_trunks.$pester_vlan | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vlans/" + $pester_vlan)
-        $int.vlan_trunks.$pester_vlan2 | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vlans/" + $pester_vlan2)
+            It "Add Second Vlan ($pester_vlan2) trunks to an interface $($_.name)" -TestCases $_ {
+                Get-ArubaCXInterfaces -interface $_.name | Add-ArubaCXInterfacesVlanTrunks -vlan_trunks $pester_vlan2
+                $int = Get-ArubaCXInterfaces -interface $_.name
+                $int.vlan_tag | Should -Be $null
+                ($int.vlan_trunks | Get-Member -MemberType NoteProperty).count | Should -Be "2"
+                $int.vlan_trunks.$pester_vlan | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vlans/" + $pester_vlan)
+                $int.vlan_trunks.$pester_vlan2 | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vlans/" + $pester_vlan2)
+            }
+
+            It "Add Vlans ($pester_vlan and $pester_vlan2) trunks to an interface $($_.name)" -TestCases $_ {
+                #reset vlan trunks
+                Get-ArubaCXInterfaces -interface $_.name | Set-ArubaCXInterfaces -vlan_mode access -vlan_trunks $null
+                #Set now to native-tagged
+                Get-ArubaCXInterfaces -interface $_.name | Set-ArubaCXInterfaces -vlan_mode native-untagged
+                Get-ArubaCXInterfaces -interface $_.name | Add-ArubaCXInterfacesVlanTrunks -vlan_trunks $pester_vlan, $pester_vlan2
+                $int = Get-ArubaCXInterfaces -interface $_.name
+                $int.vlan_tag | Should -Be $null
+                ($int.vlan_trunks | Get-Member -MemberType NoteProperty).count | Should -Be "2"
+                $int.vlan_trunks.$pester_vlan | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vlans/" + $pester_vlan)
+                $int.vlan_trunks.$pester_vlan2 | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vlans/" + $pester_vlan2)
+            }
+        }
     }
 
     AfterAll {
@@ -419,6 +427,9 @@ Describe "Add Vlan trunk on Interface" {
         #Reverse CheckPoint ?
         Get-ArubaCXVlans -id $pester_vlan | Remove-ArubaCXVlans -confirm:$false
         Get-ArubaCXVlans -id $pester_vlan2 | Remove-ArubaCXVlans -confirm:$false
+
+        #Remove Lag interface
+        Get-ArubaCXInterfaces -interface "lag$pester_lag" | Remove-ArubaCXInterfaces -confirm:$false
     }
 }
 
@@ -432,25 +443,33 @@ Describe "Remove Vlan trunk on Interface" {
         #Set interface to mode no routing and vlan mode native untagged
         Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -routing:$false -vlan_mode native-untagged
         #Make a CheckPoint ?
-    }
-    BeforeEach {
-        #Affect 2 Vlan on the interface
-        Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -vlan_trunks $pester_vlan, $pester_vlan2
+
+        #Add Lag interface
+        Add-ArubaCXInterfaces -lag_id $pester_lag -vlan_mode access
     }
 
-    It "Remove Vlan ($pester_vlan) trunks to an interface ($pester_interface)" {
-        Get-ArubaCXInterfaces -interface $pester_interface | Remove-ArubaCXInterfacesVlanTrunks -vlan_trunks $pester_vlan
-        $int = Get-ArubaCXInterfaces -interface $pester_interface
-        $int.vlan_tag | Should -Be $null
-        ($int.vlan_trunks | Get-Member -MemberType NoteProperty).count | Should -Be "1"
-        $int.vlan_trunks.$pester_vlan2 | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vlans/" + $pester_vlan2)
-    }
+    $inttypel2.ForEach{
+        Context "Interface $($_.name)" {
+            BeforeEach {
+                #Affect 2 Vlan on the interface
+                Get-ArubaCXInterfaces -interface $_.name | Set-ArubaCXInterfaces -vlan_trunks $pester_vlan, $pester_vlan2
+            }
 
-    It "Remove Vlans ($pester_vlan and $pester_vlan2) trunks to an interface ($pester_interface)" {
-        Get-ArubaCXInterfaces -interface $pester_interface | Remove-ArubaCXInterfacesVlanTrunks -vlan_trunks $pester_vlan, $pester_vlan2
-        $int = Get-ArubaCXInterfaces -interface $pester_interface
-        $int.vlan_tag | Should -Be $null
-        $int.vlan_trunks | Should -BeNullOrEmpty
+            It "Remove Vlan ($pester_vlan) trunks to an interface $($_.name)" -TestCases $_ {
+                Get-ArubaCXInterfaces -interface $_.name | Remove-ArubaCXInterfacesVlanTrunks -vlan_trunks $pester_vlan
+                $int = Get-ArubaCXInterfaces -interface $_.name
+                $int.vlan_tag | Should -Be $null
+                ($int.vlan_trunks | Get-Member -MemberType NoteProperty).count | Should -Be "1"
+                $int.vlan_trunks.$pester_vlan2 | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vlans/" + $pester_vlan2)
+            }
+
+            It "Remove Vlans ($pester_vlan and $pester_vlan2) trunks to an interface $($_.name)" -TestCases $_ {
+                Get-ArubaCXInterfaces -interface $_.name | Remove-ArubaCXInterfacesVlanTrunks -vlan_trunks $pester_vlan, $pester_vlan2
+                $int = Get-ArubaCXInterfaces -interface $_.name
+                $int.vlan_tag | Should -Be $null
+                $int.vlan_trunks | Should -BeNullOrEmpty
+            }
+        }
     }
 
     AfterAll {
@@ -458,6 +477,9 @@ Describe "Remove Vlan trunk on Interface" {
         #Reverse CheckPoint ?
         Get-ArubaCXVlans -id $pester_vlan | Remove-ArubaCXVlans -confirm:$false
         Get-ArubaCXVlans -id $pester_vlan2 | Remove-ArubaCXVlans -confirm:$false
+
+        #Remove Lag interface
+        Get-ArubaCXInterfaces -interface "lag$pester_lag" | Remove-ArubaCXInterfaces -confirm:$false
     }
 }
 
