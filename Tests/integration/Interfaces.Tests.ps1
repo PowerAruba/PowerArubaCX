@@ -490,43 +490,69 @@ Describe "Configure IP on Interface" {
         #Set interface to mode routing
         Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -routing:$true
         #Make a CheckPoint ?
+
+        # Add Vlan
+        Add-ArubaCXVlans -id $pester_vlan -name pester_PowerArubaCX
+        # and interface vlan
+        Add-ArubaCXInterfaces -vlan_id $pester_vlan
+
+        #Add Loopback interface
+        Add-ArubaCXInterfaces -loopback_id $pester_loopback
+
+        #Add Lag interface
+        Add-ArubaCXInterfaces -lag_id $pester_lag
     }
 
-    It "Try to set ip4_address without ip4_mask" {
-        {
-            Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -ip4_address 192.0.2.1
-        } | Should -Throw "You need to set ip4_mask when use ipv4_address"
-    }
+    $inttypel3.ForEach{
+        Context "Interface $($_.name)" {
+            It "Try to set ip4_address without ip4_mask" -TestCases $_ {
+                {
+                    Get-ArubaCXInterfaces -interface $_.name | Set-ArubaCXInterfaces -ip4_address 192.0.2.1
+                } | Should -Throw "You need to set ip4_mask when use ipv4_address"
+            }
 
-    It "Try to set ip4_address on interface with no routing" {
-        {
-            Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -routing:$false
-            Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -ip4_address 192.0.2.1 -ip4_mask 24
-        } | Should -Throw "You need to enable routing mode for use ipv4_address"
+            It "Try to set ip4_address on interface with no routing" -TestCases $_ {
+                {
+                    Get-ArubaCXInterfaces -interface $_.name | Set-ArubaCXInterfaces -routing:$false
+                    Get-ArubaCXInterfaces -interface $_.name | Set-ArubaCXInterfaces -ip4_address 192.0.2.1 -ip4_mask 24
+                } | Should -Throw "You need to enable routing mode for use ipv4_address"
 
-        Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -routing:$true
-    }
+                Get-ArubaCXInterfaces -interface $_.name | Set-ArubaCXInterfaces -routing:$true
+            }
 
-    It "Try to set a IPv6 Address on interface" {
-        {
-            Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -ip4_address 2001:DB8::1 -ip4_mask 24
-        } | Should -Throw "You need to specify a IPv4 Address"
-    }
+            It "Try to set a IPv6 Address on interface" -TestCases $_ {
+                {
+                    Get-ArubaCXInterfaces -interface $_.name | Set-ArubaCXInterfaces -ip4_address 2001:DB8::1 -ip4_mask 24
+                } | Should -Throw "You need to specify a IPv4 Address"
+            }
 
-    It "Set ip4_address on interface" {
-        Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -ip4_address 192.0.2.1 -ip4_mask 24
-        $int = Get-ArubaCXInterfaces -interface $pester_interface
-        $int.ip4_address | Should -Be "192.0.2.1/24"
-    }
+            It "Set ip4_address on interface" -TestCases $_ {
+                Get-ArubaCXInterfaces -interface $_.name | Set-ArubaCXInterfaces -ip4_address 192.0.2.1 -ip4_mask 24
+                $int = Get-ArubaCXInterfaces -interface $_.name
+                $int.ip4_address | Should -Be "192.0.2.1/24"
+            }
 
-    It "Set ip4_address to default on interface" {
-        Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -ip4_address $null
-        $int = Get-ArubaCXInterfaces -interface $pester_interface
-        $int.ip4_address | Should -Be $null
+            It "Set ip4_address to default on interface" -TestCases $_ {
+                Get-ArubaCXInterfaces -interface $_.name | Set-ArubaCXInterfaces -ip4_address $null
+                $int = Get-ArubaCXInterfaces -interface $_.name
+                $int.ip4_address | Should -Be $null
+            }
+        }
     }
 
     AfterAll {
         $default_int | Set-ArubaCXInterfaces -use_pipeline
+
+        #Remove Vlan Interface
+        Get-ArubaCXInterfaces -interface "vlan$pester_vlan" | Remove-ArubaCXInterfaces -confirm:$false
+        #Remove vlan
+        Get-ArubaCXVlans -id $pester_vlan | Remove-ArubaCXVlans -confirm:$false
+
+        #Remove Loopback interface
+        Get-ArubaCXInterfaces -interface "loopback$pester_loopback" | Remove-ArubaCXInterfaces -confirm:$false
+
+        #Remove Lag interface
+        Get-ArubaCXInterfaces -interface "lag$pester_lag" | Remove-ArubaCXInterfaces -confirm:$false
     }
 }
 
@@ -537,18 +563,45 @@ Describe "Configure VRF on Interface" {
         #Set interface to mode routing
         Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -routing:$true
 
+        # Add Vlan
+        Add-ArubaCXVlans -id $pester_vlan -name pester_PowerArubaCX
+        # and interface vlan
+        Add-ArubaCXInterfaces -vlan_id $pester_vlan
+
+        #Add Loopback interface
+        Add-ArubaCXInterfaces -loopback_id $pester_loopback
+
+        #Add Lag interface
+        Add-ArubaCXInterfaces -lag_id $pester_lag
+
+
         #Create the vrf
         Add-ArubaCXVrfs -name $pester_vrf
     }
 
-    It "Attach vrf ($pester_vrf) to an interface ($pester_interface)" {
-        Get-ArubaCXInterfaces -interface $pester_interface | Set-ArubaCXInterfaces -vrf $pester_vrf
-        $int = Get-ArubaCXInterfaces -interface $pester_interface
-        $int.vrf.$pester_vrf | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + $pester_vrf)
+    $inttypel3.ForEach{
+        Context "Interface $($_.name)" {
+            It "Attach vrf ($pester_vrf) to an interface $($_.name))" -TestCases $_ {
+                Get-ArubaCXInterfaces -interface $_.name | Set-ArubaCXInterfaces -vrf $pester_vrf
+                $int = Get-ArubaCXInterfaces -interface $_.name
+                $int.vrf.$pester_vrf | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + $pester_vrf)
+            }
+        }
     }
 
     AfterAll {
         $default_int | Set-ArubaCXInterfaces -use_pipeline
+
+        #Remove Vlan Interface
+        Get-ArubaCXInterfaces -interface "vlan$pester_vlan" | Remove-ArubaCXInterfaces -confirm:$false
+        #Remove vlan
+        Get-ArubaCXVlans -id $pester_vlan | Remove-ArubaCXVlans -confirm:$false
+
+        #Remove Loopback interface
+        Get-ArubaCXInterfaces -interface "loopback$pester_loopback" | Remove-ArubaCXInterfaces -confirm:$false
+
+        #Remove Lag interface
+        Get-ArubaCXInterfaces -interface "lag$pester_lag" | Remove-ArubaCXInterfaces -confirm:$false
 
         #Remove vrf
         Get-ArubaCXVrfs -name $pester_vrf | Remove-ArubaCXVrfs -confirm:$false
