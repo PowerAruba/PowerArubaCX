@@ -1028,7 +1028,21 @@ Describe "Add Interface" {
         }
     }
 
-    Context "Add Interface LAG (specific)" {
+}
+
+$inttypenolagnophysical = @(
+    @{ "name" = "vlan" + $pester_vlan }
+    @{ "name" = "loopback" + $pester_loopback }
+)
+
+$inttypenolag = @(
+    @{ "name" = $pester_interface }
+    @{ "name" = "vlan" + $pester_vlan }
+    @{ "name" = "loopback" + $pester_loopback }
+)
+Describe "LAG specific" {
+
+    Context "Add Interface LAG with members" {
         BeforeAll {
             Add-ArubaCXVlans -id $pester_vlan -name PowerArubaCX
             Add-ArubaCXVlans -id $pester_vlan2 -name PowerArubaCX2
@@ -1047,7 +1061,7 @@ Describe "Add Interface" {
             $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
             $int.name | Should -Be "lag$pester_lag"
             $int.description | Should -Be $null
-            #$int.type | Should -Be "lag"
+            $int.type | Should -Be $null
             $int.bond_status | Should -Be -Not $null
             $int.admin | Should -Be "up"
             $int.ip4_address | Should -Be $null
@@ -1062,7 +1076,7 @@ Describe "Add Interface" {
             $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
             $int.name | Should -Be "lag$pester_lag"
             $int.description | Should -Be $null
-            #$int.type | Should -Be "lag"
+            $int.type | Should -Be $null
             $int.bond_status | Should -Be -Not $null
             $int.admin | Should -Be "up"
             $int.ip4_address | Should -Be $null
@@ -1082,6 +1096,123 @@ Describe "Add Interface" {
             Get-ArubaCXVrfs -name $pester_vrf | Remove-ArubaCXVrfs -confirm:$false
         }
     }
+
+
+
+    Context "Try to Add member to no LAG interface " {
+
+        $inttypenolagnophysical.ForEach{
+            It "Try to Add member to no LAG interface $($_.name)" -TestCases $_ {
+                if ($_.name -like "vlan*") {
+                    $vlan_id = $_.name -replace "vlan", ""
+                    $invokeParams = @{ "vlan_id" = $vlan_id }
+                }
+                if ($_.name -like "loopback*") {
+                    $loopback = $_.name -replace "loopback", ""
+                    $invokeParams = @{ "loopback" = $loopback }
+                }
+                {
+                    Add-ArubaCXInterfaces @invokeParams -interfaces $pester_interface
+                } | Should -Throw
+            }
+        }
+    }
+
+    Context "Set Interface LAG with members" {
+        BeforeAll {
+            Add-ArubaCXVlans -id $pester_vlan -name PowerArubaCX
+            Add-ArubaCXVlans -id $pester_vlan2 -name PowerArubaCX2
+            #Make a CheckPoint ?
+
+            #Create the vrf
+            Add-ArubaCXVrfs -name $pester_vrf
+        }
+
+        BeforeEach {
+            #Add a Lag
+            Add-ArubaCXInterfaces -lag_id $pester_lag -interfaces $pester_interface -admin up
+        }
+
+        AfterEach {
+            Get-ArubaCXInterfaces -interface "lag$pester_lag" | Remove-ArubaCXInterfaces -confirm:$false
+        }
+
+        It "Set an interface member on lag $pester_lag " {
+            Get-ArubaCXInterfaces -interface "lag$pester_lag" | Set-ArubaCXInterfaces -lag_interfaces $pester_interface
+            $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
+            $int.name | Should -Be "lag$pester_lag"
+            $int.description | Should -Be $null
+            $int.type | Should -Be $null
+            $int.bond_status | Should -Be -Not $null
+            $int.admin | Should -Be "up"
+            $int.ip4_address | Should -Be $null
+            $int.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+            $int.routing | Should -Be $true
+            @($int.interfaces.psobject.properties.name).count | Should -Be "1"
+            $int.interfaces.$pester_interface | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/interfaces/" + ($pester_interface -replace "/", "%2F"))
+        }
+
+        It "Set 2 interfaces members on lag $pester_lag" {
+            Get-ArubaCXInterfaces -interface "lag$pester_lag" | Set-ArubaCXInterfaces -lag_interfaces $pester_interface, $pester_interface2
+            $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
+            $int.name | Should -Be "lag$pester_lag"
+            $int.description | Should -Be $null
+            $int.type | Should -Be $null
+            $int.bond_status | Should -Be -Not $null
+            $int.admin | Should -Be "up"
+            $int.ip4_address | Should -Be $null
+            $int.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+            $int.routing | Should -Be $true
+            @($int.interfaces.psobject.properties.name).count | Should -Be "2"
+            $int.interfaces.$pester_interface | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/interfaces/" + ($pester_interface -replace "/", "%2F"))
+            $int.interfaces.$pester_interface2 | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/interfaces/" + ($pester_interface2 -replace "/", "%2F"))
+        }
+
+        AfterAll {
+            Get-ArubaCXVlans -id $pester_vlan | Remove-ArubaCXVlans -confirm:$false
+            Get-ArubaCXVlans -id $pester_vlan2 | Remove-ArubaCXVlans -confirm:$false
+            #Reverse CheckPoint ?
+
+            #Remove vrf
+            Get-ArubaCXVrfs -name $pester_vrf | Remove-ArubaCXVrfs -confirm:$false
+        }
+    }
+
+    Context "Try to Add member to no LAG interface " {
+        BeforeAll {
+            $script:default_int = Get-ArubaCXInterfaces $pester_interface -selector writable
+            #Make a CheckPoint ?
+
+            # Add Vlan
+            Add-ArubaCXVlans -id $pester_vlan -name pester_PowerArubaCX
+            # and interface vlan
+            Add-ArubaCXInterfaces -vlan_id $pester_vlan
+
+            #Add Loopback interface
+            Add-ArubaCXInterfaces -loopback_id $pester_loopback
+        }
+
+        $inttypenolag.ForEach{
+            It "Try to set member to no LAG interface $($_.name)" -TestCases $_ {
+                {
+                    Get-ArubaCXInterfaces -interface $($_.name) | Set-ArubaCXInterfaces -lag_interfaces $pester_interface
+                } | Should -Throw
+            }
+        }
+
+        AfterAll {
+            $default_int | Set-ArubaCXInterfaces -use_pipeline
+
+            #Remove Vlan Interface
+            Get-ArubaCXInterfaces -interface "vlan$pester_vlan" | Remove-ArubaCXInterfaces -confirm:$false
+            #Remove vlan
+            Get-ArubaCXVlans -id $pester_vlan | Remove-ArubaCXVlans -confirm:$false
+
+            #Remove Loopback interface
+            Get-ArubaCXInterfaces -interface "loopback$pester_loopback" | Remove-ArubaCXInterfaces -confirm:$false
+        }
+    }
+
 }
 
 AfterAll {

@@ -423,6 +423,11 @@ function Set-ArubaCXInterfaces {
       Set interface 1/1/1 on the vrf MyVRF
 
       .EXAMPLE
+      Get-ArubaCXInterfaces -interface lag2 | Set-ArubaCXInterfaces -lag_interfaces
+
+      Set interface 1/1/1 on the lag 2
+
+      .EXAMPLE
       $int = Get-ArubaCXInterfaces -interface 1/1/1 -selector writable
       PS> $int.description = "My Vlan"
       PS> $int | Set-ArubaCXInterfaces -use_pipeline
@@ -478,6 +483,8 @@ function Set-ArubaCXInterfaces {
         [string]$vrf,
         [Parameter (Mandatory = $false)]
         [switch]$use_pipeline,
+        [Parameter (Mandatory = $false)]
+        [String[]]$lag_interfaces,
         [Parameter (Mandatory = $False)]
         [ValidateNotNullOrEmpty()]
         [PSObject]$connection = $DefaultArubaCXConnection
@@ -612,6 +619,20 @@ function Set-ArubaCXInterfaces {
 
         if ( $PsBoundParameters.ContainsKey('vrf') ) {
             $_interface.vrf = "/rest/" + $($connection.api_version) + "/system/vrfs/" + $vrf
+        }
+
+        #Only work for LAG interface
+        if ( $PsBoundParameters.ContainsKey('lag_interfaces') ) {
+            if ($interface -like "lag*") {
+                $members = @()
+                foreach ($member in $lag_interfaces) {
+                    $members += "/rest/" + $($connection.api_version) + "/system/interfaces/" + ($member -replace '/', '%2F')
+                }
+                $_interface.interfaces = $members
+            }
+            else {
+                throw "You can only use -lag_interfaces with lag interface"
+            }
         }
 
         if ($PSCmdlet.ShouldProcess($interface, 'Configure interface Settings')) {
