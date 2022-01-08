@@ -608,92 +608,427 @@ Describe "Configure VRF on Interface" {
     }
 }
 
+$inttypeadd = @(
+    @{ "name" = "vlan" + $pester_vlan }
+    @{ "name" = "loopback" + $pester_loopback }
+    @{ "name" = "lag" + $pester_lag }
+)
+
+$inttypeaddl2 = @(
+    @{ "name" = "lag" + $pester_lag }
+)
+
 Describe "Add Interface" {
 
-    Context "Vlan" {
-        BeforeAll {
-            Add-ArubaCXVlans -id $pester_vlan -name PowerArubaCX
-            #Make a CheckPoint ?
+    $inttypeadd.ForEach{
+        Context "Add Interface $($_.name) (Commun)" {
+            BeforeAll {
+                Add-ArubaCXVlans -id $pester_vlan -name PowerArubaCX
+                #Make a CheckPoint ?
 
-            #Create the vrf
-            Add-ArubaCXVrfs -name $pester_vrf
+                #Create the vrf
+                Add-ArubaCXVrfs -name $pester_vrf
+            }
+            AfterEach {
+                Get-ArubaCXInterfaces -interface $($_.name) | Remove-ArubaCXInterfaces -confirm:$false
+            }
+
+            It "Add Interface $($_.name) (with only an id)" -TestCases $_ {
+                if ($_.name -like "vlan*") {
+                    $vlan_id = $_.name -replace "vlan", ""
+                    $invokeParams = @{ "vlan_id" = $vlan_id }
+                    $type = "vlan"
+                }
+                if ($_.name -like "loopback*") {
+                    $loopback = $_.name -replace "loopback", ""
+                    $invokeParams = @{ "loopback" = $loopback }
+                    $type = "loopback"
+                }
+                if ($_.name -like "lag*") {
+                    $lag = $_.name -replace "lag", ""
+                    $invokeParams = @{ "lag" = $lag }
+                    #type is not specified for lag...
+                    $type = $null
+                }
+                Add-ArubaCXInterfaces @invokeParams
+                $int = Get-ArubaCXInterfaces -interface $_.name
+                $int.name | Should -Be $_.name
+                $int.description | Should -Be $null
+                $int.type | Should -Be $type
+                if ($_.name -like "lag*") {
+                    #lag don't use the same attribute for admin status... (and it is not specified by default...)
+                    #$int.admin | Should -Be "up"
+                }
+                else {
+                    $int.admin_state | Should -Be "up"
+                }
+                $int.ip4_address | Should -Be $null
+                $int.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+                $int.routing | Should -Be $true
+            }
+
+            It "Add Interface $($_.name) (with an id, description)" -TestCases $_ {
+                if ($_.name -like "vlan*") {
+                    $vlan_id = $_.name -replace "vlan", ""
+                    $invokeParams = @{ "vlan_id" = $vlan_id }
+                    $type = "vlan"
+                }
+                if ($_.name -like "loopback*") {
+                    $loopback = $_.name -replace "loopback", ""
+                    $invokeParams = @{ "loopback" = $loopback }
+                    $type = "loopback"
+                }
+                if ($_.name -like "lag*") {
+                    $lag = $_.name -replace "lag", ""
+                    $invokeParams = @{ "lag" = $lag; "admin" = "up" }
+                    $type = $null
+                }
+                Add-ArubaCXInterfaces @invokeParams -description "Add via PowerArubaCX"
+                $int = Get-ArubaCXInterfaces -interface $_.name
+                $int.name | Should -Be $_.name
+                $int.description | Should -Be "Add via PowerArubaCX"
+                $int.type | Should -Be $type
+                if ($_.name -like "lag*") {
+                    $int.admin | Should -Be "up"
+                }
+                else {
+                    $int.admin_state | Should -Be "up"
+                }
+                $int.ip4_address | Should -Be $null
+                $int.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+                $int.routing | Should -Be $true
+            }
+
+            It "Add Interface $($_.name) (with an id and status down)" -TestCases $_ {
+                if ($_.name -like "vlan*") {
+                    $vlan_id = $_.name -replace "vlan", ""
+                    $invokeParams = @{ "vlan_id" = $vlan_id }
+                    $type = "vlan"
+                }
+                if ($_.name -like "loopback*") {
+                    $loopback = $_.name -replace "loopback", ""
+                    $invokeParams = @{ "loopback" = $loopback }
+                    $type = "loopback"
+                }
+                if ($_.name -like "lag*") {
+                    $lag = $_.name -replace "lag", ""
+                    $invokeParams = @{ "lag" = $lag }
+                    $type = $null
+                }
+                Add-ArubaCXInterfaces @invokeParams -admin down
+                $int = Get-ArubaCXInterfaces -interface $_.name
+                $int.name | Should -Be $_.name
+                $int.description | Should -Be $null
+                $int.type | Should -Be $type
+                if ($_.name -like "lag*") {
+                    $int.admin | Should -Be "down"
+                }
+                else {
+                    $int.admin_state | Should -Be "down"
+                }
+                $int.ip4_address | Should -Be $null
+                $int.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+                $int.routing | Should -Be $true
+            }
+
+            It "Add Interface $($_.name) (with an id and IP4 Address (and mask))" -TestCases $_ {
+                if ($_.name -like "vlan*") {
+                    $vlan_id = $_.name -replace "vlan", ""
+                    $invokeParams = @{ "vlan_id" = $vlan_id }
+                    $type = "vlan"
+                }
+                if ($_.name -like "loopback*") {
+                    $loopback = $_.name -replace "loopback", ""
+                    $invokeParams = @{ "loopback" = $loopback }
+                    $type = "loopback"
+                }
+                if ($_.name -like "lag*") {
+                    $lag = $_.name -replace "lag", ""
+                    $invokeParams = @{ "lag" = $lag; "admin" = "up" }
+                    $type = $null
+                }
+                Add-ArubaCXInterfaces @invokeParams -ip4_address 192.0.2.1 -ip4_mask 24
+                $int = Get-ArubaCXInterfaces -interface $_.name
+                $int.name | Should -Be $_.name
+                $int.description | Should -Be $null
+                $int.type | Should -Be $type
+                if ($_.name -like "lag*") {
+                    $int.admin | Should -Be "up"
+                }
+                else {
+                    $int.admin_state | Should -Be "up"
+                }
+                $int.ip4_address | Should -Be "192.0.2.1/24"
+                $int.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+                $int.routing | Should -Be $true
+            }
+
+            It "Add Interface $($_.name) (with an id and a vrf)" -TestCases $_ {
+                if ($_.name -like "vlan*") {
+                    $vlan_id = $_.name -replace "vlan", ""
+                    $invokeParams = @{ "vlan_id" = $vlan_id }
+                    $type = "vlan"
+                }
+                if ($_.name -like "loopback*") {
+                    $loopback = $_.name -replace "loopback", ""
+                    $invokeParams = @{ "loopback" = $loopback }
+                    $type = "loopback"
+                }
+                if ($_.name -like "lag*") {
+                    $lag = $_.name -replace "lag", ""
+                    $invokeParams = @{ "lag" = $lag; "admin" = "up" }
+                    $type = $null
+                }
+                Add-ArubaCXInterfaces @invokeParams -vrf $pester_vrf
+                $int = Get-ArubaCXInterfaces -interface $_.name
+                $int.name | Should -Be $_.name
+                $int.description | Should -Be $null
+                $int.type | Should -Be $type
+                if ($_.name -like "lag*") {
+                    $int.admin | Should -Be "up"
+                }
+                else {
+                    $int.admin_state | Should -Be "up"
+                }
+                $int.ip4_address | Should -Be $null
+                $int.vrf.$pester_vrf | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + $pester_vrf)
+                $int.routing | Should -Be $true
+            }
+            AfterAll {
+                Get-ArubaCXVlans -id $pester_vlan | Remove-ArubaCXVlans -confirm:$false
+                #Reverse CheckPoint ?
+
+                #Remove vrf
+                Get-ArubaCXVrfs -name $pester_vrf | Remove-ArubaCXVrfs -confirm:$false
+            }
         }
 
-        AfterEach {
-            Get-ArubaCXInterfaces -interface "vlan$pester_vlan" | Remove-ArubaCXInterfaces -confirm:$false
-        }
+    }
 
-        It "Add Interface Vlan $pester_vlan (with only an id)" {
-            Add-ArubaCXInterfaces -vlan_id $pester_vlan
-            $int_vlan = Get-ArubaCXInterfaces -interface "vlan$pester_vlan"
-            $int_vlan.name | Should -Be "vlan$pester_vlan"
-            $int_vlan.description | Should -Be $null
-            $int_vlan.type | Should -Be "vlan"
-            $int_vlan.admin_state | Should -Be "up"
-            $int_vlan.ip4_address | Should -Be $null
-            $int_vlan.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
-            $int_vlan.routing | Should -Be $true
-        }
+    $inttypeaddl2.ForEach{
+        Context "Add Interface $($_.name) (L2)" {
+            BeforeAll {
+                Add-ArubaCXVlans -id $pester_vlan -name PowerArubaCX
+                Add-ArubaCXVlans -id $pester_vlan2 -name PowerArubaCX2
+                #Make a CheckPoint ?
 
-        It "Add Interface Vlan $pester_vlan (with an id, description)" {
-            Add-ArubaCXInterfaces -vlan_id $pester_vlan -description "Add via PowerArubaCX"
-            $int_vlan = Get-ArubaCXInterfaces -interface "vlan$pester_vlan"
-            $int_vlan.name | Should -Be "vlan$pester_vlan"
-            $int_vlan.description | Should -Be "Add via PowerArubaCX"
-            $int_vlan.type | Should -Be "vlan"
-            $int_vlan.admin_state | Should -Be "up"
-            $int_vlan.ip4_address | Should -Be $null
-            $int_vlan.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
-            $int_vlan.routing | Should -Be $true
-        }
+                #Create the vrf
+                Add-ArubaCXVrfs -name $pester_vrf
+            }
 
-        It "Add Interface Vlan $pester_vlan (with an id and status down)" {
-            Add-ArubaCXInterfaces -vlan_id $pester_vlan -admin down
-            $int_vlan = Get-ArubaCXInterfaces -interface "vlan$pester_vlan"
-            $int_vlan.name | Should -Be "vlan$pester_vlan"
-            $int_vlan.description | Should -Be $null
-            $int_vlan.type | Should -Be "vlan"
-            $int_vlan.admin_state | Should -Be "down"
-            $int_vlan.ip4_address | Should -Be $null
-            $int_vlan.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
-            $int_vlan.routing | Should -Be $true
-        }
+            AfterEach {
+                Get-ArubaCXInterfaces -interface $($_.name) | Remove-ArubaCXInterfaces -confirm:$false
+            }
 
-        It "Add Interface Vlan $pester_vlan (with an id and IP4 Address (and mask))" {
-            Add-ArubaCXInterfaces -vlan_id $pester_vlan -ip4_address 192.0.2.1 -ip4_mask 24
-            $int_vlan = Get-ArubaCXInterfaces -interface "vlan$pester_vlan"
-            $int_vlan.name | Should -Be "vlan$pester_vlan"
-            $int_vlan.description | Should -Be $null
-            $int_vlan.type | Should -Be "vlan"
-            $int_vlan.admin_state | Should -Be "up"
-            $int_vlan.ip4_address | Should -Be "192.0.2.1/24"
-            $int_vlan.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
-            $int_vlan.routing | Should -Be $true
-        }
+            It "Add Interface $($_.name) (with an id, status up and routing disable)" -TestCases $_ {
+                if ($_.name -like "lag*") {
+                    $lag = $_.name -replace "lag", ""
+                    $invokeParams = @{ "lag" = $lag; "admin" = "up" }
+                    $type = $null
+                }
+                Add-ArubaCXInterfaces @invokeParams -routing:$false
+                $int = Get-ArubaCXInterfaces -interface $_.name
+                $int.name | Should -Be $_.name
+                $int.description | Should -Be $type
+                $int.type | Should -Be $type
+                $int.bond_status | Should -Be -Not $null
+                $int.admin | Should -Be "up"
+                $int.ip4_address | Should -Be $null
+                $int.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+                $int.routing | Should -Be $false
+                $int.interfaces | Should -BeNullOrEmpty
+            }
 
+            It "Add Interface $($_.name) (with an id, status up, routing disable and vlan_mode access)" -TestCases $_ {
+                if ($_.name -like "lag*") {
+                    $lag = $_.name -replace "lag", ""
+                    $invokeParams = @{ "lag" = $lag; "admin" = "up" }
+                    $type = $null
+                }
+                Add-ArubaCXInterfaces @invokeParams -routing:$false -vlan_mode access
+                $int = Get-ArubaCXInterfaces -interface $_.name
+                $int.name | Should -Be $_.name
+                $int.description | Should -Be $null
+                $int.type | Should -Be $type
+                $int.bond_status | Should -Be -Not $null
+                $int.admin | Should -Be "up"
+                $int.ip4_address | Should -Be $null
+                $int.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+                $int.routing | Should -Be $false
+                $int.interfaces | Should -BeNullOrEmpty
+                $int.vlan_mode | Should -Be "access"
+            }
 
-        It "Add Interface Vlan $pester_vlan (with an id and a vrf)" {
-            Add-ArubaCXInterfaces -vlan_id $pester_vlan -vrf $pester_vrf
-            $int_vlan = Get-ArubaCXInterfaces -interface "vlan$pester_vlan"
-            $int_vlan.name | Should -Be "vlan$pester_vlan"
-            $int_vlan.description | Should -Be $null
-            $int_vlan.type | Should -Be "vlan"
-            #$int_vlan.admin | Should -Be "up"
-            $int_vlan.ip4_address | Should -Be $null
-            $int_vlan.vrf.$pester_vrf | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + $pester_vrf)
-            $int_vlan.routing | Should -Be $true
-        }
+            It "Add Interface $($_.name) (with an id, status up, routing disable and vlan_mode native-untagged)" -TestCases $_ {
+                if ($_.name -like "lag*") {
+                    $lag = $_.name -replace "lag", ""
+                    $invokeParams = @{ "lag" = $lag; "admin" = "up" }
+                    $type = $null
+                }
+                Add-ArubaCXInterfaces @invokeParams -routing:$false -vlan_mode native-untagged
+                $int = Get-ArubaCXInterfaces -interface $_.name
+                $int.name | Should -Be $_.name
+                $int.description | Should -Be $null
+                $int.type | Should -Be $type
+                $int.bond_status | Should -Be -Not $null
+                $int.admin | Should -Be "up"
+                $int.ip4_address | Should -Be $null
+                $int.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+                $int.routing | Should -Be $false
+                $int.interfaces | Should -BeNullOrEmpty
+                $int.vlan_mode | Should -Be "native-untagged"
+            }
 
-        AfterAll {
-            Get-ArubaCXVlans -id $pester_vlan | Remove-ArubaCXVlans -confirm:$false
-            #Reverse CheckPoint ?
+            It "Add Interface $($_.name) (with an id, status up, routing disable and vlan_mode native-tagged)" -TestCases $_ {
+                if ($_.name -like "lag*") {
+                    $lag = $_.name -replace "lag", ""
+                    $invokeParams = @{ "lag" = $lag; "admin" = "up" }
+                    $type = $null
+                }
+                Add-ArubaCXInterfaces @invokeParams -routing:$false -vlan_mode native-tagged
+                $int = Get-ArubaCXInterfaces -interface $_.name
+                $int.name | Should -Be $_.name
+                $int.description | Should -Be $null
+                $int.type | Should -Be $type
+                $int.bond_status | Should -Be -Not $null
+                $int.admin | Should -Be "up"
+                $int.ip4_address | Should -Be $null
+                $int.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+                $int.routing | Should -Be $false
+                $int.interfaces | Should -BeNullOrEmpty
+                $int.vlan_mode | Should -Be "native-tagged"
+            }
 
-            #Remove vrf
-            Get-ArubaCXVrfs -name $pester_vrf | Remove-ArubaCXVrfs -confirm:$false
+            It "Add Interface $($_.name) (with an id, status up, routing disable and vlan_mode access on vlan $pester_vlan)" -TestCases $_ {
+                if ($_.name -like "lag*") {
+                    $lag = $_.name -replace "lag", ""
+                    $invokeParams = @{ "lag" = $lag; "admin" = "up" }
+                    $type = $null
+                }
+                Add-ArubaCXInterfaces @invokeParams -routing:$false -vlan_mode access -vlan_tag $pester_vlan
+                $int = Get-ArubaCXInterfaces -interface $_.name
+                $int.name | Should -Be $_.name
+                $int.description | Should -Be $null
+                $int.type | Should -Be $type
+                $int.bond_status | Should -Be -Not $null
+                $int.admin | Should -Be "up"
+                $int.ip4_address | Should -Be $null
+                $int.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+                $int.routing | Should -Be $false
+                $int.interfaces | Should -BeNullOrEmpty
+                $int.vlan_mode | Should -Be "access"
+                @($int.vlan_tag).count | Should -Be "1"
+                $int.vlan_tag.$pester_vlan | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vlans/" + $pester_vlan)
+            }
+
+            It "Add Interface $($_.name) (with an id, status up, routing disable and vlan_mode native-untagged on vlan $pester_vlan (native) and $pester_vlan2 (tagged))" -TestCases $_ {
+                if ($_.name -like "lag*") {
+                    $lag = $_.name -replace "lag", ""
+                    $invokeParams = @{ "lag" = $lag; "admin" = "up" }
+                    $type = $null
+                }
+                Add-ArubaCXInterfaces @invokeParams -routing:$false -vlan_mode native-untagged -vlan_tag $pester_vlan -vlan_trunks $pester_vlan2
+                $int = Get-ArubaCXInterfaces -interface $_.name
+                $int.name | Should -Be $_.name
+                $int.description | Should -Be $null
+                $int.type | Should -Be $type
+                $int.bond_status | Should -Be -Not $null
+                $int.admin | Should -Be "up"
+                $int.ip4_address | Should -Be $null
+                $int.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+                $int.routing | Should -Be $false
+                $int.interfaces | Should -BeNullOrEmpty
+                $int.vlan_mode | Should -Be "native-untagged"
+                @($int.vlan_tag.psobject.properties.name).count | Should -Be "1"
+                $int.vlan_tag.$pester_vlan | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vlans/" + $pester_vlan)
+                @($int.vlan_trunks.psobject.properties.name).count | Should -Be "1"
+                $int.vlan_trunks.$pester_vlan2 | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vlans/" + $pester_vlan2)
+            }
+
+            It "Add Interface $($_.name) (with an id, status up, routing disable and vlan_mode native-untagged on vlan $pester_vlan (native and tagged) and $pester_vlan2 (tagged))" -TestCases $_ {
+                if ($_.name -like "lag*") {
+                    $lag = $_.name -replace "lag", ""
+                    $invokeParams = @{ "lag" = $lag; "admin" = "up" }
+                    $type = $null
+                }
+                Add-ArubaCXInterfaces @invokeParams -routing:$false -vlan_mode native-untagged -vlan_trunks $pester_vlan, $pester_vlan2
+                $int = Get-ArubaCXInterfaces -interface $_.name
+                $int.name | Should -Be $_.name
+                $int.description | Should -Be $null
+                $int.type | Should -Be $type
+                $int.bond_status | Should -Be -Not $null
+                $int.admin | Should -Be "up"
+                $int.ip4_address | Should -Be $null
+                $int.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+                $int.routing | Should -Be $false
+                $int.interfaces | Should -BeNullOrEmpty
+                $int.vlan_mode | Should -Be "native-untagged"
+                @($int.vlan_tag.psobject.properties.name).count | Should -Be "1"
+                @($int.vlan_trunks.psobject.properties.name).count | Should -Be "2"
+                $int.vlan_trunks.$pester_vlan | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vlans/" + $pester_vlan)
+                $int.vlan_trunks.$pester_vlan2 | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vlans/" + $pester_vlan2)
+            }
+
+            It "Add Interface $($_.name) (with an id, status up, routing disable and vlan_mode native-tagged on vlan $pester_vlan (native) and $pester_vlan2 (tagged))" -TestCases $_ {
+                if ($_.name -like "lag*") {
+                    $lag = $_.name -replace "lag", ""
+                    $invokeParams = @{ "lag" = $lag; "admin" = "up" }
+                    $type = $null
+                }
+                Add-ArubaCXInterfaces @invokeParams -routing:$false -vlan_mode native-tagged -vlan_tag $pester_vlan -vlan_trunks $pester_vlan2
+                $int = Get-ArubaCXInterfaces -interface $_.name
+                $int.name | Should -Be $_.name
+                $int.description | Should -Be $null
+                $int.type | Should -Be $type
+                $int.bond_status | Should -Be -Not $null
+                $int.admin | Should -Be "up"
+                $int.ip4_address | Should -Be $null
+                $int.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+                $int.routing | Should -Be $false
+                $int.interfaces | Should -BeNullOrEmpty
+                $int.vlan_mode | Should -Be "native-tagged"
+                @($int.vlan_tag.psobject.properties.name).count | Should -Be "1"
+                $int.vlan_tag.$pester_vlan | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vlans/" + $pester_vlan)
+                @($int.vlan_trunks.psobject.properties.name).count | Should -Be "1"
+                $int.vlan_trunks.$pester_vlan2 | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vlans/" + $pester_vlan2)
+            }
+
+            It "Add Interface $($_.name) (with an id, status up, routing disable and vlan_mode native-tagged on vlan $pester_vlan (native and tagged) and $pester_vlan2 (tagged))" -TestCases $_ {
+                if ($_.name -like "lag*") {
+                    $lag = $_.name -replace "lag", ""
+                    $invokeParams = @{ "lag" = $lag; "admin" = "up" }
+                    $type = $null
+                }
+                Add-ArubaCXInterfaces @invokeParams -routing:$false -vlan_mode native-tagged -vlan_trunks $pester_vlan, $pester_vlan2
+                $int = Get-ArubaCXInterfaces -interface $_.name
+                $int.name | Should -Be $_.name
+                $int.description | Should -Be $null
+                $int.type | Should -Be $type
+                $int.bond_status | Should -Be -Not $null
+                $int.admin | Should -Be "up"
+                $int.ip4_address | Should -Be $null
+                $int.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+                $int.routing | Should -Be $false
+                $int.interfaces | Should -BeNullOrEmpty
+                $int.vlan_mode | Should -Be "native-tagged"
+                @($int.vlan_tag.psobject.properties.name).count | Should -Be "1"
+                @($int.vlan_trunks.psobject.properties.name).count | Should -Be "2"
+                $int.vlan_trunks.$pester_vlan | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vlans/" + $pester_vlan)
+                $int.vlan_trunks.$pester_vlan2 | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vlans/" + $pester_vlan2)
+            }
+
+            AfterAll {
+                Get-ArubaCXVlans -id $pester_vlan | Remove-ArubaCXVlans -confirm:$false
+                Get-ArubaCXVlans -id $pester_vlan2 | Remove-ArubaCXVlans -confirm:$false
+                #Reverse CheckPoint ?
+
+                #Remove vrf
+                Get-ArubaCXVrfs -name $pester_vrf | Remove-ArubaCXVrfs -confirm:$false
+            }
         }
     }
 
-    Context "lag" {
+    Context "Add Interface LAG (specific)" {
         BeforeAll {
             Add-ArubaCXVlans -id $pester_vlan -name PowerArubaCX
             Add-ArubaCXVlans -id $pester_vlan2 -name PowerArubaCX2
@@ -707,257 +1042,35 @@ Describe "Add Interface" {
             Get-ArubaCXInterfaces -interface "lag$pester_lag" | Remove-ArubaCXInterfaces -confirm:$false
         }
 
-        It "Add Interface lag $pester_lag (with only an id)" {
-            Add-ArubaCXInterfaces -lag_id $pester_lag
-            $int_lag = Get-ArubaCXInterfaces -interface "lag$pester_lag"
-            $int_lag.name | Should -Be "lag$pester_lag"
-            $int_lag.description | Should -Be $null
-            #$int_lag.type | Should -Be "lag"
-            $int_lag.bond_status | Should -Be -Not $null
-            #$int_lag.admin | Should -Be "down"
-            $int_lag.ip4_address | Should -Be $null
-            $int_lag.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
-            $int_lag.routing | Should -Be $true
-            $int_lag.interfaces | Should -BeNullOrEmpty
-        }
-
-        It "Add Interface lag $pester_lag (with an id and status up)" {
-            Add-ArubaCXInterfaces -lag_id $pester_lag -admin up
-            $int_lag = Get-ArubaCXInterfaces -interface "lag$pester_lag"
-            $int_lag.name | Should -Be "lag$pester_lag"
-            $int_lag.description | Should -Be $null
-            #$int_lag.type | Should -Be "lag"
-            $int_lag.bond_status | Should -Be -Not $null
-            $int_lag.admin | Should -Be "up"
-            $int_lag.ip4_address | Should -Be $null
-            $int_lag.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
-            $int_lag.routing | Should -Be $true
-            $int_lag.interfaces | Should -BeNullOrEmpty
-        }
-
-        It "Add Interface lag $pester_lag (with an id, status up and description)" {
-            Add-ArubaCXInterfaces -lag_id $pester_lag -admin up -description "Add via PowerArubaCX"
-            $int_lag = Get-ArubaCXInterfaces -interface "lag$pester_lag"
-            $int_lag.name | Should -Be "lag$pester_lag"
-            $int_lag.description | Should -Be "Add via PowerArubaCX"
-            #$int_lag.type | Should -Be "lag"
-            $int_lag.bond_status | Should -Be -Not $null
-            $int_lag.admin | Should -Be "up"
-            $int_lag.ip4_address | Should -Be $null
-            $int_lag.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
-            $int_lag.routing | Should -Be $true
-            $int_lag.interfaces | Should -BeNullOrEmpty
-        }
-
         It "Add Interface lag $pester_lag (with an id, status up and an interface)" {
             Add-ArubaCXInterfaces -lag_id $pester_lag -interfaces $pester_interface -admin up
-            $int_lag = Get-ArubaCXInterfaces -interface "lag$pester_lag"
-            $int_lag.name | Should -Be "lag$pester_lag"
-            $int_lag.description | Should -Be $null
-            #$int_lag.type | Should -Be "lag"
-            $int_lag.bond_status | Should -Be -Not $null
-            $int_lag.admin | Should -Be "up"
-            $int_lag.ip4_address | Should -Be $null
-            $int_lag.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
-            $int_lag.routing | Should -Be $true
-            @($int_lag.interfaces.psobject.properties.name).count | Should -Be "1"
-            $int_lag.interfaces.$pester_interface | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/interfaces/" + ($pester_interface -replace "/", "%2F"))
+            $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
+            $int.name | Should -Be "lag$pester_lag"
+            $int.description | Should -Be $null
+            #$int.type | Should -Be "lag"
+            $int.bond_status | Should -Be -Not $null
+            $int.admin | Should -Be "up"
+            $int.ip4_address | Should -Be $null
+            $int.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+            $int.routing | Should -Be $true
+            @($int.interfaces.psobject.properties.name).count | Should -Be "1"
+            $int.interfaces.$pester_interface | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/interfaces/" + ($pester_interface -replace "/", "%2F"))
         }
 
         It "Add Interface lag $pester_lag (with an id, status up and 2 interfaces)" {
             Add-ArubaCXInterfaces -lag_id $pester_lag -interfaces $pester_interface, $pester_interface2 -admin up
-            $int_lag = Get-ArubaCXInterfaces -interface "lag$pester_lag"
-            $int_lag.name | Should -Be "lag$pester_lag"
-            $int_lag.description | Should -Be $null
-            #$int_lag.type | Should -Be "lag"
-            $int_lag.bond_status | Should -Be -Not $null
-            $int_lag.admin | Should -Be "up"
-            $int_lag.ip4_address | Should -Be $null
-            $int_lag.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
-            $int_lag.routing | Should -Be $true
-            @($int_lag.interfaces.psobject.properties.name).count | Should -Be "2"
-            $int_lag.interfaces.$pester_interface | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/interfaces/" + ($pester_interface -replace "/", "%2F"))
-            $int_lag.interfaces.$pester_interface2 | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/interfaces/" + ($pester_interface2 -replace "/", "%2F"))
-        }
-
-        It "Add Interface lag $pester_lag (with an id, status up and IP4 Address (and mask))" {
-            Add-ArubaCXInterfaces -lag_id $pester_lag -admin up -ip4_address 192.0.2.1 -ip4_mask 24
-            $int_lag = Get-ArubaCXInterfaces -interface "lag$pester_lag"
-            $int_lag.name | Should -Be "lag$pester_lag"
-            $int_lag.description | Should -Be $null
-            #$int_lag.type | Should -Be "lag"
-            $int_lag.bond_status | Should -Be -Not $null
-            $int_lag.admin | Should -Be "up"
-            $int_lag.ip4_address | Should -Be "192.0.2.1/24"
-            $int_lag.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
-            $int_lag.routing | Should -Be $true
-            $int_lag.interfaces | Should -BeNullOrEmpty
-        }
-
-        It "Add Interface lag $pester_lag (with an id, status up and a vrf)" {
-            Add-ArubaCXInterfaces -lag_id $pester_lag -admin up -vrf $pester_vrf
-            $int_lag = Get-ArubaCXInterfaces -interface "lag$pester_lag"
-            $int_lag.name | Should -Be "lag$pester_lag"
-            $int_lag.description | Should -Be $null
-            #$int_lag.type | Should -Be "lag"
-            $int_lag.bond_status | Should -Be -Not $null
-            $int_lag.admin | Should -Be "up"
-            $int_lag.ip4_address | Should -Be $null
-            $int_lag.vrf.$pester_vrf | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + $pester_vrf)
-            $int_lag.routing | Should -Be $true
-            $int_lag.interfaces | Should -BeNullOrEmpty
-        }
-
-        It "Add Interface lag $pester_lag (with an id, status up and routing disable)" {
-            Add-ArubaCXInterfaces -lag_id $pester_lag -admin up -routing:$false
-            $int_lag = Get-ArubaCXInterfaces -interface "lag$pester_lag"
-            $int_lag.name | Should -Be "lag$pester_lag"
-            $int_lag.description | Should -Be $null
-            #$int_lag.type | Should -Be "lag"
-            $int_lag.bond_status | Should -Be -Not $null
-            $int_lag.admin | Should -Be "up"
-            $int_lag.ip4_address | Should -Be $null
-            $int_lag.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
-            $int_lag.routing | Should -Be $false
-            $int_lag.interfaces | Should -BeNullOrEmpty
-        }
-
-        It "Add Interface lag $pester_lag (with an id, status up, routing disable and vlan_mode access)" {
-            Add-ArubaCXInterfaces -lag_id $pester_lag -admin up -routing:$false -vlan_mode access
-            $int_lag = Get-ArubaCXInterfaces -interface "lag$pester_lag"
-            $int_lag.name | Should -Be "lag$pester_lag"
-            $int_lag.description | Should -Be $null
-            #$int_lag.type | Should -Be "lag"
-            $int_lag.bond_status | Should -Be -Not $null
-            $int_lag.admin | Should -Be "up"
-            $int_lag.ip4_address | Should -Be $null
-            $int_lag.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
-            $int_lag.routing | Should -Be $false
-            $int_lag.interfaces | Should -BeNullOrEmpty
-            $int_lag.vlan_mode | Should -Be "access"
-        }
-
-        It "Add Interface lag $pester_lag (with an id, status up, routing disable and vlan_mode native-untagged)" {
-            Add-ArubaCXInterfaces -lag_id $pester_lag -admin up -routing:$false -vlan_mode native-untagged
-            $int_lag = Get-ArubaCXInterfaces -interface "lag$pester_lag"
-            $int_lag.name | Should -Be "lag$pester_lag"
-            $int_lag.description | Should -Be $null
-            #$int_lag.type | Should -Be "lag"
-            $int_lag.bond_status | Should -Be -Not $null
-            $int_lag.admin | Should -Be "up"
-            $int_lag.ip4_address | Should -Be $null
-            $int_lag.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
-            $int_lag.routing | Should -Be $false
-            $int_lag.interfaces | Should -BeNullOrEmpty
-            $int_lag.vlan_mode | Should -Be "native-untagged"
-        }
-
-        It "Add Interface lag $pester_lag (with an id, status up, routing disable and vlan_mode native-tagged)" {
-            Add-ArubaCXInterfaces -lag_id $pester_lag -admin up -routing:$false -vlan_mode native-tagged
-            $int_lag = Get-ArubaCXInterfaces -interface "lag$pester_lag"
-            $int_lag.name | Should -Be "lag$pester_lag"
-            $int_lag.description | Should -Be $null
-            #$int_lag.type | Should -Be "lag"
-            $int_lag.bond_status | Should -Be -Not $null
-            $int_lag.admin | Should -Be "up"
-            $int_lag.ip4_address | Should -Be $null
-            $int_lag.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
-            $int_lag.routing | Should -Be $false
-            $int_lag.interfaces | Should -BeNullOrEmpty
-            $int_lag.vlan_mode | Should -Be "native-tagged"
-        }
-
-        It "Add Interface lag $pester_lag (with an id, status up, routing disable and vlan_mode access on vlan $pester_vlan)" {
-            Add-ArubaCXInterfaces -lag_id $pester_lag -admin up -routing:$false -vlan_mode access -vlan_tag $pester_vlan
-            $int_lag = Get-ArubaCXInterfaces -interface "lag$pester_lag"
-            $int_lag.name | Should -Be "lag$pester_lag"
-            $int_lag.description | Should -Be $null
-            #$int_lag.type | Should -Be "lag"
-            $int_lag.bond_status | Should -Be -Not $null
-            $int_lag.admin | Should -Be "up"
-            $int_lag.ip4_address | Should -Be $null
-            $int_lag.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
-            $int_lag.routing | Should -Be $false
-            $int_lag.interfaces | Should -BeNullOrEmpty
-            $int_lag.vlan_mode | Should -Be "access"
-            @($int_lag.vlan_tag).count | Should -Be "1"
-            $int_lag.vlan_tag.$pester_vlan | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vlans/" + $pester_vlan)
-        }
-
-        It "Add Interface lag $pester_lag (with an id, status up, routing disable and vlan_mode native-untagged on vlan $pester_vlan (native) and $pester_vlan2 (tagged))" {
-            Add-ArubaCXInterfaces -lag_id $pester_lag -admin up -routing:$false -vlan_mode native-untagged -vlan_tag $pester_vlan -vlan_trunks $pester_vlan2
-            $int_lag = Get-ArubaCXInterfaces -interface "lag$pester_lag"
-            $int_lag.name | Should -Be "lag$pester_lag"
-            $int_lag.description | Should -Be $null
-            #$int_lag.type | Should -Be "lag"
-            $int_lag.bond_status | Should -Be -Not $null
-            $int_lag.admin | Should -Be "up"
-            $int_lag.ip4_address | Should -Be $null
-            $int_lag.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
-            $int_lag.routing | Should -Be $false
-            $int_lag.interfaces | Should -BeNullOrEmpty
-            $int_lag.vlan_mode | Should -Be "native-untagged"
-            @($int_lag.vlan_tag.psobject.properties.name).count | Should -Be "1"
-            $int_lag.vlan_tag.$pester_vlan | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vlans/" + $pester_vlan)
-            @($int_lag.vlan_trunks.psobject.properties.name).count | Should -Be "1"
-            $int_lag.vlan_trunks.$pester_vlan2 | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vlans/" + $pester_vlan2)
-        }
-
-        It "Add Interface lag $pester_lag (with an id, status up, routing disable and vlan_mode native-untagged on vlan $pester_vlan (native and tagged) and $pester_vlan2 (tagged))" {
-            Add-ArubaCXInterfaces -lag_id $pester_lag -admin up -routing:$false -vlan_mode native-untagged -vlan_trunks $pester_vlan, $pester_vlan2
-            $int_lag = Get-ArubaCXInterfaces -interface "lag$pester_lag"
-            $int_lag.name | Should -Be "lag$pester_lag"
-            $int_lag.description | Should -Be $null
-            #$int_lag.type | Should -Be "lag"
-            $int_lag.bond_status | Should -Be -Not $null
-            $int_lag.admin | Should -Be "up"
-            $int_lag.ip4_address | Should -Be $null
-            $int_lag.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
-            $int_lag.routing | Should -Be $false
-            $int_lag.interfaces | Should -BeNullOrEmpty
-            $int_lag.vlan_mode | Should -Be "native-untagged"
-            @($int_lag.vlan_tag.psobject.properties.name).count | Should -Be "1"
-            @($int_lag.vlan_trunks.psobject.properties.name).count | Should -Be "2"
-            $int_lag.vlan_trunks.$pester_vlan | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vlans/" + $pester_vlan)
-            $int_lag.vlan_trunks.$pester_vlan2 | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vlans/" + $pester_vlan2)
-        }
-
-        It "Add Interface lag $pester_lag (with an id, status up, routing disable and vlan_mode native-tagged on vlan $pester_vlan (native) and $pester_vlan2 (tagged))" {
-            Add-ArubaCXInterfaces -lag_id $pester_lag -admin up -routing:$false -vlan_mode native-tagged -vlan_tag $pester_vlan -vlan_trunks $pester_vlan2
-            $int_lag = Get-ArubaCXInterfaces -interface "lag$pester_lag"
-            $int_lag.name | Should -Be "lag$pester_lag"
-            $int_lag.description | Should -Be $null
-            #$int_lag.type | Should -Be "lag"
-            $int_lag.bond_status | Should -Be -Not $null
-            $int_lag.admin | Should -Be "up"
-            $int_lag.ip4_address | Should -Be $null
-            $int_lag.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
-            $int_lag.routing | Should -Be $false
-            $int_lag.interfaces | Should -BeNullOrEmpty
-            $int_lag.vlan_mode | Should -Be "native-tagged"
-            @($int_lag.vlan_tag.psobject.properties.name).count | Should -Be "1"
-            $int_lag.vlan_tag.$pester_vlan | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vlans/" + $pester_vlan)
-            @($int_lag.vlan_trunks.psobject.properties.name).count | Should -Be "1"
-            $int_lag.vlan_trunks.$pester_vlan2 | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vlans/" + $pester_vlan2)
-        }
-
-        It "Add Interface lag $pester_lag (with an id, status up, routing disable and vlan_mode native-tagged on vlan $pester_vlan (native and tagged) and $pester_vlan2 (tagged))" {
-            Add-ArubaCXInterfaces -lag_id $pester_lag -admin up -routing:$false -vlan_mode native-tagged -vlan_trunks $pester_vlan, $pester_vlan2
-            $int_lag = Get-ArubaCXInterfaces -interface "lag$pester_lag"
-            $int_lag.name | Should -Be "lag$pester_lag"
-            $int_lag.description | Should -Be $null
-            #$int_lag.type | Should -Be "lag"
-            $int_lag.bond_status | Should -Be -Not $null
-            $int_lag.admin | Should -Be "up"
-            $int_lag.ip4_address | Should -Be $null
-            $int_lag.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
-            $int_lag.routing | Should -Be $false
-            $int_lag.interfaces | Should -BeNullOrEmpty
-            $int_lag.vlan_mode | Should -Be "native-tagged"
-            @($int_lag.vlan_tag.psobject.properties.name).count | Should -Be "1"
-            @($int_lag.vlan_trunks.psobject.properties.name).count | Should -Be "2"
-            $int_lag.vlan_trunks.$pester_vlan | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vlans/" + $pester_vlan)
-            $int_lag.vlan_trunks.$pester_vlan2 | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vlans/" + $pester_vlan2)
+            $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
+            $int.name | Should -Be "lag$pester_lag"
+            $int.description | Should -Be $null
+            #$int.type | Should -Be "lag"
+            $int.bond_status | Should -Be -Not $null
+            $int.admin | Should -Be "up"
+            $int.ip4_address | Should -Be $null
+            $int.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+            $int.routing | Should -Be $true
+            @($int.interfaces.psobject.properties.name).count | Should -Be "2"
+            $int.interfaces.$pester_interface | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/interfaces/" + ($pester_interface -replace "/", "%2F"))
+            $int.interfaces.$pester_interface2 | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/interfaces/" + ($pester_interface2 -replace "/", "%2F"))
         }
 
         AfterAll {
@@ -965,83 +1078,6 @@ Describe "Add Interface" {
             Get-ArubaCXVlans -id $pester_vlan2 | Remove-ArubaCXVlans -confirm:$false
             #Reverse CheckPoint ?
 
-            #Remove vrf
-            Get-ArubaCXVrfs -name $pester_vrf | Remove-ArubaCXVrfs -confirm:$false
-        }
-    }
-
-    Context "loopback" {
-        BeforeAll {
-            #Create the vrf
-            Add-ArubaCXVrfs -name $pester_vrf
-        }
-
-        AfterEach {
-            Get-ArubaCXInterfaces -interface "loopback$pester_loopback" | Remove-ArubaCXInterfaces -confirm:$false
-        }
-
-        It "Add Interface loopback $pester_loopback (with only an id)" {
-            Add-ArubaCXInterfaces -loopback_id $pester_loopback
-            $int_loopback = Get-ArubaCXInterfaces -interface "loopback$pester_loopback"
-            $int_loopback.name | Should -Be "loopback$pester_loopback"
-            $int_loopback.description | Should -Be $null
-            $int_loopback.type | Should -Be "loopback"
-            $int_loopback.admin_state | Should -Be "up"
-            $int_loopback.ip4_address | Should -Be $null
-            $int_loopback.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
-            $int_loopback.routing | Should -Be $true
-        }
-
-        It "Add Interface loopback $pester_loopback (with an id, description)" {
-            Add-ArubaCXInterfaces -loopback_id $pester_loopback -description "Add via PowerArubaCX"
-            $int_loopback = Get-ArubaCXInterfaces -interface "loopback$pester_loopback"
-            $int_loopback.name | Should -Be "loopback$pester_loopback"
-            $int_loopback.description | Should -Be "Add via PowerArubaCX"
-            $int_loopback.type | Should -Be "loopback"
-            $int_loopback.admin_state | Should -Be "up"
-            $int_loopback.ip4_address | Should -Be $null
-            $int_loopback.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
-            $int_loopback.routing | Should -Be $true
-        }
-
-        It "Add Interface loopback $pester_loopback (with an id and status down)" {
-            Add-ArubaCXInterfaces -loopback_id $pester_loopback -admin down
-            $int_loopback = Get-ArubaCXInterfaces -interface "loopback$pester_loopback"
-            $int_loopback.name | Should -Be "loopback$pester_loopback"
-            $int_loopback.description | Should -Be $null
-            $int_loopback.type | Should -Be "loopback"
-            $int_loopback.admin_state | Should -Be "down"
-            $int_loopback.ip4_address | Should -Be $null
-            $int_loopback.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
-            $int_loopback.routing | Should -Be $true
-        }
-
-        It "Add Interface loopback $pester_loopback (with an id and IP4 Address (and mask))" {
-            Add-ArubaCXInterfaces -loopback_id $pester_loopback -ip4_address 192.0.2.1 -ip4_mask 24
-            $int_loopback = Get-ArubaCXInterfaces -interface "loopback$pester_loopback"
-            $int_loopback.name | Should -Be "loopback$pester_loopback"
-            $int_loopback.description | Should -Be $null
-            $int_loopback.type | Should -Be "loopback"
-            $int_loopback.admin_state | Should -Be "up"
-            $int_loopback.ip4_address | Should -Be "192.0.2.1/24"
-            $int_loopback.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
-            $int_loopback.routing | Should -Be $true
-        }
-
-
-        It "Add Interface loopback $pester_loopback (with an id and a vrf)" {
-            Add-ArubaCXInterfaces -loopback_id $pester_loopback -vrf $pester_vrf
-            $int_loopback = Get-ArubaCXInterfaces -interface "loopback$pester_loopback"
-            $int_loopback.name | Should -Be "loopback$pester_loopback"
-            $int_loopback.description | Should -Be $null
-            $int_loopback.type | Should -Be "loopback"
-            #$int_loopback.admin | Should -Be "up"
-            $int_loopback.ip4_address | Should -Be $null
-            $int_loopback.vrf.$pester_vrf | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + $pester_vrf)
-            $int_loopback.routing | Should -Be $true
-        }
-
-        AfterAll {
             #Remove vrf
             Get-ArubaCXVrfs -name $pester_vrf | Remove-ArubaCXVrfs -confirm:$false
         }
