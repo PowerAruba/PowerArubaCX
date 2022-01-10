@@ -315,6 +315,9 @@ function Add-ArubaCXInterfacesLagInterfaces {
         $interface = $interface -replace '/', '%2F'
         $uri += "/$interface"
 
+        if ($interface -notlike "lag*") {
+            throw "You can use only with LAG interface"
+        }
         $_interface = Get-ArubaCXInterfaces $interface -selector writable -connection $connection
 
         #Remove name from vlan (can not be modified)

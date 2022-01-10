@@ -1273,6 +1273,40 @@ Describe "LAG specific" {
         }
     }
 
+    Context "Try to Add member to no LAG interface " {
+        BeforeAll {
+            $script:default_int = Get-ArubaCXInterfaces $pester_interface -selector writable
+            #Make a CheckPoint ?
+
+            # Add Vlan
+            Add-ArubaCXVlans -id $pester_vlan -name pester_PowerArubaCX
+            # and interface vlan
+            Add-ArubaCXInterfaces -vlan_id $pester_vlan
+
+            #Add Loopback interface
+            Add-ArubaCXInterfaces -loopback_id $pester_loopback
+        }
+
+        $inttypenolag.ForEach{
+            It "Try to Add member to no LAG interface $($_.name)" -TestCases $_ {
+                {
+                    Get-ArubaCXInterfaces -interface $($_.name) | Add-ArubaCXInterfacesLagInterfaces -interfaces $pester_interface
+                } | Should -Throw
+            }
+        }
+
+        AfterAll {
+            $default_int | Set-ArubaCXInterfaces -use_pipeline
+
+            #Remove Vlan Interface
+            Get-ArubaCXInterfaces -interface "vlan$pester_vlan" | Remove-ArubaCXInterfaces -confirm:$false
+            #Remove vlan
+            Get-ArubaCXVlans -id $pester_vlan | Remove-ArubaCXVlans -confirm:$false
+
+            #Remove Loopback interface
+            Get-ArubaCXInterfaces -interface "loopback$pester_loopback" | Remove-ArubaCXInterfaces -confirm:$false
+        }
+    }
 }
 
 AfterAll {
