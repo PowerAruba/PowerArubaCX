@@ -268,6 +268,81 @@ function Add-ArubaCXInterfacesVlanTrunks {
     End {
     }
 }
+function Add-ArubaCXInterfacesLagInterfaces {
+
+    <#
+      .SYNOPSIS
+      Add interfaces (members) on an interface LAG
+
+      .DESCRIPTION
+      Add interfaces (members) on an interface LAG
+
+      .EXAMPLE
+      Get-ArubaCXInterfaces -interface lag 2 | Add-ArubaCXInterfacesLagInterfaces -interfaces 1/1/1
+
+      Add interface 1/1/1 on lag 2
+
+      .EXAMPLE
+      Get-ArubaCXInterfaces -interface lag 2 | Add-ArubaCXInterfacesLagInterfaces -interfaces 1/1/1, 1/1/2
+
+      Add interfaces 1/1/1 and 1/1/2 on lag 2
+
+    #>
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "")]
+    Param(
+        [Parameter (Mandatory = $true, ValueFromPipeline = $true, Position = 1)]
+        [ValidateScript( { Confirm-ArubaCXInterfaces $_ })]
+        [psobject]$int,
+        [Parameter(Mandatory = $true)]
+        #[ValidateRange(1, 4096)]
+        [string[]]$interfaces,
+        [Parameter (Mandatory = $False)]
+        [ValidateNotNullOrEmpty()]
+        [PSObject]$connection = $DefaultArubaCXConnection
+    )
+
+    Begin {
+    }
+
+    Process {
+
+        $uri = "system/interfaces"
+
+        #get interface name from int ps object
+        $interface = $int.name
+
+        #Add interface to $uri
+        $interface = $interface -replace '/', '%2F'
+        $uri += "/$interface"
+
+        $_interface = Get-ArubaCXInterfaces $interface -selector writable -connection $connection
+
+        #Remove name from vlan (can not be modified)
+        $_interface.psobject.Properties.remove("name")
+
+        #get list of existant interfaces
+        $intf = $_interface.interfaces
+        if ($intf) {
+            foreach ($i in $intf.psobject.Properties.Name) {
+                $interfaces += $i
+            }
+        }
+
+        $members = @()
+        #Add new vlan
+        foreach ($member in $interfaces) {
+            $members += "/rest/" + $($connection.api_version) + "/system/interfaces/" + ($member -replace '/', '%2F')
+        }
+        $_interface.interfaces = $members
+
+        $response = Invoke-ArubaCXRestMethod -uri $uri -method 'PUT' -body $_interface -connection $connection
+        $response
+        Get-ArubaCXInterfaces $interface -connection $connection
+    }
+
+    End {
+    }
+}
 function Get-ArubaCXInterfaces {
 
     <#
