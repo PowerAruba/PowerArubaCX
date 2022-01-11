@@ -1119,15 +1119,6 @@ Describe "LAG specific" {
     }
 
     Context "Set Interface LAG with members" {
-        BeforeAll {
-            Add-ArubaCXVlans -id $pester_vlan -name PowerArubaCX
-            Add-ArubaCXVlans -id $pester_vlan2 -name PowerArubaCX2
-            #Make a CheckPoint ?
-
-            #Create the vrf
-            Add-ArubaCXVrfs -name $pester_vrf
-        }
-
         BeforeEach {
             #Add a Lag
             Add-ArubaCXInterfaces -lag_id $pester_lag -interfaces $pester_interface -admin up
@@ -1166,15 +1157,6 @@ Describe "LAG specific" {
             @($int.interfaces.psobject.properties.name).count | Should -Be "2"
             $int.interfaces.$pester_interface | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/interfaces/" + ($pester_interface -replace "/", "%2F"))
             $int.interfaces.$pester_interface2 | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/interfaces/" + ($pester_interface2 -replace "/", "%2F"))
-        }
-
-        AfterAll {
-            Get-ArubaCXVlans -id $pester_vlan | Remove-ArubaCXVlans -confirm:$false
-            Get-ArubaCXVlans -id $pester_vlan2 | Remove-ArubaCXVlans -confirm:$false
-            #Reverse CheckPoint ?
-
-            #Remove vrf
-            Get-ArubaCXVrfs -name $pester_vrf | Remove-ArubaCXVrfs -confirm:$false
         }
     }
 
