@@ -1178,7 +1178,7 @@ Describe "LAG specific" {
         }
     }
 
-    Context "Try to Add member to no LAG interface " {
+    Context "Try to Set member to no LAG interface " {
         BeforeAll {
             $script:default_int = Get-ArubaCXInterfaces $pester_interface -selector writable
             #Make a CheckPoint ?
