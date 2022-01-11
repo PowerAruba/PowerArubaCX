@@ -174,7 +174,7 @@ function Add-ArubaCXInterfaces {
                 } if ($_interface.routing -eq $false) {
                     Throw "You need to enable routing mode for use ipv4_address"
                 } if ( -not ($ip4_address.AddressFamily -eq "InterNetwork" )) {
-                    Throw "You need to specify a IPv4 Address"
+                    Throw "You need to specify an IPv4 Address"
                 }
                 $_interface | Add-Member -name "ip4_address" -membertype NoteProperty -Value ($ip4_address.ToString() + "/" + $ip4_mask)
             }
@@ -655,7 +655,7 @@ function Set-ArubaCXInterfaces {
                     Throw "You need to enable routing mode for use ipv4_address"
                 }
                 if ( -not ($ip4_address.AddressFamily -eq "InterNetwork" )) {
-                    Throw "You need to specify a IPv4 Address"
+                    Throw "You need to specify an IPv4 Address"
                 }
                 $_interface.ip4_address = $ip4_address.ToString() + "/" + $ip4_mask
             }

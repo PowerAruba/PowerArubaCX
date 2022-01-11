@@ -520,10 +520,10 @@ Describe "Configure IP on Interface" {
                 Get-ArubaCXInterfaces -interface $_.name | Set-ArubaCXInterfaces -routing:$true
             }
 
-            It "Try to set a IPv6 Address on interface" -TestCases $_ {
+            It "Try to set an IPv6 Address on interface" -TestCases $_ {
                 {
                     Get-ArubaCXInterfaces -interface $_.name | Set-ArubaCXInterfaces -ip4_address 2001:DB8::1 -ip4_mask 24
-                } | Should -Throw "You need to specify a IPv4 Address"
+                } | Should -Throw "You need to specify an IPv4 Address"
             }
 
             It "Set ip4_address on interface" -TestCases $_ {
