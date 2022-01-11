@@ -855,3 +855,85 @@ function Remove-ArubaCXInterfacesVlanTrunks {
     End {
     }
 }
+
+function Remove-ArubaCXInterfacesLagInterfaces {
+
+    <#
+      .SYNOPSIS
+      Remove interfaces on an interface LAG
+
+      .DESCRIPTION
+      Remove interface memer on an interface LAG
+
+      .EXAMPLE
+      Get-ArubaCXInterfaces -interface lag2 | Remove-ArubaCXInterfacesLagInterfaces -interfaces 1/1/1
+
+      Remove interface member 1/1/1 on lag 2
+
+      .EXAMPLE
+      Get-ArubaCXInterfaces -interface lag2| Remove-ArubaCXInterfacesLagInterfaces -interfaces 1/1/1, 1/1/2
+
+      Remove interfaces members 1/1/1 and 1/1/2 on lag 2
+
+    #>
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "")]
+    [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'medium')]
+    Param(
+        [Parameter (Mandatory = $true, ValueFromPipeline = $true, Position = 1)]
+        [ValidateScript( { Confirm-ArubaCXInterfaces $_ })]
+        [psobject]$int,
+        [Parameter(Mandatory = $true)]
+        #[ValidateRange(1, 4096)]
+        [string[]]$interfaces,
+        [Parameter (Mandatory = $False)]
+        [ValidateNotNullOrEmpty()]
+        [PSObject]$connection = $DefaultArubaCXConnection
+    )
+
+    Begin {
+    }
+
+    Process {
+
+        $uri = "system/interfaces"
+
+        #get interface name from int ps object
+        $interface = $int.name
+
+        #Add interface to $uri
+        $interface = $interface -replace '/', '%2F'
+        $uri += "/$interface"
+
+        if ($interface -notlike "lag*") {
+            throw "You can use only with LAG interface"
+        }
+        $_interface = Get-ArubaCXInterfaces $interface -selector writable -connection $connection
+
+        #Remove name from vlan (can not be modified)
+        $_interface.psobject.Properties.remove("name")
+
+        #get list of existant vlan and recreate $trunk
+        $intf = $_interface.interfaces
+        $members = @()
+        if ($intf) {
+            foreach ($i in $intf.psobject.Properties.Name) {
+                #Remove interface ($i) if it is on intf list
+                if ($interfaces -contains $i) {
+                    continue
+                }
+                $members += "/rest/" + $($connection.api_version) + "/system/interfaces/" + ($i -replace '/', '%2F')
+            }
+        }
+
+        $_interface.interfaces = $members
+
+        if ($PSCmdlet.ShouldProcess($interface, 'Remove interface on interface lag')) {
+            Invoke-ArubaCXRestMethod -uri $uri -method 'PUT' -body $_interface -connection $connection
+        }
+
+        Get-ArubaCXInterfaces $interface -connection $connection
+    }
+
+    End {
+    }
+}
