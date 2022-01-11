@@ -143,6 +143,10 @@ function Add-ArubaCXInterfaces {
                 $_interface | Add-Member -name "routing" -membertype NoteProperty -Value $false
             }
         }
+        else {
+            #Set routing to $true by default it is not specified...
+            $_interface | Add-Member -name "routing" -membertype NoteProperty -Value $true
+        }
 
         if ( $PsBoundParameters.ContainsKey('vlan_mode') ) {
             $_interface | Add-Member -name "vlan_mode" -membertype NoteProperty -Value $vlan_mode
