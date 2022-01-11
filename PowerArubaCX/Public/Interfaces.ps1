@@ -327,12 +327,16 @@ function Add-ArubaCXInterfacesLagInterfaces {
         $intf = $_interface.interfaces
         if ($intf) {
             foreach ($i in $intf.psobject.Properties.Name) {
+                #Skip interface ($i) if it is on already on $interfaces
+                if ($interfaces -contains $i) {
+                    continue
+                }
                 $interfaces += $i
             }
         }
 
         $members = @()
-        #Add new vlan
+        #Add new interface
         foreach ($member in $interfaces) {
             $members += "/rest/" + $($connection.api_version) + "/system/interfaces/" + ($member -replace '/', '%2F')
         }
