@@ -1253,6 +1253,24 @@ Describe "LAG specific" {
             $int.interfaces.$pester_interface | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/interfaces/" + ($pester_interface -replace "/", "%2F"))
             $int.interfaces.$pester_interface2 | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/interfaces/" + ($pester_interface2 -replace "/", "%2F"))
         }
+
+        It "(re) Add 1 interface member on lag $pester_lag (with the same member)" {
+            #Add/Set a first member
+            Get-ArubaCXInterfaces -interface "lag$pester_lag" | Set-ArubaCXInterfaces -lag_interfaces $pester_interface
+            #Re Add the same interface...
+            Get-ArubaCXInterfaces -interface "lag$pester_lag" | Add-ArubaCXInterfacesLagInterfaces -interfaces $pester_interface
+            $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
+            $int.name | Should -Be "lag$pester_lag"
+            $int.description | Should -Be $null
+            $int.type | Should -Be $null
+            $int.bond_status | Should -Be -Not $null
+            $int.admin | Should -Be "up"
+            $int.ip4_address | Should -Be $null
+            $int.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+            $int.routing | Should -Be $true
+            @($int.interfaces.psobject.properties.name).count | Should -Be "1"
+            $int.interfaces.$pester_interface | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/interfaces/" + ($pester_interface -replace "/", "%2F"))
+        }
     }
 
     Context "Try to Add member to no LAG interface " {
