@@ -38,6 +38,20 @@ function Add-ArubaCXInterfaces {
       Add interface lag 2 with admin status to up and interfaces 1/1/2 and 1/1/3 with no routing and vlan acces 23
 
       .EXAMPLE
+      Add-ArubaCXInterfaces -lag_id 2 -admin up -lacp active -lacp_rate fast
+
+      Add interface lag 2 with admin status to up and lacp mode active and lacp rate fast
+
+      .EXAMPLE
+      Add-ArubaCXInterfaces -lag_id 2 -admin up -mclag
+
+      Add interface lag 2 with admin status to up and mc (Multi Chassis) lag enable
+
+      .EXAMPLE
+      Add-ArubaCXInterfaces -lag_id 2 -admin up -maclag -lacp_fallback
+
+      Add interface lag 2 with admin status to up, mc (Multi Chassis) lag  and lacp_fallback enable
+      .EXAMPLE
       Add-ArubaCXInterfaces -loopback 1 -ip4_address 198.51.100.1 -ip4_mask 32
 
       Add interface loopback 1 with IPv4 Address 198.51.100.1/32 (and admin up)
@@ -68,6 +82,16 @@ function Add-ArubaCXInterfaces {
         [int[]]$vlan_trunks,
         [Parameter(Mandatory = $false, ParameterSetName = "lag")]
         [string[]]$interfaces,
+        [Parameter(Mandatory = $false, ParameterSetName = "lag")]
+        [ValidateSet('passive', 'active', IgnoreCase = $false)]
+        [string]$lacp,
+        [Parameter(Mandatory = $false, ParameterSetName = "lag")]
+        [switch]$mclag,
+        [Parameter(Mandatory = $false, ParameterSetName = "lag")]
+        [switch]$lacp_fallback,
+        [Parameter(Mandatory = $false, ParameterSetName = "lag")]
+        [ValidateSet('slow', 'fast', IgnoreCase = $false)]
+        [string]$lacp_rate,
         [Parameter(Mandatory = $false)]
         [ipaddress]$ip4_address,
         [Parameter(Mandatory = $false)]
@@ -92,6 +116,7 @@ function Add-ArubaCXInterfaces {
             }
             "lag" {
                 $name = "lag" + $lag_id
+                $other_config = New-Object -TypeName PSObject
             }
             "loopback" {
                 $name = "loopback" + $loopback_id
@@ -180,6 +205,35 @@ function Add-ArubaCXInterfaces {
             }
         }
 
+        if ( $PsBoundParameters.ContainsKey('lacp') ) {
+            $_interface | Add-Member -name "lacp" -membertype NoteProperty -Value $lacp
+        }
+
+        if ( $PsBoundParameters.ContainsKey('mclag') ) {
+            if ($mclag) {
+                $other_config | Add-Member -name "mclag_enabled" -membertype NoteProperty -Value $true
+            }
+            else {
+                $other_config | Add-Member -name "mclag_enabled" -membertype NoteProperty -Value $false
+            }
+        }
+
+        if ( $PsBoundParameters.ContainsKey('lacp_fallback') ) {
+            if ($lacp_fallback) {
+                $other_config | Add-Member -name "lacp-fallback" -membertype NoteProperty -Value $true
+            }
+            else {
+                $other_config | Add-Member -name "lacp-fallback" -membertype NoteProperty -Value $false
+            }
+        }
+
+        if ( $PsBoundParameters.ContainsKey('lacp_rate') ) {
+            $other_config | Add-Member -name "lacp-time" -membertype NoteProperty -Value $lacp_rate
+        }
+
+        if ($other_config) {
+            $_interface | Add-Member -name "other_config" -membertype NoteProperty -Value $other_config
+        }
         $response = Invoke-ArubaCXRestMethod -uri $uri -method 'POST' -body $_interface -connection $connection
         $response
         Get-ArubaCXInterfaces $name -connection $connection
