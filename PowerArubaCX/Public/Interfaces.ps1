@@ -625,6 +625,16 @@ function Set-ArubaCXInterfaces {
         [switch]$use_pipeline,
         [Parameter (Mandatory = $false)]
         [String[]]$lag_interfaces,
+        [Parameter(Mandatory = $false)]
+        [ValidateSet('passive', 'active', IgnoreCase = $false)]
+        [string]$lacp,
+        [Parameter(Mandatory = $false)]
+        [switch]$mclag,
+        [Parameter(Mandatory = $false)]
+        [switch]$lacp_fallback,
+        [Parameter(Mandatory = $false)]
+        [ValidateSet('slow', 'fast', IgnoreCase = $false)]
+        [string]$lacp_rate,
         [Parameter (Mandatory = $False)]
         [ValidateNotNullOrEmpty()]
         [PSObject]$connection = $DefaultArubaCXConnection
@@ -773,6 +783,57 @@ function Set-ArubaCXInterfaces {
             else {
                 throw "You can only use -lag_interfaces with lag interface"
             }
+        }
+
+        if ( $PsBoundParameters.ContainsKey('lacp') ) {
+            if ($interface -notlike "lag*") {
+                throw "You can only use -lacp with lag interface"
+            }
+            $_interface.lacp = $lacp
+        }
+
+        if ( $PsBoundParameters.ContainsKey('mclag') ) {
+            if ($interface -notlike "lag*") {
+                throw "You can only use -mclag with lag interface"
+            }
+
+            #if mclag_enabled is not available, create it...
+            if ($null -eq $_interface.other_config.mclag_enabled) {
+                $_interface.other_config | Add-member -name "mclag_enabled" -membertype NoteProperty -Value ""
+            }
+            if ($mclag_enabled) {
+                $_interface.other_config.mclag_enabled = $true
+            }
+            else {
+                $_interface.other_config.mclag_enabled = $false
+            }
+        }
+
+        if ( $PsBoundParameters.ContainsKey('lacp_fallback') ) {
+            if ($interface -notlike "lag*") {
+                throw "You can only use -lacp_fallback with lag interface"
+            }
+            #if lacp-fallback is not available, create it...
+            if ($null -eq $_interface.other_config.'lacp-fallback') {
+                $_interface.other_config | Add-member -name "lacp-fallback" -membertype NoteProperty -Value ""
+            }
+            if ($lacp_fallback) {
+                $_interface.other_config.'lacp-fallback' = $true
+            }
+            else {
+                $_interface.other_config.'lacp-fallback' = $false
+            }
+        }
+
+        if ( $PsBoundParameters.ContainsKey('lacp_rate') ) {
+            if ($interface -notlike "lag*") {
+                throw "You can only use -lacp_rate with lag interface"
+            }
+            #if lacp-time is not available, create it...
+            if ($null -eq $_interface.other_config.'lacp-time') {
+                $_interface.other_config | Add-member -name "lacp-time" -membertype NoteProperty -Value ""
+            }
+            $_interface.other_config.'lacp-time' = $lacp_rate
         }
 
         if ($PSCmdlet.ShouldProcess($interface, 'Configure interface Settings')) {

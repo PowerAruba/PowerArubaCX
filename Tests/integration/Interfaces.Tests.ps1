@@ -1522,6 +1522,129 @@ Describe "LAG specific" {
             $int.other_config.'lacp-time' | Should -Be "fast"
         }
     }
+
+    Context "Set Interface LAG specific (lacp, fallback, mclag)" {
+        BeforeEach {
+            #Add a Lag
+            Add-ArubaCXInterfaces -lag_id $pester_lag -interfaces $pester_interface -admin up
+        }
+
+        AfterEach {
+            Get-ArubaCXInterfaces -interface "lag$pester_lag" | Remove-ArubaCXInterfaces -confirm:$false
+        }
+
+        It "Set an interface lag $pester_lag (with lacp passive)" {
+            Get-ArubaCXInterfaces -interface "lag$pester_lag" | Set-ArubaCXInterfaces -lacp passive
+            $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
+            $int.name | Should -Be "lag$pester_lag"
+            $int.description | Should -Be $null
+            $int.type | Should -Be $null
+            $int.bond_status | Should -Be -Not $null
+            $int.admin | Should -Be "up"
+            $int.ip4_address | Should -Be $null
+            $int.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+            $int.routing | Should -Be $true
+            $int.lacp | Should -Be "passive"
+        }
+
+        It "Set an interface lag $pester_lag (with lacp active)" {
+            Get-ArubaCXInterfaces -interface "lag$pester_lag" | Set-ArubaCXInterfaces -lacp active
+            $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
+            $int.name | Should -Be "lag$pester_lag"
+            $int.description | Should -Be $null
+            $int.type | Should -Be $null
+            $int.bond_status | Should -Be -Not $null
+            $int.admin | Should -Be "up"
+            $int.ip4_address | Should -Be $null
+            $int.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+            $int.routing | Should -Be $true
+            $int.lacp | Should -Be "active"
+        }
+
+        It "Set an interface lag $pester_lag (with mclag enabled)" {
+            Get-ArubaCXInterfaces -interface "lag$pester_lag" | Set-ArubaCXInterfaces -mclag
+            $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
+            $int.name | Should -Be "lag$pester_lag"
+            $int.description | Should -Be $null
+            $int.type | Should -Be $null
+            $int.bond_status | Should -Be -Not $null
+            $int.admin | Should -Be "up"
+            $int.ip4_address | Should -Be $null
+            $int.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+            $int.routing | Should -Be $true
+            $int.other_config.mclag_enabled | Should -Be $true
+        }
+
+        It "Set an interface lag $pester_lag (with mclag disable)" {
+            Get-ArubaCXInterfaces -interface "lag$pester_lag" | Set-ArubaCXInterfaces -mclag:$false
+            $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
+            $int.name | Should -Be "lag$pester_lag"
+            $int.description | Should -Be $null
+            $int.type | Should -Be $null
+            $int.bond_status | Should -Be -Not $null
+            $int.admin | Should -Be "up"
+            $int.ip4_address | Should -Be $null
+            $int.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+            $int.routing | Should -Be $true
+            $int.other_config.mclag_enabled | Should -Be $false
+        }
+
+        It "Set an interface lag $pester_lag (with lacp_fallback enabled)" {
+            Get-ArubaCXInterfaces -interface "lag$pester_lag" | Set-ArubaCXInterfaces -lacp_fallback
+            $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
+            $int.name | Should -Be "lag$pester_lag"
+            $int.description | Should -Be $null
+            $int.type | Should -Be $null
+            $int.bond_status | Should -Be -Not $null
+            $int.admin | Should -Be "up"
+            $int.ip4_address | Should -Be $null
+            $int.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+            $int.routing | Should -Be $true
+            $int.other_config.'lacp-fallback' | Should -Be $true
+        }
+
+        It "Set an interface lag $pester_lag (with lacp_fallback disable)" {
+            Get-ArubaCXInterfaces -interface "lag$pester_lag" | Set-ArubaCXInterfaces -lacp_fallback:$false
+            $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
+            $int.name | Should -Be "lag$pester_lag"
+            $int.description | Should -Be $null
+            $int.type | Should -Be $null
+            $int.bond_status | Should -Be -Not $null
+            $int.admin | Should -Be "up"
+            $int.ip4_address | Should -Be $null
+            $int.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+            $int.routing | Should -Be $true
+            $int.other_config.'lacp-fallback' | Should -Be $false
+        }
+
+        It "Set an interface lag $pester_lag (with lacp_rate slow)" {
+            Get-ArubaCXInterfaces -interface "lag$pester_lag" | Set-ArubaCXInterfaces -lacp_rate slow
+            $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
+            $int.name | Should -Be "lag$pester_lag"
+            $int.description | Should -Be $null
+            $int.type | Should -Be $null
+            $int.bond_status | Should -Be -Not $null
+            $int.admin | Should -Be "up"
+            $int.ip4_address | Should -Be $null
+            $int.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+            $int.routing | Should -Be $true
+            $int.other_config.'lacp-time' | Should -Be "slow"
+        }
+
+        It "Set an interface lag $pester_lag (with lacp_rate fast)" {
+            Get-ArubaCXInterfaces -interface "lag$pester_lag" | Set-ArubaCXInterfaces -lacp_rate fast
+            $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
+            $int.name | Should -Be "lag$pester_lag"
+            $int.description | Should -Be $null
+            $int.type | Should -Be $null
+            $int.bond_status | Should -Be -Not $null
+            $int.admin | Should -Be "up"
+            $int.ip4_address | Should -Be $null
+            $int.vrf.default | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vrfs/" + "default")
+            $int.routing | Should -Be $true
+            $int.other_config.'lacp-time' | Should -Be "fast"
+        }
+    }
 }
 
 
