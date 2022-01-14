@@ -1043,14 +1043,6 @@ $inttypenolag = @(
 Describe "LAG specific" {
 
     Context "Add Interface LAG with members" {
-        BeforeAll {
-            Add-ArubaCXVlans -id $pester_vlan -name PowerArubaCX
-            Add-ArubaCXVlans -id $pester_vlan2 -name PowerArubaCX2
-            #Make a CheckPoint ?
-
-            #Create the vrf
-            Add-ArubaCXVrfs -name $pester_vrf
-        }
 
         AfterEach {
             Get-ArubaCXInterfaces -interface "lag$pester_lag" | Remove-ArubaCXInterfaces -confirm:$false
@@ -1087,14 +1079,6 @@ Describe "LAG specific" {
             $int.interfaces.$pester_interface2 | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/interfaces/" + ($pester_interface2 -replace "/", "%2F"))
         }
 
-        AfterAll {
-            Get-ArubaCXVlans -id $pester_vlan | Remove-ArubaCXVlans -confirm:$false
-            Get-ArubaCXVlans -id $pester_vlan2 | Remove-ArubaCXVlans -confirm:$false
-            #Reverse CheckPoint ?
-
-            #Remove vrf
-            Get-ArubaCXVrfs -name $pester_vrf | Remove-ArubaCXVrfs -confirm:$false
-        }
     }
 
 
