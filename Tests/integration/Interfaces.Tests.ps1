@@ -1629,6 +1629,54 @@ Describe "LAG specific" {
             $int.other_config.'lacp-time' | Should -Be "fast"
         }
     }
+
+    Context "Try to Set Interface LAG specific (lacp, fallback, rate)  to no LAG interface " {
+        BeforeAll {
+            $script:default_int = Get-ArubaCXInterfaces $pester_interface -selector writable
+            #Make a CheckPoint ?
+
+            # Add Vlan
+            Add-ArubaCXVlans -id $pester_vlan -name pester_PowerArubaCX
+            # and interface vlan
+            Add-ArubaCXInterfaces -vlan_id $pester_vlan
+
+            #Add Loopback interface
+            Add-ArubaCXInterfaces -loopback_id $pester_loopback
+        }
+
+        $inttypenolag.ForEach{
+            It "Try to Set Interface Lag Specific to no LAG interface $($_.name) (lacp)" -TestCases $_ {
+                {
+                    Get-ArubaCXInterfaces -interface $($_.name) | Set-ArubaCXInterfaces -lacp passive
+                } | Should -Throw
+            }
+
+            It "Try to Set Interface Lag Specific to no LAG interface $($_.name) (lacp fallback)" -TestCases $_ {
+                {
+                    Get-ArubaCXInterfaces -interface $($_.name) | Set-ArubaCXInterfaces -lacp_fallback
+                } | Should -Throw
+            }
+
+            It "Try to Set Interface Lag Specific to no LAG interface $($_.name) (lacp rate)" -TestCases $_ {
+                {
+                    Get-ArubaCXInterfaces -interface $($_.name) | Set-ArubaCXInterfaces -lacp_rate slow
+                } | Should -Throw
+            }
+        }
+
+        AfterAll {
+            $default_int | Set-ArubaCXInterfaces -use_pipeline
+
+            #Remove Vlan Interface
+            Get-ArubaCXInterfaces -interface "vlan$pester_vlan" | Remove-ArubaCXInterfaces -confirm:$false
+            #Remove vlan
+            Get-ArubaCXVlans -id $pester_vlan | Remove-ArubaCXVlans -confirm:$false
+
+            #Remove Loopback interface
+            Get-ArubaCXInterfaces -interface "loopback$pester_loopback" | Remove-ArubaCXInterfaces -confirm:$false
+        }
+    }
+
 }
 
 
