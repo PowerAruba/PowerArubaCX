@@ -443,8 +443,37 @@ Describe "Add Vlan trunk on Interface" {
             Get-ArubaCXInterfaces -interface "lag$pester_lag" | Remove-ArubaCXInterfaces -confirm:$false
         }
     }
-}
 
+    Context "Try to Add Vlan not Interface LAG or physical" {
+        BeforeAll {
+            # Add Vlan
+            Add-ArubaCXVlans -id $pester_vlan -name pester_PowerArubaCX
+            # and interface vlan
+            Add-ArubaCXInterfaces -vlan_id $pester_vlan
+
+            #Add Loopback interface
+            Add-ArubaCXInterfaces -loopback_id $pester_loopback
+        }
+
+        $inttypenolagnophysical.ForEach{
+            It "Try to Add Vlan to interface $($_.name)" -TestCases $_ {
+                {
+                    Get-ArubaCXInterfaces -interface $_.name | Add-ArubaCXInterfacesVlanTrunks -vlan_trunks $pester_vlan
+                } | Should -Throw
+            }
+        }
+
+        AfterAll {
+            #Remove Vlan Interface
+            Get-ArubaCXInterfaces -interface "vlan$pester_vlan" | Remove-ArubaCXInterfaces -confirm:$false
+            #Remove vlan
+            Get-ArubaCXVlans -id $pester_vlan | Remove-ArubaCXVlans -confirm:$false
+
+            #Remove Loopback interface
+            Get-ArubaCXInterfaces -interface "loopback$pester_loopback" | Remove-ArubaCXInterfaces -confirm:$false
+        }
+    }
+}
 Describe "Remove Vlan trunk on Interface" {
 
     Context "Add Vlan on Interface physical and LAG" {
@@ -494,6 +523,36 @@ Describe "Remove Vlan trunk on Interface" {
 
             #Remove Lag interface
             Get-ArubaCXInterfaces -interface "lag$pester_lag" | Remove-ArubaCXInterfaces -confirm:$false
+        }
+    }
+
+    Context "Try to Remove Vlan not Interface LAG or physical" {
+        BeforeAll {
+            # Add Vlan
+            Add-ArubaCXVlans -id $pester_vlan -name pester_PowerArubaCX
+            # and interface vlan
+            Add-ArubaCXInterfaces -vlan_id $pester_vlan
+
+            #Add Loopback interface
+            Add-ArubaCXInterfaces -loopback_id $pester_loopback
+        }
+
+        $inttypenolagnophysical.ForEach{
+            It "Try to Remove Vlan to interface $($_.name)" -TestCases $_ {
+                {
+                    Get-ArubaCXInterfaces -interface $_.name | Remove-ArubaCXInterfacesVlanTrunks -vlan_trunks $pester_vlan
+                } | Should -Throw
+            }
+        }
+
+        AfterAll {
+            #Remove Vlan Interface
+            Get-ArubaCXInterfaces -interface "vlan$pester_vlan" | Remove-ArubaCXInterfaces -confirm:$false
+            #Remove vlan
+            Get-ArubaCXVlans -id $pester_vlan | Remove-ArubaCXVlans -confirm:$false
+
+            #Remove Loopback interface
+            Get-ArubaCXInterfaces -interface "loopback$pester_loopback" | Remove-ArubaCXInterfaces -confirm:$false
         }
     }
 }

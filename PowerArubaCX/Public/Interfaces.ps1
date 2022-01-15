@@ -286,6 +286,10 @@ function Add-ArubaCXInterfacesVlanTrunks {
         #get interface name from int ps object
         $interface = $int.name
 
+        if (-not ($interface -like "lag*" -or $interface -like "*/*/*")) {
+            throw "You can use only with LAG or physical interface"
+        }
+
         #Add interface to $uri
         $interface = $interface -replace '/', '%2F'
         $uri += "/$interface"
@@ -948,6 +952,9 @@ function Remove-ArubaCXInterfacesVlanTrunks {
         #get interface name from int ps object
         $interface = $int.name
 
+        if (-not ($interface -like "lag*" -or $interface -like "*/*/*")) {
+            throw "You can use only with LAG or physical interface"
+        }
         #Add interface to $uri
         $interface = $interface -replace '/', '%2F'
         $uri += "/$interface"
