@@ -1544,7 +1544,7 @@ Describe "LAG specific" {
             $int.routing | Should -Be $true
             $int.lacp | Should -Be "active"
         }
-
+        <# Disable because you can not enable mclag after create LAG (but you can disable....)
         It "Set an interface lag $pester_lag (with mclag enabled)" {
             Get-ArubaCXInterfaces -interface "lag$pester_lag" | Set-ArubaCXInterfaces -mclag
             $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
@@ -1572,7 +1572,7 @@ Describe "LAG specific" {
             $int.routing | Should -Be $true
             $int.other_config.mclag_enabled | Should -Be $false
         }
-
+        #>
         It "Set an interface lag $pester_lag (with lacp_fallback enabled)" {
             Get-ArubaCXInterfaces -interface "lag$pester_lag" | Set-ArubaCXInterfaces -lacp_fallback
             $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"

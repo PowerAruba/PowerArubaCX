@@ -628,8 +628,10 @@ function Set-ArubaCXInterfaces {
         [Parameter(Mandatory = $false)]
         [ValidateSet('passive', 'active', IgnoreCase = $false)]
         [string]$lacp,
+        <# Disable because you can not enable mclag after create LAG (but you can disable....)
         [Parameter(Mandatory = $false)]
         [switch]$mclag,
+        #>
         [Parameter(Mandatory = $false)]
         [switch]$lacp_fallback,
         [Parameter(Mandatory = $false)]
@@ -792,6 +794,7 @@ function Set-ArubaCXInterfaces {
             $_interface.lacp = $lacp
         }
 
+        <# Disable because you can not enable mclag after create LAG (but you can disable....)
         if ( $PsBoundParameters.ContainsKey('mclag') ) {
             if ($interface -notlike "lag*") {
                 throw "You can only use -mclag with lag interface"
@@ -808,6 +811,7 @@ function Set-ArubaCXInterfaces {
                 $_interface.other_config.mclag_enabled = $false
             }
         }
+        #>
 
         if ( $PsBoundParameters.ContainsKey('lacp_fallback') ) {
             if ($interface -notlike "lag*") {
