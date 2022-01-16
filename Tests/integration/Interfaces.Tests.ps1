@@ -363,6 +363,48 @@ Describe "Configure Vlan on Interface" {
         }
     }
 
+    Context "Try to Set Vlan not Interface LAG or physical" {
+        BeforeAll {
+            # Add Vlan
+            Add-ArubaCXVlans -id $pester_vlan -name pester_PowerArubaCX
+            # and interface vlan
+            Add-ArubaCXInterfaces -vlan_id $pester_vlan
+
+            #Add Loopback interface
+            Add-ArubaCXInterfaces -loopback_id $pester_loopback
+        }
+
+        $inttypenolagnophysical.ForEach{
+            It "Try to Set Vlan Mode to interface $($_.name)" -TestCases $_ {
+                {
+                    Get-ArubaCXInterfaces -interface $_.name | Set-ArubaCXInterfaces -vlan_mode access
+                } | Should -Throw
+            }
+
+            It "Try to Set Vlan tag to interface $($_.name)" -TestCases $_ {
+                {
+                    Get-ArubaCXInterfaces -interface $_.name | Set-ArubaCXInterfaces -vlan_tag $pester_vlan
+                } | Should -Throw
+            }
+
+            It "Try to Set Vlan Trunks to interface $($_.name)" -TestCases $_ {
+                {
+                    Get-ArubaCXInterfaces -interface $_.name | Set-ArubaCXInterfaces -vlan_trunks $pester_vlan
+                } | Should -Throw
+            }
+        }
+
+        AfterAll {
+            #Remove Vlan Interface
+            Get-ArubaCXInterfaces -interface "vlan$pester_vlan" | Remove-ArubaCXInterfaces -confirm:$false
+            #Remove vlan
+            Get-ArubaCXVlans -id $pester_vlan | Remove-ArubaCXVlans -confirm:$false
+
+            #Remove Loopback interface
+            Get-ArubaCXInterfaces -interface "loopback$pester_loopback" | Remove-ArubaCXInterfaces -confirm:$false
+        }
+    }
+
 }
 
 Describe "Add Vlan trunk on Interface" {

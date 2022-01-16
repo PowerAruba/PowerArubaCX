@@ -659,8 +659,8 @@ function Set-ArubaCXInterfaces {
         }
 
         #Add interface to $uri
-        $interface = $interface -replace '/', '%2F'
-        $uri += "/$interface"
+        #$interface = $interface -replace '/', '%2F'
+        $uri += "/" + ($interface -replace '/', '%2F')
 
         if ($use_pipeline) {
             $_interface = $int
@@ -698,14 +698,23 @@ function Set-ArubaCXInterfaces {
         }
 
         if ( $PsBoundParameters.ContainsKey('vlan_mode') ) {
+            if (-not ($interface -like "lag*" -or $interface -like "*/*/*")) {
+                throw "You can use only with LAG or physical interface"
+            }
             $_interface.vlan_mode = $vlan_mode
         }
 
         if ( $PsBoundParameters.ContainsKey('vlan_tag') ) {
+            if (-not ($interface -like "lag*" -or $interface -like "*/*/*")) {
+                throw "You can use only with LAG or physical interface"
+            }
             $_interface.vlan_tag = "/rest/" + $($connection.api_version) + "/system/vlans/" + $vlan_tag
         }
 
         if ( $PsBoundParameters.ContainsKey('vlan_trunks') ) {
+            if (-not ($interface -like "lag*" -or $interface -like "*/*/*")) {
+                throw "You can use only with LAG or physical interface"
+            }
             $trunks = @()
             foreach ($trunk in $vlan_trunks) {
                 $trunks += "/rest/" + $($connection.api_version) + "/system/vlans/" + $trunk
