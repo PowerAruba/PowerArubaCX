@@ -1202,11 +1202,10 @@ Describe "LAG specific" {
 
     }
 
-
-
     Context "Try to Add member to no LAG interface " {
 
         $inttypenolagnophysical.ForEach{
+
             It "Try to Add member to no LAG interface $($_.name)" -TestCases $_ {
                 if ($_.name -like "vlan*") {
                     $vlan_id = $_.name -replace "vlan", ""
@@ -1220,7 +1219,9 @@ Describe "LAG specific" {
                     Add-ArubaCXInterfaces @invokeParams -interfaces $pester_interface
                 } | Should -Throw
             }
+
         }
+
     }
 
     Context "Set Interface LAG with members" {
@@ -1509,7 +1510,6 @@ Describe "LAG specific" {
     }
 
     Context "Add Interface LAG specific (lacp, fallback, mclag)" {
-
         AfterEach {
             Get-ArubaCXInterfaces -interface "lag$pester_lag" | Remove-ArubaCXInterfaces -confirm:$false
         }
@@ -1799,9 +1799,6 @@ Describe "LAG specific" {
     }
 
 }
-
-
-
 
 AfterAll {
     Disconnect-ArubaCX -confirm:$false
