@@ -7,10 +7,10 @@ function Add-ArubaCXInterfaces {
 
     <#
       .SYNOPSIS
-      Add Aruba CX Interfaces (lag, vlan...)
+      Add Aruba CX Interfaces (lag, vlan, loopback...)
 
       .DESCRIPTION
-      Add Aruba CX Interfaces (lag, vlan... with IP Address, description)
+      Add Aruba CX Interfaces (lag, vlan, loopback ... with IP Address, description)
 
       .EXAMPLE
       Add-ArubaCXInterfaces -vlan_id 23 -description "Add by PowerArubaCX"
@@ -51,10 +51,12 @@ function Add-ArubaCXInterfaces {
       Add-ArubaCXInterfaces -lag_id 2 -admin up -maclag -lacp_fallback
 
       Add interface lag 2 with admin status to up, mc (Multi Chassis) lag  and lacp_fallback enable
+
       .EXAMPLE
       Add-ArubaCXInterfaces -loopback 1 -ip4_address 198.51.100.1 -ip4_mask 32
 
       Add interface loopback 1 with IPv4 Address 198.51.100.1/32 (and admin up)
+
       #>
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "")]
     Param(
@@ -78,7 +80,6 @@ function Add-ArubaCXInterfaces {
         [ValidateRange(1, 4096)]
         [int]$vlan_tag,
         [Parameter(Mandatory = $false, ParameterSetName = "lag")]
-        #[ValidateRange(1, 4096)]
         [int[]]$vlan_trunks,
         [Parameter(Mandatory = $false, ParameterSetName = "lag")]
         [string[]]$interfaces,
@@ -177,7 +178,7 @@ function Add-ArubaCXInterfaces {
             $_interface | Add-Member -name "vlan_mode" -membertype NoteProperty -Value $vlan_mode
         }
 
-        if ($vlan_tag) {
+        if ( $PsBoundParameters.ContainsKey('vlan_tag') ) {
             $_interface | Add-Member -name "vlan_tag" -membertype NoteProperty -Value ("/rest/" + $($connection.api_version) + "/system/vlans/" + $vlan_tag)
         }
 
@@ -234,8 +235,9 @@ function Add-ArubaCXInterfaces {
         if ($other_config) {
             $_interface | Add-Member -name "other_config" -membertype NoteProperty -Value $other_config
         }
-        $response = Invoke-ArubaCXRestMethod -uri $uri -method 'POST' -body $_interface -connection $connection
-        $response
+
+        Invoke-ArubaCXRestMethod -uri $uri -method 'POST' -body $_interface -connection $connection
+
         Get-ArubaCXInterfaces $name -connection $connection
     }
     End {
@@ -269,7 +271,6 @@ function Add-ArubaCXInterfacesVlanTrunks {
         [ValidateScript( { Confirm-ArubaCXInterfaces $_ })]
         [psobject]$int,
         [Parameter(Mandatory = $true)]
-        #[ValidateRange(1, 4096)]
         [int[]]$vlan_trunks,
         [Parameter (Mandatory = $False)]
         [ValidateNotNullOrEmpty()]
@@ -326,8 +327,8 @@ function Add-ArubaCXInterfacesVlanTrunks {
         }
         $_interface.vlan_trunks = $trunks
 
-        $response = Invoke-ArubaCXRestMethod -uri $uri -method 'PUT' -body $_interface -connection $connection
-        $response
+        Invoke-ArubaCXRestMethod -uri $uri -method 'PUT' -body $_interface -connection $connection
+
         Get-ArubaCXInterfaces $interface -connection $connection
     }
 
@@ -360,7 +361,6 @@ function Add-ArubaCXInterfacesLagInterfaces {
         [ValidateScript( { Confirm-ArubaCXInterfaces $_ })]
         [psobject]$int,
         [Parameter(Mandatory = $true)]
-        #[ValidateRange(1, 4096)]
         [string[]]$interfaces,
         [Parameter (Mandatory = $False)]
         [ValidateNotNullOrEmpty()]
@@ -378,7 +378,6 @@ function Add-ArubaCXInterfacesLagInterfaces {
         $interface = $int.name
 
         #Add interface to $uri
-        $interface = $interface -replace '/', '%2F'
         $uri += "/$interface"
 
         if ($interface -notlike "lag*") {
@@ -386,7 +385,7 @@ function Add-ArubaCXInterfacesLagInterfaces {
         }
         $_interface = Get-ArubaCXInterfaces $interface -selector writable -connection $connection
 
-        #Remove name from vlan (can not be modified)
+        #Remove name from interface (can not be modified)
         $_interface.psobject.Properties.remove("name")
 
         #get list of existant interfaces
@@ -402,14 +401,14 @@ function Add-ArubaCXInterfacesLagInterfaces {
         }
 
         $members = @()
-        #Add new interface
+        #Add new interface member
         foreach ($member in $interfaces) {
             $members += "/rest/" + $($connection.api_version) + "/system/interfaces/" + ($member -replace '/', '%2F')
         }
         $_interface.interfaces = $members
 
-        $response = Invoke-ArubaCXRestMethod -uri $uri -method 'PUT' -body $_interface -connection $connection
-        $response
+        Invoke-ArubaCXRestMethod -uri $uri -method 'PUT' -body $_interface -connection $connection
+
         Get-ArubaCXInterfaces $interface -connection $connection
     }
 
@@ -571,9 +570,14 @@ function Set-ArubaCXInterfaces {
       Set interface 1/1/1 on the vrf MyVRF
 
       .EXAMPLE
-      Get-ArubaCXInterfaces -interface lag2 | Set-ArubaCXInterfaces -lag_interfaces
+      Get-ArubaCXInterfaces -interface lag2 | Set-ArubaCXInterfaces -lag_interfaces 1/1/1
 
       Set interface 1/1/1 on the lag 2
+
+      .EXAMPLE
+      Get-ArubaCXInterfaces -interface lag2 | Set-ArubaCXInterfaces -lacp active -lacp_fallback -lacp_rate fast
+
+      Set interface lacp (mode) active with lacp fallback enable and lacp rate fast
 
       .EXAMPLE
       $int = Get-ArubaCXInterfaces -interface 1/1/1 -selector writable
@@ -582,6 +586,7 @@ function Set-ArubaCXInterfaces {
 
       Configure some interfacevariable (description) no available on parameter using pipeline (can be only with selector equal writable)
     #>
+
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "")]
     [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'medium')]
     Param(
@@ -604,7 +609,6 @@ function Set-ArubaCXInterfaces {
         [ValidateRange(1, 4096)]
         [int]$vlan_tag,
         [Parameter(Mandatory = $false)]
-        #[ValidateRange(1, 4096)]
         [int[]]$vlan_trunks,
         [Parameter(Mandatory = $false)]
         [ipaddress]$ip4_address,
@@ -663,7 +667,6 @@ function Set-ArubaCXInterfaces {
         }
 
         #Add interface to $uri
-        #$interface = $interface -replace '/', '%2F'
         $uri += "/" + ($interface -replace '/', '%2F')
 
         if ($use_pipeline) {
@@ -874,7 +877,7 @@ function Remove-ArubaCXInterfaces {
       Remove an interface
 
       .DESCRIPTION
-      Remove an interface (vlan or lag)
+      Remove an interface (vlan, lag, loopback)
 
       .EXAMPLE
       Get-ArubaCXInterfaces -interface vlan23 | Remove-ArubaCXInterfaces
@@ -886,7 +889,13 @@ function Remove-ArubaCXInterfaces {
 
       Remove lag 2 without confirmation
 
+      .EXAMPLE
+      Get-ArubaCXInterfaces -interface loopback1 | Remove-ArubaCXInterfaces
+
+      Remove loopback 1
+
     #>
+
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "")]
     [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'high')]
     Param(
@@ -909,7 +918,6 @@ function Remove-ArubaCXInterfaces {
         $interface = $int.name
 
         #Add interface to $uri
-        $interface = $interface -replace '/', '%2F'
         $uri += "/$interface"
 
         if ($PSCmdlet.ShouldProcess($interface, 'Remove interface')) {
@@ -948,7 +956,6 @@ function Remove-ArubaCXInterfacesVlanTrunks {
         [ValidateScript( { Confirm-ArubaCXInterfaces $_ })]
         [psobject]$int,
         [Parameter(Mandatory = $true)]
-        #[ValidateRange(1, 4096)]
         [int[]]$vlan_trunks,
         [Parameter (Mandatory = $False)]
         [ValidateNotNullOrEmpty()]
@@ -993,9 +1000,9 @@ function Remove-ArubaCXInterfacesVlanTrunks {
         $_interface.vlan_trunks = $trunks
 
         if ($PSCmdlet.ShouldProcess($interface, 'Remove vlan tagged on interface')) {
-            $response = Invoke-ArubaCXRestMethod -uri $uri -method 'PUT' -body $_interface -connection $connection
+            Invoke-ArubaCXRestMethod -uri $uri -method 'PUT' -body $_interface -connection $connection
         }
-        $response
+
         Get-ArubaCXInterfaces $interface -connection $connection
     }
 
@@ -1010,7 +1017,7 @@ function Remove-ArubaCXInterfacesLagInterfaces {
       Remove interfaces on an interface LAG
 
       .DESCRIPTION
-      Remove interface memer on an interface LAG
+      Remove interface member on an interface LAG
 
       .EXAMPLE
       Get-ArubaCXInterfaces -interface lag2 | Remove-ArubaCXInterfacesLagInterfaces -interfaces 1/1/1
@@ -1018,7 +1025,7 @@ function Remove-ArubaCXInterfacesLagInterfaces {
       Remove interface member 1/1/1 on lag 2
 
       .EXAMPLE
-      Get-ArubaCXInterfaces -interface lag2| Remove-ArubaCXInterfacesLagInterfaces -interfaces 1/1/1, 1/1/2
+      Get-ArubaCXInterfaces -interface lag2 | Remove-ArubaCXInterfacesLagInterfaces -interfaces 1/1/1, 1/1/2
 
       Remove interfaces members 1/1/1 and 1/1/2 on lag 2
 
@@ -1030,7 +1037,6 @@ function Remove-ArubaCXInterfacesLagInterfaces {
         [ValidateScript( { Confirm-ArubaCXInterfaces $_ })]
         [psobject]$int,
         [Parameter(Mandatory = $true)]
-        #[ValidateRange(1, 4096)]
         [string[]]$interfaces,
         [Parameter (Mandatory = $False)]
         [ValidateNotNullOrEmpty()]
@@ -1048,7 +1054,6 @@ function Remove-ArubaCXInterfacesLagInterfaces {
         $interface = $int.name
 
         #Add interface to $uri
-        $interface = $interface -replace '/', '%2F'
         $uri += "/$interface"
 
         if ($interface -notlike "lag*") {
@@ -1059,7 +1064,7 @@ function Remove-ArubaCXInterfacesLagInterfaces {
         #Remove name from vlan (can not be modified)
         $_interface.psobject.Properties.remove("name")
 
-        #get list of existant vlan and recreate $trunk
+        #get list of existant interfaces and recreate $members
         $intf = $_interface.interfaces
         $members = @()
         if ($intf) {
