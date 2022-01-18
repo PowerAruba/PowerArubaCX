@@ -311,6 +311,10 @@ function Add-ArubaCXInterfacesVlanTrunks {
         $vlans = $_interface.vlan_trunks
         if ($vlans) {
             foreach ($v in $vlans.psobject.Properties.Name) {
+                #Skip vlan ($i) if it is on already on $vlan_trunks
+                if ($vlan_trunks -contains $v) {
+                    continue
+                }
                 $vlan_trunks += $v
             }
         }

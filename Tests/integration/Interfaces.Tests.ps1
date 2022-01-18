@@ -460,6 +460,16 @@ Describe "Add Vlan trunk on Interface" {
                     $int.vlan_trunks.$pester_vlan2 | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vlans/" + $pester_vlan2)
                 }
 
+                It "(re) Add Second Vlan ($pester_vlan2) trunks to an interface $($_.name)" -TestCases $_ {
+                    #Should not Throw
+                    Get-ArubaCXInterfaces -interface $_.name | Add-ArubaCXInterfacesVlanTrunks -vlan_trunks $pester_vlan2
+                    $int = Get-ArubaCXInterfaces -interface $_.name
+                    $int.vlan_tag | Should -Be $null
+                    ($int.vlan_trunks | Get-Member -MemberType NoteProperty).count | Should -Be "2"
+                    $int.vlan_trunks.$pester_vlan | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vlans/" + $pester_vlan)
+                    $int.vlan_trunks.$pester_vlan2 | Should -Be ("/rest/" + $($DefaultArubaCXConnection.api_version) + "/system/vlans/" + $pester_vlan2)
+                }
+
                 It "Add Vlans ($pester_vlan and $pester_vlan2) trunks to an interface $($_.name)" -TestCases $_ {
                     #reset vlan trunks
                     Get-ArubaCXInterfaces -interface $_.name | Set-ArubaCXInterfaces -vlan_mode access -vlan_trunks $null
