@@ -13,14 +13,19 @@ function Get-ArubaCXLLDPNeighbor {
       Get list of LLDP Neighbor (Chassis name, IP Address, description...)
 
       .EXAMPLE
+      Get-ArubaCXLLDPNeighbor
+
+      Get LLDP Neighbor information of ALL Ports
+
+      .EXAMPLE
       Get-ArubaCXLLDPNeighbor 1/1/1
 
       Get LLDP Neighbor information of port 1/1/1
 
     #>
     Param(
-        [Parameter(Mandatory = $true, position = 1)]
-        [String]$neighbor,
+        [Parameter(Mandatory = $false, position = 1)]
+        [String]$neighbor = "*",
         [Parameter(Mandatory = $false)]
         [ValidateRange(1, 4)]
         [Int]$depth,
