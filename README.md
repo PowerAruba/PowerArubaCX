@@ -9,7 +9,7 @@ This is a Powershell module for configure an ArubaCX Switch.
 With this module (version 0.4.0) you can manage:
 
 - Firmware (Get)
-- [Interfaces](#Interface) (Get/Set)
+- [Interfaces](#interface) (Add/Get/Set/Remove [LAG](#interface-lag), [Loopback](#interface-loopback), [Vlans](#interface-vlans))
 - LLDP Neighbor (Get)
 - [System](#System) (Get/Set)
 - User (Get)
@@ -191,7 +191,13 @@ And choice a service (for example System)
 ![](./Medias/ArubaCX_API_system.png)
 
 ### Interface
-for example to get ArubaCX Interface
+
+On ArubaCX, on interface, there is all type of interface physical/system and virtual (LAG, Loopback, Vlans)
+
+You can create a new interface (LAG, Loopback, Vlans) `Add-ArubaCXInterfaces`, retrieve its information `Get-ArubaCXInterfaces`, modify its properties `Set-ArubaCXInterfaces` or delete it `Remove-ArubaCXInterfaces`. There is also extra cmdlets for Add `Add-ArubaCXInterfacesVlansTrunks` / Remove `Remove-ArubaCXInterfacesVlansTrunks` Vlans trunks on interface (physical or LAG) or for Add  `Add-ArubaCXInterfacesLagInterface` or Remove  `Remove-ArubaCXInterfacesLagInterface` member (physical) interface on LAG.
+
+
+#### Interface Physical (System)
 
 ```powershell
 
@@ -213,6 +219,14 @@ for example to get ArubaCX Interface
     aclv6_out_cfg_version                :
     admin                                : up
     [...]
+
+#Get name, admin state and link state of interface
+
+    Get-ArubaCXInterfaces 1/1/1 -attributes name, admin_state, link_state
+
+    admin_state link_state name
+    ----------- ---------- ----
+    down        down       1/1/1
 
 #Configure interface 1/1/1 (Description, admin and routing)
 
@@ -248,7 +262,7 @@ for example to get ArubaCX Interface
     vlan_tag                                : @{85=/rest/v10.04/system/vlans/85}
     vlan_trunks                             : @{44=/rest/v10.04/system/vlans/44}
 
-#Configure interface 1/1/1 and add vlan 44 to trunks
+#Configure interface 1/1/1 and add vlan 45 to trunks
 
     Get-ArubaCXInterfaces -interface 1/1/1 | Add-ArubaCXInterfacesVlanTrunks -vlan_trunks 45
 
@@ -268,22 +282,164 @@ for example to get ArubaCX Interface
     ip4_address                             : 192.0.2.1/24
     [...]
 ```
-<!--
-#Get name, admin state and link state of interface
 
-    Get-ArubaCXInterfaces 1/1/1 -attributes name, admin_state, link_state
+#### Interface LAG
 
-    admin_state link_state name
-    ----------- ---------- ----
-    up          up         bridge_normal
-    up          up         1/1/1
-    down        down       1/1/4
-    down        down       1/1/3
-    down        down       1/1/2
-    up          up         1/1/5
-    up          up         1/1/6
-    up          up         vlan55
--->
+```powershell
+
+#Add LAG 1 with member interface 1/1/1
+
+    Add-ArubaCXInterfaces -lag_id 1 admin up -interfaces 1/1/3 -lacp active
+
+    name                                    : lag1
+    [...]
+    interfaces                              : @{1/1/3=/rest/v10.09/system/interfaces/1%2F1%2F3}
+    [...]
+    lacp                                    : active
+    [...]
+
+#Configure Access vlan 44 on LAG 1
+
+    Get-ArubaCXInterfaces lag1 | Set-ArubaCXInterfaces -vlan_tag 44 -vlan_mode access
+
+    name                                    : lag1
+    [...]
+    vlan_mode                               : access
+    vlan_tag                                : @{44=/rest/v10.09/system/vlans/44}
+    [...]
+
+#Configure Trunk vlan 44,45 on LAG 1
+
+    Get-ArubaCXInterfaces lag1 | Set-ArubaCXInterfaces -vlan_tag 1 -vlan_trunks 44,45 -vlan_mode native-untagged 
+
+    name                                    : lag1
+    [...]
+    vlan_mode                               : native-untagged
+    vlan_tag                                : @{1=/rest/v10.09/system/vlans/1}
+    vlan_trunks                             : @{44=/rest/v10.09/system/vlans/44; 45=/rest/v10.09/system/vlans/45}
+    [...]
+
+#Add interface 1/1/2 on LAG 1
+
+    Get-ArubaCXInterfaces lag1 | Add-ArubaCXInterfacesLagInterfaces -interfaces 1/1/2
+
+    name                                    : lag1
+    [...]
+    interfaces                              : @{1/1/2=/rest/v10.09/system/interfaces/1%2F1%2F2; 1/1/3=/rest/v10.09/system/interfaces/1%2F1%2F3}
+    [...]
+    lacp                                    : active
+    [...]
+
+#Remove interface 1/1/3 on LAG 1
+
+    Get-ArubaCXInterfaces lag1 | Remove-ArubaCXInterfacesLagInterfaces -interfaces 1/1/3
+
+    name                                    : lag1
+    [...]
+    interfaces                              : @{1/1/2=/rest/v10.09/system/interfaces/1%2F1%2F2}
+    [...]
+    lacp                                    : active
+    [...]
+
+#Remove LAG 1
+
+    Get-ArubaCXInterfaces lag1 | Remove-ArubaCXInterfaces
+
+    Confirm
+    Are you sure you want to perform this action?
+    Performing the operation "Remove interface" on target "lag1".
+    [Y] Yes  [A] Yes to All  [N] No  [L] No to All  [S] Suspend  [?] Help (default is "Y"): Y
+```
+
+#### Interface Loopback
+
+```powershell
+
+#Add interface loopback 1 with a IPv4 Address (you need to add vlan before)
+
+    Add-ArubaCXInterfaces -loopback_id 1 -ip4_address 192.0.2.44 -ip4_mask 24
+
+    name                                    : loopback1
+    [...]
+    active_ip4_address                      : 192.0.2.44/24
+    [...]
+    ip4_address                             : 192.0.2.44/24
+    [...]
+
+#Change IP Address of interface loopback 1
+
+    Get-ArubaCXInterfaces loopback1 | Set-ArubaCXInterfaces -ip4_address 192.0.2.254 -ip4_mask 24
+
+    name                                    : loopback1
+    [...]
+    active_ip4_address                      : 192.0.2.254/24
+    [...]
+    ip4_address                             : 192.0.2.254/24
+    [...]
+
+#Set VRF Blue on interface loopback 1(need to create vrf before)
+
+    Get-ArubaCXInterfaces loopback1 | Set-ArubaCXInterfaces -vrf blue
+
+    name                                    : loopback1
+    [...]
+    vrf                                     : @{blue=/rest/v10.09/system/vrfs/blue}
+    [...]
+
+#Remove interface loopback 1
+
+    Get-ArubaCXInterfaces loopback1 | Remove-ArubaCXInterfaces
+
+    Confirm
+    Are you sure you want to perform this action?
+    Performing the operation "Remove interface" on target "loopback1".
+    [Y] Yes  [A] Yes to All  [N] No  [L] No to All  [S] Suspend  [?] Help (default is "Y"): Y
+```
+
+#### Interface Vlans
+
+```powershell
+
+#Add interface vlan 44 with a IPv4 Address (you need to add vlan before)
+
+    Add-ArubaCXInterfaces -vlan_id 44 -ip4_address 192.0.2.44 -ip4_mask 24
+
+    name                                    : vlan44
+    [...]
+    active_ip4_address                      : 192.0.2.44/24
+    [...]
+    ip4_address                             : 192.0.2.44/24
+    [...]
+
+#Change IP Address of interface vlan 44
+
+    Get-ArubaCXInterfaces vlan44 | Set-ArubaCXInterfaces -ip4_address 192.0.2.254 -ip4_mask 24
+
+    name                                    : vlan44
+    [...]
+    active_ip4_address                      : 192.0.2.254/24
+    [...]
+    ip4_address                             : 192.0.2.254/24
+    [...]
+
+#Set VRF Blue on interface vlan 44 (need to create vrf before)
+
+    Get-ArubaCXInterfaces vlan44 | Set-ArubaCXInterfaces -vrf blue
+
+    name                                    : vlan44
+    [...]
+    vrf                                     : @{blue=/rest/v10.09/system/vrfs/blue}
+    [...]
+
+#Remove interface vlan 44
+
+    Get-ArubaCXInterfaces vlan44 | Remove-ArubaCXInterfaces
+
+    Confirm
+    Are you sure you want to perform this action?
+    Performing the operation "Remove interface" on target "vlan44".
+    [Y] Yes  [A] Yes to All  [N] No  [L] No to All  [S] Suspend  [?] Help (default is "Y"): Y
+```
 
 ### System
 for example to get/set ArubaCX System settings
