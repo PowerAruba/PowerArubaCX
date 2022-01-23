@@ -38,7 +38,7 @@ function Add-ArubaCXInterfaces {
       Add interface lag 2 with admin status to up and interfaces 1/1/2 and 1/1/3 with no routing and vlan acces 23
 
       .EXAMPLE
-      Add-ArubaCXInterfaces -lag_id 2 -admin up -lacp active -lacp_rate fast
+      Add-ArubaCXInterfaces -lag_id 2 -admin up -lacp active -lacp_time fast
 
       Add interface lag 2 with admin status to up and lacp mode active and lacp rate fast
 
@@ -92,7 +92,7 @@ function Add-ArubaCXInterfaces {
         [switch]$lacp_fallback,
         [Parameter(Mandatory = $false, ParameterSetName = "lag")]
         [ValidateSet('slow', 'fast', IgnoreCase = $false)]
-        [string]$lacp_rate,
+        [string]$lacp_time,
         [Parameter(Mandatory = $false)]
         [ipaddress]$ip4_address,
         [Parameter(Mandatory = $false)]
@@ -228,8 +228,8 @@ function Add-ArubaCXInterfaces {
             }
         }
 
-        if ( $PsBoundParameters.ContainsKey('lacp_rate') ) {
-            $other_config | Add-Member -name "lacp-time" -membertype NoteProperty -Value $lacp_rate
+        if ( $PsBoundParameters.ContainsKey('lacp_time') ) {
+            $other_config | Add-Member -name "lacp-time" -membertype NoteProperty -Value $lacp_time
         }
 
         if ($other_config) {
@@ -575,7 +575,7 @@ function Set-ArubaCXInterfaces {
       Set interface 1/1/1 on the lag 2
 
       .EXAMPLE
-      Get-ArubaCXInterfaces -interface lag2 | Set-ArubaCXInterfaces -lacp active -lacp_fallback -lacp_rate fast
+      Get-ArubaCXInterfaces -interface lag2 | Set-ArubaCXInterfaces -lacp active -lacp_fallback -lacp_time fast
 
       Set interface lacp (mode) active with lacp fallback enable and lacp rate fast
 
@@ -648,7 +648,7 @@ function Set-ArubaCXInterfaces {
         [switch]$lacp_fallback,
         [Parameter(Mandatory = $false)]
         [ValidateSet('slow', 'fast', IgnoreCase = $false)]
-        [string]$lacp_rate,
+        [string]$lacp_time,
         [Parameter (Mandatory = $False)]
         [ValidateNotNullOrEmpty()]
         [PSObject]$connection = $DefaultArubaCXConnection
@@ -849,15 +849,15 @@ function Set-ArubaCXInterfaces {
             }
         }
 
-        if ( $PsBoundParameters.ContainsKey('lacp_rate') ) {
+        if ( $PsBoundParameters.ContainsKey('lacp_time') ) {
             if ($interface -notlike "lag*") {
-                throw "You can only use -lacp_rate with lag interface"
+                throw "You can only use -lacp_time with lag interface"
             }
             #if lacp-time is not available, create it...
             if ($null -eq $_interface.other_config.'lacp-time') {
                 $_interface.other_config | Add-member -name "lacp-time" -membertype NoteProperty -Value ""
             }
-            $_interface.other_config.'lacp-time' = $lacp_rate
+            $_interface.other_config.'lacp-time' = $lacp_time
         }
 
         if ($PSCmdlet.ShouldProcess($interface, 'Configure interface Settings')) {

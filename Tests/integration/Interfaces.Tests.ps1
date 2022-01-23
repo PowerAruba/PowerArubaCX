@@ -1599,8 +1599,8 @@ Describe "LAG specific" {
             $int.other_config.'lacp-fallback' | Should -Be $false
         }
 
-        It "Add Interface lag $pester_lag (with an id, lacp_rate slow)" {
-            Add-ArubaCXInterfaces -lag_id $pester_lag -admin up -lacp_rate slow
+        It "Add Interface lag $pester_lag (with an id, lacp_time slow)" {
+            Add-ArubaCXInterfaces -lag_id $pester_lag -admin up -lacp_time slow
             $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
             $int.name | Should -Be "lag$pester_lag"
             $int.description | Should -Be $null
@@ -1613,8 +1613,8 @@ Describe "LAG specific" {
             $int.other_config.'lacp-time' | Should -Be "slow"
         }
 
-        It "Add Interface lag $pester_lag (with an id, lacp_rate fast)" {
-            Add-ArubaCXInterfaces -lag_id $pester_lag -admin up -lacp_rate fast
+        It "Add Interface lag $pester_lag (with an id, lacp_time fast)" {
+            Add-ArubaCXInterfaces -lag_id $pester_lag -admin up -lacp_time fast
             $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
             $int.name | Should -Be "lag$pester_lag"
             $int.description | Should -Be $null
@@ -1722,8 +1722,8 @@ Describe "LAG specific" {
             $int.other_config.'lacp-fallback' | Should -Be $false
         }
 
-        It "Set an interface lag $pester_lag (with lacp_rate slow)" {
-            Get-ArubaCXInterfaces -interface "lag$pester_lag" | Set-ArubaCXInterfaces -lacp_rate slow
+        It "Set an interface lag $pester_lag (with lacp_time slow)" {
+            Get-ArubaCXInterfaces -interface "lag$pester_lag" | Set-ArubaCXInterfaces -lacp_time slow
             $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
             $int.name | Should -Be "lag$pester_lag"
             $int.description | Should -Be $null
@@ -1736,8 +1736,8 @@ Describe "LAG specific" {
             $int.other_config.'lacp-time' | Should -Be "slow"
         }
 
-        It "Set an interface lag $pester_lag (with lacp_rate fast)" {
-            Get-ArubaCXInterfaces -interface "lag$pester_lag" | Set-ArubaCXInterfaces -lacp_rate fast
+        It "Set an interface lag $pester_lag (with lacp_time fast)" {
+            Get-ArubaCXInterfaces -interface "lag$pester_lag" | Set-ArubaCXInterfaces -lacp_time fast
             $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
             $int.name | Should -Be "lag$pester_lag"
             $int.description | Should -Be $null
@@ -1780,7 +1780,7 @@ Describe "LAG specific" {
 
             It "Try to Set Interface Lag Specific to no LAG interface $($_.name) (lacp rate)" -TestCases $_ {
                 {
-                    Get-ArubaCXInterfaces -interface $($_.name) | Set-ArubaCXInterfaces -lacp_rate slow
+                    Get-ArubaCXInterfaces -interface $($_.name) | Set-ArubaCXInterfaces -lacp_time slow
                 } | Should -Throw
             }
         }
