@@ -25,6 +25,7 @@ function Get-ArubaCXUsers {
 
     #>
 
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "")]
     Param(
         [Parameter(Mandatory = $false, position = 1)]
         [String]$user,
