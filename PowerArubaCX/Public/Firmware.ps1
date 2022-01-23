@@ -8,7 +8,7 @@
         Get all informations about Aruba CX firmware
 
         .EXAMPLE
-        Get-ArubaCXfirmware
+        Get-ArubaCXFirmware
 
         Get all informations about Aruba CX firmware, first image an secondary image
     #>
@@ -27,6 +27,7 @@
     Process {
 
         $invokeParams = @{ }
+        #don't have depth, selector or attributes...
         if ( $PsBoundParameters.ContainsKey('vsx_peer') ) {
             $invokeParams.add( 'vsx_peer', $true )
         }
