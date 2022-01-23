@@ -14,6 +14,7 @@ With this module (version 0.4.0) you can manage:
 - [System](#System) (Get/Set)
 - User (Get)
 - [Vlans](#Vlans-Management) (Add/Get/Set/Remove)
+- [VRF](#vrf) (Add/Get/Set/Remove)
 
 There is some extra feature
 - [Invoke API](#Invoke-API) using Invoke-ArubaCXRestMethod
@@ -496,6 +497,64 @@ for example to get/set ArubaCX System settings
     [...]
     usb_disable                                     : True
     [...]
+```
+
+### VRF
+
+You can create a new VRF `Add-ArubaCXVrfs`, retrieve its information `Get-ArubaCXVrfs`, modify its properties `Set-ArubaCXVrfs`, or delete it `Remove-ArubaCXVrfs`.
+
+```powershell
+
+# Create a vrf
+    Add-ArubaCXVrfs -name blue
+
+    [...]
+    https_server                            :
+    [...]
+    name                                    : blue
+    [...]
+    rd                                      :
+    [...]
+    snmp_enable                             : False
+    [...]
+    source_interface                        :
+    source_ip                               :
+    ssh_enable                              :
+    [...]
+
+# Get information about a vrf
+    Get-ArubaCXvrfs -name blue -attributes name, https_server, rd, ssh_enable, snmp_enable
+
+    https_server :
+    name         : blue
+    rd           :
+    snmp_enable  : False
+    ssh_enable   :
+
+# Change settings of a vrf (rd, snmp, ssh, https)
+    Get-ArubaCXVrfs blue | Set-ArubaCXVrfs -ssh_enable -https_server -snmp_enable -rd 11:22
+
+    [...]
+    https_server                            : @{enable=True}
+    [...]
+    name                                    : blue
+    [...]
+    rd                                      : 11:22
+    [...]
+    snmp_enable                             : True
+    [...]
+    source_interface                        :
+    source_ip                               :
+    ssh_enable                              : True
+    [...]
+
+# Remove a vrf
+    Get-ArubaCXVrfs blue | Remove-ArubaCXVrfs
+
+    Confirm
+    Are you sure you want to perform this action?
+    Performing the operation "Remove Vrf blue" on target "Vrf".
+    [Y] Yes  [A] Yes to All  [N] No  [L] No to All  [S] Suspend  [?] Help (default is "Y"): Y
 ```
 
 ### MultiConnection
