@@ -1,4 +1,4 @@
-﻿function Get-ArubaCXUser {
+﻿function Get-ArubaCXUsers {
 
     <#
         .SYNOPSIS
