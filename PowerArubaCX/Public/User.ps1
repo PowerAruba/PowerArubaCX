@@ -15,6 +15,8 @@
     #>
 
     Param(
+        [Parameter(Mandatory = $false)]
+        [ValidateRange(1, 4)]
         [Int]$depth,
         [Parameter(Mandatory = $false)]
         [ValidateSet("configuration", "status", "statistics", "writable")]
@@ -49,8 +51,8 @@
 
         $uri = "system/users"
 
-        $response = Invoke-ArubaCXRestMethod -uri $uri -method 'GET' -connection $connection @invokeParams
-        $response
+        Invoke-ArubaCXRestMethod -uri $uri -method 'GET' -connection $connection @invokeParams
+
     }
 
     End {
