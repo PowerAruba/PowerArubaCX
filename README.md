@@ -12,7 +12,7 @@ With this module (version 0.4.0) you can manage:
 - [Interfaces](#interface) (Add/Get/Set/Remove [LAG](#interface-lag), [Loopback](#interface-loopback), [Vlans](#interface-vlans))
 - [LLDP Neighbor](#lldp-neighbor) (Get)
 - [System](#System) (Get/Set)
-- User (Get)
+- [Users](#Users) (Get)
 - [Vlans](#Vlans-Management) (Add/Get/Set/Remove)
 - [VRF](#vrf) (Add/Get/Set/Remove)
 
@@ -619,6 +619,29 @@ for example to get/set ArubaCX System settings
     [...]
     usb_disable                                     : True
     [...]
+```
+### Users
+You can get Users (local account) of Aruba CX
+
+```powershell
+
+#Get ALL local user
+    Get-ArubaCXUsers
+
+    admin
+    -----
+    /rest/v10.09/system/users/admin
+
+#Get info about admin local user
+
+    Get-ArubaCXUsers -user admin
+
+    authorized_keys :
+    name            : admin
+    origin          : built-in
+    password        : AQBapU0TkclkN5abVvBfWakRLdEwQAuF4jP3oqWRlwxj4avqYgAAAFw0UPMjwXH1xvCD00IaJ5YMo+OxvaA853gdPSu4cjkzvYlKIuQvQ52v6YH1wtxbBIU5nht+RMM2thytQZO7PNut4PNFnNwUP22h0Aq16IdEy2Oc2ma0csZ00l+TaGa4o8Ja
+    user_group      : @{administrators=/rest/v10.09/system/user_groups/administrators}
+
 ```
 
 ### VRF
