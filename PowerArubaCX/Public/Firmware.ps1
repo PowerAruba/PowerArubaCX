@@ -1,4 +1,10 @@
-﻿function Get-ArubaCXFirmware {
+﻿#
+# Copyright 2022, Alexis La Goutte <alexis dot lagoutte at gmail dot com>
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+function Get-ArubaCXFirmware {
 
     <#
         .SYNOPSIS
