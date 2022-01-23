@@ -11,9 +11,16 @@
         Get-ArubaCXFirmware
 
         Get all informations about Aruba CX firmware, first image an secondary image
+
+        .EXAMPLE
+        Get-ArubaCXFirmware -status
+
+        Get status (date, reason, status) about Aruba CX firmware.
     #>
 
     Param(
+        [Parameter(Mandatory = $false)]
+        [switch]$status,
         [Parameter(Mandatory = $false)]
         [switch]$vsx_peer,
         [Parameter (Mandatory = $False)]
@@ -33,6 +40,10 @@
         }
 
         $uri = "firmware"
+
+        if ( $PsBoundParameters.ContainsKey('status') ) {
+            $uri += "/status"
+        }
 
         $response = Invoke-ArubaCXRestMethod -uri $uri -method 'GET' -connection $connection @invokeParams
         $response
