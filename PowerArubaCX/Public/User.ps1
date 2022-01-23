@@ -14,13 +14,20 @@ function Get-ArubaCXUsers {
         Get all informations about Aruba CX Users
 
         .EXAMPLE
-        Get-ArubaCXUser
+        Get-ArubaCXUsers
 
         List all users in ArubaCX
+
+        .EXAMPLE
+        Get-ArubaCXUsers -user admin
+
+        list info about user admin
 
     #>
 
     Param(
+        [Parameter(Mandatory = $false, position = 1)]
+        [String]$user,
         [Parameter(Mandatory = $false)]
         [ValidateRange(1, 4)]
         [Int]$depth,
@@ -56,6 +63,10 @@ function Get-ArubaCXUsers {
         }
 
         $uri = "system/users"
+
+        if ( $PsBoundParameters.ContainsKey('user') ) {
+            $uri += "/$user"
+        }
 
         Invoke-ArubaCXRestMethod -uri $uri -method 'GET' -connection $connection @invokeParams
 
