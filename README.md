@@ -8,7 +8,7 @@ This is a Powershell module for configure an ArubaCX Switch.
 
 With this module (version 0.4.0) you can manage:
 
-- Firmware (Get)
+- [Firmware](#firmware) (Get)
 - [Interfaces](#interface) (Add/Get/Set/Remove [LAG](#interface-lag), [Loopback](#interface-loopback), [Vlans](#interface-vlans))
 - [LLDP Neighbor](#lldp-neighbor) (Get)
 - [System](#System) (Get/Set)
@@ -539,6 +539,30 @@ You can create a new interface (LAG, Loopback, Vlans) `Add-ArubaCXInterfaces`, r
 
 ```
 
+### Firmware
+For Get Firmware information on Aruba CX Switch
+
+```powershell
+
+#Get Firmware info
+
+    Get-ArubaCXFirmware -attribute current_version -Verbose
+
+    current_version   : FL.10.09.0002
+    primary_version   : FL.10.09.0002
+    secondary_version : FL.10.09.0002
+    default_image     : primary
+    booted_image      : primary
+
+#Get Firmware Status
+
+    Get-ArubaCXFirmware -status
+
+    date reason status
+    ---- ------ ------
+    0    none   none
+
+```
 
 ### System
 for example to get/set ArubaCX System settings
