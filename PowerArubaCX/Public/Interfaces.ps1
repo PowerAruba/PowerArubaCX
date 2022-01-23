@@ -48,7 +48,7 @@ function Add-ArubaCXInterfaces {
       Add interface lag 2 with admin status to up and mc (Multi Chassis) lag enable
 
       .EXAMPLE
-      Add-ArubaCXInterfaces -lag_id 2 -admin up -maclag -lacp_fallback
+      Add-ArubaCXInterfaces -lag_id 2 -admin up -mclag -lacp_fallback
 
       Add interface lag 2 with admin status to up, mc (Multi Chassis) lag  and lacp_fallback enable
 
