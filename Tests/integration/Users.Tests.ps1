@@ -5,7 +5,6 @@
 #
 . ../common.ps1
 
-
 BeforeAll {
     Connect-ArubaCX @invokeParams
 }
