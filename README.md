@@ -462,7 +462,7 @@ You can create a new interface (LAG, Loopback, Vlans) `Add-ArubaCXInterfaces`, r
     -----------------------
     @{chassis_id=08:00:09:0d:2d:06; dcbx_cee_status=; mac_addr=08:00:09:0d:2d:06; med_network_policy=; neighbor_info=; neighbor_info_organizational=; port_id=1/1/9}
 
-#for Get all info, you can use
+#To Get all info, you can use
 
     (Get-ArubaCXLLDPNeighbor 1/1/8 -depth 2).'08:00:09:0d:2d:06,1/1/9'
 
@@ -540,7 +540,7 @@ You can create a new interface (LAG, Loopback, Vlans) `Add-ArubaCXInterfaces`, r
 ```
 
 ### Firmware
-For Get Firmware information on Aruba CX Switch
+Tor Get Firmware information on Aruba CX Switch
 
 ```powershell
 
