@@ -163,7 +163,7 @@ function Set-ArubaCXVMFirtBootPassword {
         Configure initial Password for Aruba CX OVA
 
         .EXAMPLE
-        Set-ArubaCXVMFirtBootPassword -vmname ArubaCX -mdp toulouse
+        Set-ArubaCXVMFirtBootPassword -vmname ArubaCX -new_password MyNewPassword
 
         Configure password (using console) for the first connection
 
