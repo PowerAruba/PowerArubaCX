@@ -246,7 +246,7 @@ function Set-ArubaCXVMMgmtOobm {
         Configure IP Address on OOBM Interface
 
         .EXAMPLE
-        Set-VMArubaCXMgmtOob -vmname ArubaCX -mgmt_ip 192.0.2.1 -mgmt_mask 24
+        Set-VMArubaCXMgmtOobm -vmname ArubaCX -mgmt_ip 192.0.2.1 -mgmt_mask 24
 
         Configure IP Address 192.0.2.1(/24) to mgmt interface of Aruba CX OVA
 
@@ -262,7 +262,7 @@ function Set-ArubaCXVMMgmtOobm {
         }
         Set-ArubaCXVMMgmtOobm @cxConfMgmtParams
 
-        Configure IP Address 192.0.2.1(/24)  with gateway to mgmt interface of Aruba CX OVA
+        Configure IP Address 192.0.2.1(/24) with gateway to mgmt interface of Aruba CX OVA
         Also reconnect to the switch and save the configuration and exit!
     #>
 
