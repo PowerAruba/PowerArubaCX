@@ -1,4 +1,10 @@
-﻿function Get-ArubaCXUser {
+﻿#
+# Copyright 2022, Alexis La Goutte <alexis dot lagoutte at gmail dot com>
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+function Get-ArubaCXUsers {
 
     <#
         .SYNOPSIS
@@ -8,13 +14,23 @@
         Get all informations about Aruba CX Users
 
         .EXAMPLE
-        Get-ArubaCXUser
+        Get-ArubaCXUsers
 
         List all users in ArubaCX
 
+        .EXAMPLE
+        Get-ArubaCXUsers -user admin
+
+        List info about user admin
+
     #>
 
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "")]
     Param(
+        [Parameter(Mandatory = $false, position = 1)]
+        [String]$user,
+        [Parameter(Mandatory = $false)]
+        [ValidateRange(1, 4)]
         [Int]$depth,
         [Parameter(Mandatory = $false)]
         [ValidateSet("configuration", "status", "statistics", "writable")]
@@ -49,8 +65,12 @@
 
         $uri = "system/users"
 
-        $response = Invoke-ArubaCXRestMethod -uri $uri -method 'GET' -connection $connection @invokeParams
-        $response
+        if ( $PsBoundParameters.ContainsKey('user') ) {
+            $uri += "/$user"
+        }
+
+        Invoke-ArubaCXRestMethod -uri $uri -method 'GET' -connection $connection @invokeParams
+
     }
 
     End {

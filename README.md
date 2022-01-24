@@ -8,11 +8,11 @@ This is a Powershell module for configure an ArubaCX Switch.
 
 With this module (version 0.4.0) you can manage:
 
-- Firmware (Get)
+- [Firmware](#firmware) (Get)
 - [Interfaces](#interface) (Add/Get/Set/Remove [LAG](#interface-lag), [Loopback](#interface-loopback), [Vlans](#interface-vlans))
-- LLDP Neighbor (Get)
+- [LLDP Neighbor](#lldp-neighbor) (Get)
 - [System](#System) (Get/Set)
-- User (Get)
+- [Users](#Users) (Get)
 - [Vlans](#Vlans-Management) (Add/Get/Set/Remove)
 - [VRF](#vrf) (Add/Get/Set/Remove)
 - [VM](#vm) (Deploy and Configure ArubaCX OVA (for initial setup))
@@ -443,6 +443,128 @@ You can create a new interface (LAG, Loopback, Vlans) `Add-ArubaCXInterfaces`, r
     [Y] Yes  [A] Yes to All  [N] No  [L] No to All  [S] Suspend  [?] Help (default is "Y"): Y
 ```
 
+### LLDP Neighbor
+
+```powershell
+
+#Get LLDP Neighbor of All Ports
+
+    Get-ArubaCXLLDPNeighbor
+
+    %2F1%2F8                                                                                                                1%2F1%2F9
+    ---------                                                                                                                ---------
+    @{08:00:09:0d:2d:06,1/1/9=/rest/v10.09/system/interfaces/1%2F1%2F8/lldp_neighbors/08%3A00%3A09%3A0d%3A2d%3A06,1%2F1%2F9} @{08:00:09:0d:2d:06,1/1/8=/rest/v10.09/system/interfaces/1%2F1%2F9/lldp_neighbors/08%3A00%3A09%3…
+
+#Get LLDP Neighbor of port 1/1/8 with depth 2
+
+    Get-ArubaCXLLDPNeighbor 1/1/8 -depth 2
+
+    08:00:09:0d:2d:06,1/1/9
+    -----------------------
+    @{chassis_id=08:00:09:0d:2d:06; dcbx_cee_status=; mac_addr=08:00:09:0d:2d:06; med_network_policy=; neighbor_info=; neighbor_info_organizational=; port_id=1/1/9}
+
+#To Get all info, you can use
+
+    (Get-ArubaCXLLDPNeighbor 1/1/8 -depth 2).'08:00:09:0d:2d:06,1/1/9'
+
+    chassis_id                   : 08:00:09:0d:2d:06
+    dcbx_cee_status              :
+    mac_addr                     : 08:00:09:0d:2d:06
+    med_network_policy           :
+    neighbor_info                : @{associated_poe_tlv_for_pd=dot3; chassis_capability_available=Bridge, Router; chassis_capability_enabled=Bridge, Router; chassis_description=Aruba ABC123  Virtual.10.09.0002;
+                                chassis_id_len=6; chassis_id_subtype=link_local_addr; chassis_index=1; chassis_name=switch; chassis_protocol=LLDP; chassis_refcount=2; chassis_ttl=120; eee_wake_time_fallback=0;
+                                eee_wake_time_rx=0; eee_wake_time_rx_echo=0; eee_wake_time_tx=0; eee_wake_time_tx_echo=0; macphy_autoneg_advertised=Other; macphy_autoneg_enabled=0; macphy_autoneg_support=0;
+                                macphy_mau_type= ; mgmt_iface_list=33554433; mgmt_iface_oid_list=1.3.6.1.2.1.31.1.1.1.1.33554433; mgmt_ip_list=192.0.2.44; pd_dot3_ext_tlv_advertised=False; pd_dot3_tlv_advertised=False;
+                                pd_med_tlv_advertised=False; port_description=1/1/9; port_hidden_in=0; port_hidden_out=0; port_id_len=5; port_id_subtype=if_name;port_lastchange=61ed751e; port_lastupdate=61ed764a;
+                                port_mfs=0; port_protocol=LLDP; power_allocated=0; power_allocated_pair_a=0; power_allocated_pair_b=0; power_class=Class0; power_devicetype=PSE; power_enabled=1; power_paircontrol=0;
+                                power_pairs=SIGNAL; power_powertype=None; power_priority=Unknown; power_requested=0; power_requested_pair_a=0; power_requested_pair_b=0; power_source=Unknown; power_supported=1;
+                                remote_index=2}
+    neighbor_info_organizational : @{1=; 2=; 3=}
+    port_id                      : 1/1/9
+
+#and for neighbor info
+
+    (Get-ArubaCXLLDPNeighbor 1/1/8 -depth 2).'08:00:09:0d:2d:06,1/1/9'.neighbor_info
+
+    associated_poe_tlv_for_pd    : dot3
+    chassis_capability_available : Bridge, Router
+    chassis_capability_enabled   : Bridge, Router
+    chassis_description          : Aruba ABC123  Virtual.10.09.0002
+    chassis_id_len               : 6
+    chassis_id_subtype           : link_local_addr
+    chassis_index                : 1
+    chassis_name                 : switch
+    chassis_protocol             : LLDP
+    chassis_refcount             : 2
+    chassis_ttl                  : 120
+    eee_wake_time_fallback       : 0
+    eee_wake_time_rx             : 0
+    eee_wake_time_rx_echo        : 0
+    eee_wake_time_tx             : 0
+    eee_wake_time_tx_echo        : 0
+    macphy_autoneg_advertised    : Other
+    macphy_autoneg_enabled       : 0
+    macphy_autoneg_support       : 0
+    macphy_mau_type              :
+    mgmt_iface_list              : 33554433
+    mgmt_iface_oid_list          : 1.3.6.1.2.1.31.1.1.1.1.33554433
+    mgmt_ip_list                 : 192.0.2.44
+    pd_dot3_ext_tlv_advertised   : False
+    pd_dot3_tlv_advertised       : False
+    pd_med_tlv_advertised        : False
+    port_description             : 1/1/9
+    port_hidden_in               : 0
+    port_hidden_out              : 0
+    port_id_len                  : 5
+    port_id_subtype              : if_name
+    port_lastchange              : 61ed751e
+    port_lastupdate              : 61ed7686
+    port_mfs                     : 0
+    port_protocol                : LLDP
+    power_allocated              : 0
+    power_allocated_pair_a       : 0
+    power_allocated_pair_b       : 0
+    power_class                  : Class0
+    power_devicetype             : PSE
+    power_enabled                : 1
+    power_paircontrol            : 0
+    power_pairs                  : SIGNAL
+    power_powertype              : None
+    power_priority               : Unknown
+    power_requested              : 0
+    power_requested_pair_a       : 0
+    power_requested_pair_b       : 0
+    power_source                 : Unknown
+    power_supported              : 1
+    remote_index                 : 2
+
+```
+
+### Firmware
+Tor Get Firmware information on Aruba CX Switch
+
+```powershell
+
+#Get Firmware info
+
+    Get-ArubaCXFirmware -attribute current_version -Verbose
+
+    current_version   : FL.10.09.0002
+    primary_version   : FL.10.09.0002
+    secondary_version : FL.10.09.0002
+    default_image     : primary
+    booted_image      : primary
+
+#Get Firmware Status
+
+    Get-ArubaCXFirmware -status
+
+    date reason status
+    ---- ------ ------
+    0    none   none
+
+```
+
 ### System
 for example to get/set ArubaCX System settings
 
@@ -498,6 +620,29 @@ for example to get/set ArubaCX System settings
     [...]
     usb_disable                                     : True
     [...]
+```
+### Users
+You can get Users (local account) of Aruba CX
+
+```powershell
+
+#Get ALL local user
+    Get-ArubaCXUsers
+
+    admin
+    -----
+    /rest/v10.09/system/users/admin
+
+#Get info about admin local user
+
+    Get-ArubaCXUsers -user admin
+
+    authorized_keys :
+    name            : admin
+    origin          : built-in
+    password        : AQBapU0TkclkN5abVvBfWakRLdEwQAuF4jP3oqWRlwxj4avqYgAAAFw0UPMjwXH1xvCD00IaJ5YMo+OxvaA853gdPSu4cjkzvYlKIuQvQ52v6YH1wtxbBIU5nht+RMM2thytQZO7PNut4PNFnNwUP22h0Aq16IdEy2Oc2ma0csZ00l+TaGa4o8Ja
+    user_group      : @{administrators=/rest/v10.09/system/user_groups/administrators}
+
 ```
 
 ### VRF

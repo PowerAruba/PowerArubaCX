@@ -64,7 +64,7 @@ Describe "Connect to a switch (using multi connection)" {
             { Get-ArubaCXSystem -connection $cx } | Should -Not -Throw
         }
         It "Use Multi connection for call Get User" {
-            { Get-ArubaCXUser -connection $cx } | Should -Not -Throw
+            { Get-ArubaCXUsers -connection $cx } | Should -Not -Throw
         }
         It "Use Multi connection for call Get Vlans" {
             { Get-ArubaCXVlans -connection $cx } | Should -Not -Throw

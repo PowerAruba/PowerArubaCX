@@ -17,7 +17,7 @@ Describe "Get System" {
         } | Should -Not -Throw
     }
 
-    It "Get System ($pester_vlan) and confirm (via Confirm-ArubaCXSystem)" {
+    It "Get System and confirm (via Confirm-ArubaCXSystem)" {
         $sys = Get-ArubaCXSystem
         Confirm-ArubaCXSystem ($sys) | Should -Be $true
     }
