@@ -312,8 +312,8 @@ function Set-ArubaCXVMMgmtOobm {
         Start-Sleep 1
         if ( $PsBoundParameters.ContainsKey('mgmt_gateway') ) {
             Set-VMKeystrokes -VMName $vmname -StringInput "default-gateway $mgmt_gateway" -ReturnCarriage $true
+            Start-Sleep 1
         }
-        Start-Sleep 1
         #Exit Configure interface mgmt context
         Set-VMKeystrokes -VMName $vmname -StringInput "exit" -ReturnCarriage $true
         Start-Sleep 1
