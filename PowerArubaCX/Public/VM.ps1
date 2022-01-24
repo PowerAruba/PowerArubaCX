@@ -179,6 +179,8 @@ function Set-ArubaCXVMFirtBootPassword {
         Configure password (using console) for the first connection, save configuration and exit
     #>
 
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "")]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "")]
     Param(
         [Parameter (Mandatory = $true)]
         [string]$vmname,
@@ -260,6 +262,8 @@ function Set-ArubaCXVMMgmtOobm {
         Also reconnect to the switch and save the configuration and exit!
     #>
 
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "")]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "")]
     Param(
         [Parameter (Mandatory = $true)]
         [string]$vmname,
