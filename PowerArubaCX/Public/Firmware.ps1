@@ -16,7 +16,7 @@ function Get-ArubaCXFirmware {
         .EXAMPLE
         Get-ArubaCXFirmware
 
-        Get all informations about Aruba CX firmware, first image an secondary image
+        Get all informations about Aruba CX firmware, primary image and secondary image...
 
         .EXAMPLE
         Get-ArubaCXFirmware -status
