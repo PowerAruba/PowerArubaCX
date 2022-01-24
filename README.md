@@ -566,7 +566,7 @@ You need to have [VMware.PowerCLI](https://developer.vmware.com/powercli) and [S
 You can use the following cmdlet (on this order)
 
 - `Deploy-ArubaCXVm` Deploy CPPM OVA with add hard disk
-- `Set-ArubaCXVMFirtBootPassword` Configure first boot (Password...)
+- `Set-ArubaCXVMFirstBootPassword` Configure first boot (Password...)
 - `Set-ArubaCXVMMgmtOobm` Configure OOBM Interface (ip, default-gateway)
 
 ### MultiConnection

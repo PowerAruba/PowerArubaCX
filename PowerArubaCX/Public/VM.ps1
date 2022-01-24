@@ -153,7 +153,7 @@ function Deploy-ArubaCXVm {
     }
 }
 
-function Set-ArubaCXVMFirtBootPassword {
+function Set-ArubaCXVMFirstBootPassword {
 
     <#
         .SYNOPSIS
@@ -163,7 +163,7 @@ function Set-ArubaCXVMFirtBootPassword {
         Configure initial Password for Aruba CX OVA
 
         .EXAMPLE
-        Set-ArubaCXVMFirtBootPassword -vmname ArubaCX -new_password MyNewPassword
+        Set-ArubaCXVMFirstBootPassword -vmname ArubaCX -new_password MyNewPassword
 
         Configure password (using console) for the first connection
 
@@ -174,7 +174,7 @@ function Set-ArubaCXVMFirtBootPassword {
             write_memory            = $true
             exit                    = $true
         }
-        PS>Set-ArubaCXVMFirtBootPassword @cxConfParams
+        PS>Set-ArubaCXVMFirstBootPassword @cxConfParams
 
         Configure password (using console) for the first connection, save configuration and exit
     #>
