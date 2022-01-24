@@ -200,21 +200,24 @@ function Set-ArubaCXVMFirtBootPassword {
             Throw "You need to install/import Set-VMKeystrokes script (Install-Script -Name VMKeystrokes)"
         }
         #Connection
-        Set-VMKeystrokes -VMName $vmname -StringInput admin -ReturnCarriage $true
+        Write-Output "Connection to console using default login (no password)"
+        Set-VMKeystrokes -VMName $vmname -StringInput admin -ReturnCarriage $true 6>> $null
         Start-Sleep 1
-        Set-VMKeystrokes -VMName $vmname -SpecialKeyInput "KeyEnter"
+        Set-VMKeystrokes -VMName $vmname -SpecialKeyInput "KeyEnter" 6>> $null
         Start-Sleep 10
 
         #Change Password (First Connection)
-        Set-VMKeystrokes -VMName $vmname -StringInput $new_password -ReturnCarriage $true
+        Write-Output "Change Password (First Connection)"
+        Set-VMKeystrokes -VMName $vmname -StringInput $new_password -ReturnCarriage $true 6>> $null
         Start-Sleep 1
-        Set-VMKeystrokes -VMName $vmname -StringInput $new_password -ReturnCarriage $true
+        Set-VMKeystrokes -VMName $vmname -StringInput $new_password -ReturnCarriage $true 6>> $null
         Start-Sleep 1
 
         #Save configuration
         if ( $PsBoundParameters.ContainsKey('write_memory') ) {
             if ( $write_memory ) {
-                Set-VMKeystrokes -VMName $vmname -StringInput "write memory" -ReturnCarriage $true
+                Write-Output "Save Configuration"
+                Set-VMKeystrokes -VMName $vmname -StringInput "write memory" -ReturnCarriage $true 6>> $null
                 Start-Sleep 2
             }
         }
@@ -222,7 +225,8 @@ function Set-ArubaCXVMFirtBootPassword {
         #Exit ?
         if ( $PsBoundParameters.ContainsKey('exit') ) {
             if ( $exit ) {
-                Set-VMKeystrokes -VMName $vmname -StringInput "exit" -ReturnCarriage $true
+                Write-Output "Exit ! Bye"
+                Set-VMKeystrokes -VMName $vmname -StringInput "exit" -ReturnCarriage $true 6>> $null
                 Start-Sleep 1
             }
         }
