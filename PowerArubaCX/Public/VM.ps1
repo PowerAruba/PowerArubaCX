@@ -298,37 +298,46 @@ function Set-ArubaCXVMMgmtOobm {
         #Connection ?
         if ( $PsBoundParameters.ContainsKey('password') ) {
             #Connect to the switch
-            Set-VMKeystrokes -VMName $vmname -StringInput admin -ReturnCarriage $true
+            Write-Output "Connect to the switch (login/password)"
+            Set-VMKeystrokes -VMName $vmname -StringInput admin -ReturnCarriage $true 6>> $null
             Start-Sleep 1
-            Set-VMKeystrokes -VMName $vmname -StringInput $password -ReturnCarriage $true
+            Set-VMKeystrokes -VMName $vmname -StringInput $password -ReturnCarriage $true 6>> $null
             Start-Sleep 5
         }
 
-        Set-VMKeystrokes -VMName $vmname -StringInput "conf t" -ReturnCarriage $true
+        Write-Output "Go on Configure Terminal"
+        Set-VMKeystrokes -VMName $vmname -StringInput "conf t" -ReturnCarriage $true 6>> $null
         Start-Sleep 1
 
         #Configuration OOBM (mgmt) interface
-        Set-VMKeystrokes -VMName $vmname -StringInput "interface mgmt" -ReturnCarriage $true
+        Write-Output "Configure OOBM (mgmt) interface"
+        Set-VMKeystrokes -VMName $vmname -StringInput "interface mgmt" -ReturnCarriage $true 6>> $null
         Start-Sleep 1
-        Set-VMKeystrokes -VMName $vmname -StringInput "no shutdown" -ReturnCarriage $true
+        Write-Output "Configure disable shutdown"
+        Set-VMKeystrokes -VMName $vmname -StringInput "no shutdown" -ReturnCarriage $true 6>> $null
         Start-Sleep 1
-        Set-VMKeystrokes -VMName $vmname -StringInput "ip static $mgmt_ip/$mgmt_mask" -ReturnCarriage $true
+        Write-Output "Configure ip static (OOBM): $mgmt_ip/$mgmt_mask"
+        Set-VMKeystrokes -VMName $vmname -StringInput "ip static $mgmt_ip/$mgmt_mask" -ReturnCarriage $true 6>> $null
         Start-Sleep 1
         if ( $PsBoundParameters.ContainsKey('mgmt_gateway') ) {
-            Set-VMKeystrokes -VMName $vmname -StringInput "default-gateway $mgmt_gateway" -ReturnCarriage $true
+            Write-Output "Configure default-gateway: $mgmt_gateway"
+            Set-VMKeystrokes -VMName $vmname -StringInput "default-gateway $mgmt_gateway" -ReturnCarriage $true 6>> $null
             Start-Sleep 1
         }
         #Exit Configure interface mgmt context
-        Set-VMKeystrokes -VMName $vmname -StringInput "exit" -ReturnCarriage $true
+        Write-Output "Exit (Configure interface mgmt)"
+        Set-VMKeystrokes -VMName $vmname -StringInput "exit" -ReturnCarriage $true 6>> $null
         Start-Sleep 1
         #Exit Configure terminal (conf t mode)
-        Set-VMKeystrokes -VMName $vmname -StringInput "exit" -ReturnCarriage $true
+        Write-Output "Exit (Configure terminal)"
+        Set-VMKeystrokes -VMName $vmname -StringInput "exit" -ReturnCarriage $true 6>> $null
         Start-Sleep 1
 
         #Save configuration
         if ( $PsBoundParameters.ContainsKey('write_memory') ) {
             if ( $write_memory ) {
-                Set-VMKeystrokes -VMName $vmname -StringInput "write memory" -ReturnCarriage $true
+                Write-Output "Save Configuration"
+                Set-VMKeystrokes -VMName $vmname -StringInput "write memory" -ReturnCarriage $true 6>> $null
                 Start-Sleep 2
             }
         }
@@ -336,7 +345,8 @@ function Set-ArubaCXVMMgmtOobm {
         #Exit ?
         if ( $PsBoundParameters.ContainsKey('exit') ) {
             if ( $exit ) {
-                Set-VMKeystrokes -VMName $vmname -StringInput "exit" -ReturnCarriage $true
+                Write-Output "Exit ! Bye"
+                Set-VMKeystrokes -VMName $vmname -StringInput "exit" -ReturnCarriage $true 6>> $null
                 Start-Sleep 1
             }
         }
