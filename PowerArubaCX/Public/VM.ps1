@@ -293,7 +293,7 @@ function Set-ArubaCXVMMgmtOobm {
 
         #Connection ?
         if ( $PsBoundParameters.ContainsKey('password') ) {
-
+            #Connect to the switch
             Set-VMKeystrokes -VMName $vmname -StringInput admin -ReturnCarriage $true
             Start-Sleep 1
             Set-VMKeystrokes -VMName $vmname -StringInput $password -ReturnCarriage $true
