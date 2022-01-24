@@ -80,10 +80,10 @@ function Deploy-ArubaCXVm {
         }
 
         if ($DefaultVIServers.Count -eq 0) {
-            throw "Need to be connect to vCenter (use Connect-VIServer)"
+            throw "Need to be connected to vCenter (use Connect-VIServer)"
         }
         if (Get-VM $name_vm -ErrorAction "silentlyContinue") {
-            Throw "VM $name_vm already exist, change name or remove VM"
+            Throw "VM $name_vm already exists, change name or remove VM"
         }
 
         if (-not (Get-Cluster -Name $cluster -ErrorAction "silentlycontinue")) {
