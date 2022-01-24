@@ -15,6 +15,7 @@ With this module (version 0.4.0) you can manage:
 - User (Get)
 - [Vlans](#Vlans-Management) (Add/Get/Set/Remove)
 - [VRF](#vrf) (Add/Get/Set/Remove)
+- [VM](#vm) (Deploy and Configure ArubaCX OVA (for initial setup))
 
 There is some extra feature
 - [Invoke API](#Invoke-API) using Invoke-ArubaCXRestMethod
@@ -556,6 +557,17 @@ You can create a new VRF `Add-ArubaCXVrfs`, retrieve its information `Get-ArubaC
     Performing the operation "Remove Vrf blue" on target "Vrf".
     [Y] Yes  [A] Yes to All  [N] No  [L] No to All  [S] Suspend  [?] Help (default is "Y"): Y
 ```
+
+### VM
+
+You can use PowerArubaCX for help to deploy Aruba CX OVA on VMware ESXi (With a vCenter)
+You need to have [VMware.PowerCLI](https://developer.vmware.com/powercli) and [Set-VMKeystrokes](https://www.powershellgallery.com/packages/VMKeystrokes/1.0.0) from [William Lam](https://williamlam.com/2017/09/automating-vm-keystrokes-using-the-vsphere-api-powercli.html)
+
+You can use the following cmdlet (on this order)
+
+- `Deploy-ArubaCXVm` Deploy CPPM OVA with add hard disk
+- `Set-ArubaCXVMFirtBootPassword` Configure first boot (Password...)
+- `Set-ArubaCXVMMgmtOobm` Configure OOBM Interface (ip, default-gateway)
 
 ### MultiConnection
 
