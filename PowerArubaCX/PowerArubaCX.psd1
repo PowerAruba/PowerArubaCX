@@ -12,7 +12,7 @@
     RootModule        = 'PowerArubaCX.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '0.4.1'
+    ModuleVersion     = '0.5.0'
 
     # ID used to uniquely identify this module
     GUID              = '44c73bcd-17c0-5d37-c0bd-16b5b41d621a'
@@ -24,7 +24,7 @@
     #CompanyName = 'Unknown'
 
     # Copyright statement for this module
-    Copyright         = '(c) 2018 Alexis La Goutte All rights reserved.'
+    Copyright         = '(c) 2018-2022 Alexis La Goutte All rights reserved.'
 
     # Description of the functionality provided by this module
     Description       = 'PowerShell module to query the ArubaCX Switch API'
