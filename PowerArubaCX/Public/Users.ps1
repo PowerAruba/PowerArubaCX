@@ -21,7 +21,7 @@ function Get-ArubaCXUsers {
         .EXAMPLE
         Get-ArubaCXUsers -user admin
 
-        list info about user admin
+        List info about user admin
 
     #>
 
