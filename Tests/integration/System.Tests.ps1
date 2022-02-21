@@ -129,6 +129,41 @@ Describe "Configure System" {
         $sys.other_config.banner | Should -Be "PowerArubaCX-Banner"
     }
 
+    It "Change System contact (Add if needed)" {
+        Set-ArubaCXSystem -Contact "PowerArubaCX-Contact"
+        $sys = Get-ArubaCXSystem
+        $sys.other_config.system_contact | Should -Be "PowerArubaCX-Contact"
+    }
+
+    It "Change System contact" {
+        Set-ArubaCXSystem -Contact "PowerArubaCX-Contact2"
+        $sys = Get-ArubaCXSystem
+        $sys.other_config.system_contact | Should -Be "PowerArubaCX-Contact2"
+    }
+
+    It "Change System description (Add if needed)" {
+        Set-ArubaCXSystem -Description "PowerArubaCX-Description"
+        $sys = Get-ArubaCXSystem
+        $sys.other_config.system_description | Should -Be "PowerArubaCX-Description"
+    }
+
+    It "Change System description" {
+        Set-ArubaCXSystem -description "PowerArubaCX-Description2"
+        $sys = Get-ArubaCXSystem
+        $sys.other_config.system_description | Should -Be "PowerArubaCX-Description2"
+    }
+
+    It "Change System location (Add if needed)" {
+        Set-ArubaCXSystem -location "PowerArubaCX-Location"
+        $sys = Get-ArubaCXSystem
+        $sys.other_config.system_location | Should -Be "PowerArubaCX-Location"
+    }
+
+    It "Change System location" {
+        Set-ArubaCXSystem -location "PowerArubaCX-Location2"
+        $sys = Get-ArubaCXSystem
+        $sys.other_config.system_location | Should -Be "PowerArubaCX-Location2"
+    }
     AfterAll {
         $default_sys | Set-ArubaCXSystem -use_pipeline
         #Reverse CheckPoint ?
