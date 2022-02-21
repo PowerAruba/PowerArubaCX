@@ -108,6 +108,12 @@ function Set-ArubaCXSystem {
         #add Check of timezone ? very long list..
         [string]$timezone,
         [Parameter (Mandatory = $false)]
+        [string]$contact,
+        [Parameter (Mandatory = $false)]
+        [string]$description,
+        [Parameter (Mandatory = $false)]
+        [string]$location,
+        [Parameter (Mandatory = $false)]
         [switch]$use_pipeline,
         [Parameter (Mandatory = $False)]
         [ValidateNotNullOrEmpty()]
@@ -137,6 +143,30 @@ function Set-ArubaCXSystem {
         }
         if ( $PsBoundParameters.ContainsKey('timezone') ) {
             $_system.timezone = $timezone
+        }
+        if ( $PsBoundParameters.ContainsKey('contact') ) {
+            if ($_system.other_config.system_contact) {
+                $_system.other_config.system_contact = $contact
+            }
+            else {
+                $_system.other_config | Add-member -name "system_contact" -membertype NoteProperty -Value $contact
+            }
+        }
+        if ( $PsBoundParameters.ContainsKey('description') ) {
+            if ($_system.other_config.system_description) {
+                $_system.other_config.system_description = $description
+            }
+            else {
+                $_system.other_config | Add-member -name "system_description" -membertype NoteProperty -Value $description
+            }
+        }
+        if ( $PsBoundParameters.ContainsKey('location') ) {
+            if ($_system.other_config.system_location) {
+                $_system.other_config.system_location = $location
+            }
+            else {
+                $_system.other_config | Add-member -name "system_location" -membertype NoteProperty -Value $location
+            }
         }
 
         if ($PSCmdlet.ShouldProcess($_system.hostname, 'Configure System Settings')) {
