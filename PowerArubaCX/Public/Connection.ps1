@@ -93,7 +93,7 @@ function Connect-ArubaCX {
         }
 
         $postParams = @{username = $Credential.username; password = $Credential.GetNetworkCredential().Password }
-        $url = "https://${Server}:${Port}/rest/v1/login"
+        $url = "https://${Server}:${Port}/rest/v10.08/login"
         try {
             Invoke-RestMethod $url -Method POST -Body $postParams -SessionVariable arubacx @invokeParams | Out-Null
         }
@@ -107,7 +107,7 @@ function Connect-ArubaCX {
             $rest = Invoke-RestMethod $url -Method "get" -WebSession $arubacx @invokeParams
         }
         catch {
-            throw "Unsupported release Need to use ArubaCX >= 10.04"
+            throw "Unsupported release Need to use ArubaCX >= 10.08"
         }
 
         $connection.server = $server

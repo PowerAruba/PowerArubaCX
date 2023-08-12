@@ -47,7 +47,7 @@ Describe "Connect to a switch (using multi connection)" {
     }
 
     It "Throw when try to use Invoke-ArubaCPRestMethod and not connected" {
-        { Invoke-ArubaCXRestMethod -uri "rest/v1/system" } | Should -Throw "Not Connected. Connect to the Switch with Connect-ArubaCX"
+        { Invoke-ArubaCXRestMethod -uri "rest/v10.08/system" } | Should -Throw "Not Connected. Connect to the Switch with Connect-ArubaCX"
     }
 
     Context "Use Multi connection for call some (Get) cmdlet (Vlan, System...)" {
