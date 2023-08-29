@@ -202,7 +202,7 @@ Describe "Configure Vrf" {
         $vrf.https_server.enable | Should -Be $true
     }
 
-    It "Change Vrf http_server (disable)" {
+    It "Change Vrf https_server (disable)" {
         Get-ArubaCXVrfs -name $pester_vrf | Set-ArubaCXVrfs -https_server:$false
         $vrf = Get-ArubaCXVrfs -name $pester_vrf
         $vrf.https_server | Should -BeNullOrEmpty
