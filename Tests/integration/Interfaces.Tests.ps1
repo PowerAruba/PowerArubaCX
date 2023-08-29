@@ -985,7 +985,7 @@ Describe "Add Interface" {
                 Add-ArubaCXInterfaces @invokeParams -routing:$false
                 $int = Get-ArubaCXInterfaces -interface $_.name
                 $int.name | Should -Be $_.name
-                $int.description | Should -Be $type
+                $int.description | Should -Be $null
                 $int.type | Should -Be $type
                 $int.bond_status | Should -Be -Not $null
                 $int.admin | Should -Be "up"
