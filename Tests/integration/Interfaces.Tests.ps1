@@ -773,8 +773,13 @@ Describe "Add Interface" {
                 if ($_.name -like "lag*") {
                     $lag = $_.name -replace "lag", ""
                     $invokeParams = @{ "lag" = $lag }
-                    #type is not specified for lag...
-                    $type = $null
+                    #type is not specified for lag... (before 10.10...)
+                    if ($DefaultArubaCXConnection.version.minor -ge "10") {
+                        $type = "lag"
+                    }
+                    else {
+                        $type = $null
+                    }
                 }
                 Add-ArubaCXInterfaces @invokeParams
                 $int = Get-ArubaCXInterfaces -interface $_.name
@@ -807,7 +812,12 @@ Describe "Add Interface" {
                 if ($_.name -like "lag*") {
                     $lag = $_.name -replace "lag", ""
                     $invokeParams = @{ "lag" = $lag; "admin" = "up" }
-                    $type = $null
+                    if ($DefaultArubaCXConnection.version.minor -ge "10") {
+                        $type = "lag"
+                    }
+                    else {
+                        $type = $null
+                    }
                 }
                 Add-ArubaCXInterfaces @invokeParams -description "Add via PowerArubaCX"
                 $int = Get-ArubaCXInterfaces -interface $_.name
@@ -839,7 +849,12 @@ Describe "Add Interface" {
                 if ($_.name -like "lag*") {
                     $lag = $_.name -replace "lag", ""
                     $invokeParams = @{ "lag" = $lag }
-                    $type = $null
+                    if ($DefaultArubaCXConnection.version.minor -ge "10") {
+                        $type = "lag"
+                    }
+                    else {
+                        $type = $null
+                    }
                 }
                 Add-ArubaCXInterfaces @invokeParams -admin down
                 $int = Get-ArubaCXInterfaces -interface $_.name
@@ -871,7 +886,12 @@ Describe "Add Interface" {
                 if ($_.name -like "lag*") {
                     $lag = $_.name -replace "lag", ""
                     $invokeParams = @{ "lag" = $lag; "admin" = "up" }
-                    $type = $null
+                    if ($DefaultArubaCXConnection.version.minor -ge "10") {
+                        $type = "lag"
+                    }
+                    else {
+                        $type = $null
+                    }
                 }
                 Add-ArubaCXInterfaces @invokeParams -ip4_address 192.0.2.1 -ip4_mask 24
                 $int = Get-ArubaCXInterfaces -interface $_.name
@@ -903,7 +923,12 @@ Describe "Add Interface" {
                 if ($_.name -like "lag*") {
                     $lag = $_.name -replace "lag", ""
                     $invokeParams = @{ "lag" = $lag; "admin" = "up" }
-                    $type = $null
+                    if ($DefaultArubaCXConnection.version.minor -ge "10") {
+                        $type = "lag"
+                    }
+                    else {
+                        $type = $null
+                    }
                 }
                 Add-ArubaCXInterfaces @invokeParams -vrf $pester_vrf
                 $int = Get-ArubaCXInterfaces -interface $_.name
@@ -950,7 +975,12 @@ Describe "Add Interface" {
                 if ($_.name -like "lag*") {
                     $lag = $_.name -replace "lag", ""
                     $invokeParams = @{ "lag" = $lag; "admin" = "up" }
-                    $type = $null
+                    if ($DefaultArubaCXConnection.version.minor -ge "10") {
+                        $type = "lag"
+                    }
+                    else {
+                        $type = $null
+                    }
                 }
                 Add-ArubaCXInterfaces @invokeParams -routing:$false
                 $int = Get-ArubaCXInterfaces -interface $_.name
@@ -969,7 +999,12 @@ Describe "Add Interface" {
                 if ($_.name -like "lag*") {
                     $lag = $_.name -replace "lag", ""
                     $invokeParams = @{ "lag" = $lag; "admin" = "up" }
-                    $type = $null
+                    if ($DefaultArubaCXConnection.version.minor -ge "10") {
+                        $type = "lag"
+                    }
+                    else {
+                        $type = $null
+                    }
                 }
                 Add-ArubaCXInterfaces @invokeParams -routing:$false -vlan_mode access
                 $int = Get-ArubaCXInterfaces -interface $_.name
@@ -989,7 +1024,12 @@ Describe "Add Interface" {
                 if ($_.name -like "lag*") {
                     $lag = $_.name -replace "lag", ""
                     $invokeParams = @{ "lag" = $lag; "admin" = "up" }
-                    $type = $null
+                    if ($DefaultArubaCXConnection.version.minor -ge "10") {
+                        $type = "lag"
+                    }
+                    else {
+                        $type = $null
+                    }
                 }
                 Add-ArubaCXInterfaces @invokeParams -routing:$false -vlan_mode native-untagged
                 $int = Get-ArubaCXInterfaces -interface $_.name
@@ -1009,7 +1049,12 @@ Describe "Add Interface" {
                 if ($_.name -like "lag*") {
                     $lag = $_.name -replace "lag", ""
                     $invokeParams = @{ "lag" = $lag; "admin" = "up" }
-                    $type = $null
+                    if ($DefaultArubaCXConnection.version.minor -ge "10") {
+                        $type = "lag"
+                    }
+                    else {
+                        $type = $null
+                    }
                 }
                 Add-ArubaCXInterfaces @invokeParams -routing:$false -vlan_mode native-tagged
                 $int = Get-ArubaCXInterfaces -interface $_.name
@@ -1029,7 +1074,12 @@ Describe "Add Interface" {
                 if ($_.name -like "lag*") {
                     $lag = $_.name -replace "lag", ""
                     $invokeParams = @{ "lag" = $lag; "admin" = "up" }
-                    $type = $null
+                    if ($DefaultArubaCXConnection.version.minor -ge "10") {
+                        $type = "lag"
+                    }
+                    else {
+                        $type = $null
+                    }
                 }
                 Add-ArubaCXInterfaces @invokeParams -routing:$false -vlan_mode access -vlan_tag $pester_vlan
                 $int = Get-ArubaCXInterfaces -interface $_.name
@@ -1051,7 +1101,12 @@ Describe "Add Interface" {
                 if ($_.name -like "lag*") {
                     $lag = $_.name -replace "lag", ""
                     $invokeParams = @{ "lag" = $lag; "admin" = "up" }
-                    $type = $null
+                    if ($DefaultArubaCXConnection.version.minor -ge "10") {
+                        $type = "lag"
+                    }
+                    else {
+                        $type = $null
+                    }
                 }
                 Add-ArubaCXInterfaces @invokeParams -routing:$false -vlan_mode native-untagged -vlan_tag $pester_vlan -vlan_trunks $pester_vlan2
                 $int = Get-ArubaCXInterfaces -interface $_.name
@@ -1075,7 +1130,12 @@ Describe "Add Interface" {
                 if ($_.name -like "lag*") {
                     $lag = $_.name -replace "lag", ""
                     $invokeParams = @{ "lag" = $lag; "admin" = "up" }
-                    $type = $null
+                    if ($DefaultArubaCXConnection.version.minor -ge "10") {
+                        $type = "lag"
+                    }
+                    else {
+                        $type = $null
+                    }
                 }
                 Add-ArubaCXInterfaces @invokeParams -routing:$false -vlan_mode native-untagged -vlan_trunks $pester_vlan, $pester_vlan2
                 $int = Get-ArubaCXInterfaces -interface $_.name
@@ -1099,7 +1159,12 @@ Describe "Add Interface" {
                 if ($_.name -like "lag*") {
                     $lag = $_.name -replace "lag", ""
                     $invokeParams = @{ "lag" = $lag; "admin" = "up" }
-                    $type = $null
+                    if ($DefaultArubaCXConnection.version.minor -ge "10") {
+                        $type = "lag"
+                    }
+                    else {
+                        $type = $null
+                    }
                 }
                 Add-ArubaCXInterfaces @invokeParams -routing:$false -vlan_mode native-tagged -vlan_tag $pester_vlan -vlan_trunks $pester_vlan2
                 $int = Get-ArubaCXInterfaces -interface $_.name
@@ -1123,7 +1188,12 @@ Describe "Add Interface" {
                 if ($_.name -like "lag*") {
                     $lag = $_.name -replace "lag", ""
                     $invokeParams = @{ "lag" = $lag; "admin" = "up" }
-                    $type = $null
+                    if ($DefaultArubaCXConnection.version.minor -ge "10") {
+                        $type = "lag"
+                    }
+                    else {
+                        $type = $null
+                    }
                 }
                 Add-ArubaCXInterfaces @invokeParams -routing:$false -vlan_mode native-tagged -vlan_trunks $pester_vlan, $pester_vlan2
                 $int = Get-ArubaCXInterfaces -interface $_.name
@@ -1174,7 +1244,12 @@ Describe "LAG specific" {
             $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
             $int.name | Should -Be "lag$pester_lag"
             $int.description | Should -Be $null
-            $int.type | Should -Be $null
+            if ($DefaultArubaCXConnection.version.minor -ge "10") {
+                $int.type | Should -Be "lag"
+            }
+            else {
+                $int.type | Should -Be $null
+            }
             $int.bond_status | Should -Be -Not $null
             $int.admin | Should -Be "up"
             $int.ip4_address | Should -Be $null
@@ -1189,7 +1264,12 @@ Describe "LAG specific" {
             $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
             $int.name | Should -Be "lag$pester_lag"
             $int.description | Should -Be $null
-            $int.type | Should -Be $null
+            if ($DefaultArubaCXConnection.version.minor -ge "10") {
+                $int.type | Should -Be "lag"
+            }
+            else {
+                $int.type | Should -Be $null
+            }
             $int.bond_status | Should -Be -Not $null
             $int.admin | Should -Be "up"
             $int.ip4_address | Should -Be $null
@@ -1239,7 +1319,12 @@ Describe "LAG specific" {
             $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
             $int.name | Should -Be "lag$pester_lag"
             $int.description | Should -Be $null
-            $int.type | Should -Be $null
+            if ($DefaultArubaCXConnection.version.minor -ge "10") {
+                $int.type | Should -Be "lag"
+            }
+            else {
+                $int.type | Should -Be $null
+            }
             $int.bond_status | Should -Be -Not $null
             $int.admin | Should -Be "up"
             $int.ip4_address | Should -Be $null
@@ -1254,7 +1339,12 @@ Describe "LAG specific" {
             $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
             $int.name | Should -Be "lag$pester_lag"
             $int.description | Should -Be $null
-            $int.type | Should -Be $null
+            if ($DefaultArubaCXConnection.version.minor -ge "10") {
+                $int.type | Should -Be "lag"
+            }
+            else {
+                $int.type | Should -Be $null
+            }
             $int.bond_status | Should -Be -Not $null
             $int.admin | Should -Be "up"
             $int.ip4_address | Should -Be $null
@@ -1316,7 +1406,12 @@ Describe "LAG specific" {
             $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
             $int.name | Should -Be "lag$pester_lag"
             $int.description | Should -Be $null
-            $int.type | Should -Be $null
+            if ($DefaultArubaCXConnection.version.minor -ge "10") {
+                $int.type | Should -Be "lag"
+            }
+            else {
+                $int.type | Should -Be $null
+            }
             $int.bond_status | Should -Be -Not $null
             $int.admin | Should -Be "up"
             $int.ip4_address | Should -Be $null
@@ -1331,7 +1426,12 @@ Describe "LAG specific" {
             $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
             $int.name | Should -Be "lag$pester_lag"
             $int.description | Should -Be $null
-            $int.type | Should -Be $null
+            if ($DefaultArubaCXConnection.version.minor -ge "10") {
+                $int.type | Should -Be "lag"
+            }
+            else {
+                $int.type | Should -Be $null
+            }
             $int.bond_status | Should -Be -Not $null
             $int.admin | Should -Be "up"
             $int.ip4_address | Should -Be $null
@@ -1349,7 +1449,12 @@ Describe "LAG specific" {
             $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
             $int.name | Should -Be "lag$pester_lag"
             $int.description | Should -Be $null
-            $int.type | Should -Be $null
+            if ($DefaultArubaCXConnection.version.minor -ge "10") {
+                $int.type | Should -Be "lag"
+            }
+            else {
+                $int.type | Should -Be $null
+            }
             $int.bond_status | Should -Be -Not $null
             $int.admin | Should -Be "up"
             $int.ip4_address | Should -Be $null
@@ -1368,7 +1473,12 @@ Describe "LAG specific" {
             $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
             $int.name | Should -Be "lag$pester_lag"
             $int.description | Should -Be $null
-            $int.type | Should -Be $null
+            if ($DefaultArubaCXConnection.version.minor -ge "10") {
+                $int.type | Should -Be "lag"
+            }
+            else {
+                $int.type | Should -Be $null
+            }
             $int.bond_status | Should -Be -Not $null
             $int.admin | Should -Be "up"
             $int.ip4_address | Should -Be $null
@@ -1429,7 +1539,12 @@ Describe "LAG specific" {
             $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
             $int.name | Should -Be "lag$pester_lag"
             $int.description | Should -Be $null
-            $int.type | Should -Be $null
+            if ($DefaultArubaCXConnection.version.minor -ge "10") {
+                $int.type | Should -Be "lag"
+            }
+            else {
+                $int.type | Should -Be $null
+            }
             $int.bond_status | Should -Be -Not $null
             $int.admin | Should -Be "up"
             $int.ip4_address | Should -Be $null
@@ -1446,7 +1561,12 @@ Describe "LAG specific" {
             $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
             $int.name | Should -Be "lag$pester_lag"
             $int.description | Should -Be $null
-            $int.type | Should -Be $null
+            if ($DefaultArubaCXConnection.version.minor -ge "10") {
+                $int.type | Should -Be "lag"
+            }
+            else {
+                $int.type | Should -Be $null
+            }
             $int.bond_status | Should -Be -Not $null
             $int.admin | Should -Be "up"
             $int.ip4_address | Should -Be $null
@@ -1463,7 +1583,12 @@ Describe "LAG specific" {
             $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
             $int.name | Should -Be "lag$pester_lag"
             $int.description | Should -Be $null
-            $int.type | Should -Be $null
+            if ($DefaultArubaCXConnection.version.minor -ge "10") {
+                $int.type | Should -Be "lag"
+            }
+            else {
+                $int.type | Should -Be $null
+            }
             $int.bond_status | Should -Be -Not $null
             $int.admin | Should -Be "up"
             $int.ip4_address | Should -Be $null
@@ -1519,7 +1644,12 @@ Describe "LAG specific" {
             $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
             $int.name | Should -Be "lag$pester_lag"
             $int.description | Should -Be $null
-            $int.type | Should -Be $null
+            if ($DefaultArubaCXConnection.version.minor -ge "10") {
+                $int.type | Should -Be "lag"
+            }
+            else {
+                $int.type | Should -Be $null
+            }
             $int.bond_status | Should -Be -Not $null
             $int.admin | Should -Be "up"
             $int.ip4_address | Should -Be $null
@@ -1533,7 +1663,12 @@ Describe "LAG specific" {
             $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
             $int.name | Should -Be "lag$pester_lag"
             $int.description | Should -Be $null
-            $int.type | Should -Be $null
+            if ($DefaultArubaCXConnection.version.minor -ge "10") {
+                $int.type | Should -Be "lag"
+            }
+            else {
+                $int.type | Should -Be $null
+            }
             $int.bond_status | Should -Be -Not $null
             $int.admin | Should -Be "up"
             $int.ip4_address | Should -Be $null
@@ -1548,7 +1683,12 @@ Describe "LAG specific" {
             $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
             $int.name | Should -Be "lag$pester_lag"
             $int.description | Should -Be $null
-            $int.type | Should -Be $null
+            if ($DefaultArubaCXConnection.version.minor -ge "10") {
+                $int.type | Should -Be "lag"
+            }
+            else {
+                $int.type | Should -Be $null
+            }
             $int.bond_status | Should -Be -Not $null
             $int.admin | Should -Be "up"
             $int.ip4_address | Should -Be $null
@@ -1562,7 +1702,12 @@ Describe "LAG specific" {
             $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
             $int.name | Should -Be "lag$pester_lag"
             $int.description | Should -Be $null
-            $int.type | Should -Be $null
+            if ($DefaultArubaCXConnection.version.minor -ge "10") {
+                $int.type | Should -Be "lag"
+            }
+            else {
+                $int.type | Should -Be $null
+            }
             $int.bond_status | Should -Be -Not $null
             $int.admin | Should -Be "up"
             $int.ip4_address | Should -Be $null
@@ -1576,7 +1721,12 @@ Describe "LAG specific" {
             $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
             $int.name | Should -Be "lag$pester_lag"
             $int.description | Should -Be $null
-            $int.type | Should -Be $null
+            if ($DefaultArubaCXConnection.version.minor -ge "10") {
+                $int.type | Should -Be "lag"
+            }
+            else {
+                $int.type | Should -Be $null
+            }
             $int.bond_status | Should -Be -Not $null
             $int.admin | Should -Be "up"
             $int.ip4_address | Should -Be $null
@@ -1590,7 +1740,12 @@ Describe "LAG specific" {
             $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
             $int.name | Should -Be "lag$pester_lag"
             $int.description | Should -Be $null
-            $int.type | Should -Be $null
+            if ($DefaultArubaCXConnection.version.minor -ge "10") {
+                $int.type | Should -Be "lag"
+            }
+            else {
+                $int.type | Should -Be $null
+            }
             $int.bond_status | Should -Be -Not $null
             $int.admin | Should -Be "up"
             $int.ip4_address | Should -Be $null
@@ -1604,7 +1759,12 @@ Describe "LAG specific" {
             $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
             $int.name | Should -Be "lag$pester_lag"
             $int.description | Should -Be $null
-            $int.type | Should -Be $null
+            if ($DefaultArubaCXConnection.version.minor -ge "10") {
+                $int.type | Should -Be "lag"
+            }
+            else {
+                $int.type | Should -Be $null
+            }
             $int.bond_status | Should -Be -Not $null
             $int.admin | Should -Be "up"
             $int.ip4_address | Should -Be $null
@@ -1618,7 +1778,12 @@ Describe "LAG specific" {
             $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
             $int.name | Should -Be "lag$pester_lag"
             $int.description | Should -Be $null
-            $int.type | Should -Be $null
+            if ($DefaultArubaCXConnection.version.minor -ge "10") {
+                $int.type | Should -Be "lag"
+            }
+            else {
+                $int.type | Should -Be $null
+            }
             $int.bond_status | Should -Be -Not $null
             $int.admin | Should -Be "up"
             $int.ip4_address | Should -Be $null
@@ -1643,7 +1808,12 @@ Describe "LAG specific" {
             $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
             $int.name | Should -Be "lag$pester_lag"
             $int.description | Should -Be $null
-            $int.type | Should -Be $null
+            if ($DefaultArubaCXConnection.version.minor -ge "10") {
+                $int.type | Should -Be "lag"
+            }
+            else {
+                $int.type | Should -Be $null
+            }
             $int.bond_status | Should -Be -Not $null
             $int.admin | Should -Be "up"
             $int.ip4_address | Should -Be $null
@@ -1657,7 +1827,12 @@ Describe "LAG specific" {
             $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
             $int.name | Should -Be "lag$pester_lag"
             $int.description | Should -Be $null
-            $int.type | Should -Be $null
+            if ($DefaultArubaCXConnection.version.minor -ge "10") {
+                $int.type | Should -Be "lag"
+            }
+            else {
+                $int.type | Should -Be $null
+            }
             $int.bond_status | Should -Be -Not $null
             $int.admin | Should -Be "up"
             $int.ip4_address | Should -Be $null
@@ -1671,7 +1846,11 @@ Describe "LAG specific" {
             $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
             $int.name | Should -Be "lag$pester_lag"
             $int.description | Should -Be $null
-            $int.type | Should -Be $null
+            if($DefaultArubaCXConnection.version.minor -ge "10") {
+                $int.type | Should -Be "lag"
+            } else {
+                $int.type | Should -Be $null
+            }
             $int.bond_status | Should -Be -Not $null
             $int.admin | Should -Be "up"
             $int.ip4_address | Should -Be $null
@@ -1685,7 +1864,11 @@ Describe "LAG specific" {
             $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
             $int.name | Should -Be "lag$pester_lag"
             $int.description | Should -Be $null
-            $int.type | Should -Be $null
+            if($DefaultArubaCXConnection.version.minor -ge "10") {
+                $int.type | Should -Be "lag"
+            } else {
+                $int.type | Should -Be $null
+            }
             $int.bond_status | Should -Be -Not $null
             $int.admin | Should -Be "up"
             $int.ip4_address | Should -Be $null
@@ -1699,7 +1882,12 @@ Describe "LAG specific" {
             $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
             $int.name | Should -Be "lag$pester_lag"
             $int.description | Should -Be $null
-            $int.type | Should -Be $null
+            if ($DefaultArubaCXConnection.version.minor -ge "10") {
+                $int.type | Should -Be "lag"
+            }
+            else {
+                $int.type | Should -Be $null
+            }
             $int.bond_status | Should -Be -Not $null
             $int.admin | Should -Be "up"
             $int.ip4_address | Should -Be $null
@@ -1713,7 +1901,12 @@ Describe "LAG specific" {
             $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
             $int.name | Should -Be "lag$pester_lag"
             $int.description | Should -Be $null
-            $int.type | Should -Be $null
+            if ($DefaultArubaCXConnection.version.minor -ge "10") {
+                $int.type | Should -Be "lag"
+            }
+            else {
+                $int.type | Should -Be $DefaultArubaCXConnection.version.minor
+            }
             $int.bond_status | Should -Be -Not $null
             $int.admin | Should -Be "up"
             $int.ip4_address | Should -Be $null
@@ -1727,7 +1920,12 @@ Describe "LAG specific" {
             $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
             $int.name | Should -Be "lag$pester_lag"
             $int.description | Should -Be $null
-            $int.type | Should -Be $null
+            if ($DefaultArubaCXConnection.version.minor -ge "10") {
+                $int.type | Should -Be "lag"
+            }
+            else {
+                $int.type | Should -Be $null
+            }
             $int.bond_status | Should -Be -Not $null
             $int.admin | Should -Be "up"
             $int.ip4_address | Should -Be $null
@@ -1741,7 +1939,12 @@ Describe "LAG specific" {
             $int = Get-ArubaCXInterfaces -interface "lag$pester_lag"
             $int.name | Should -Be "lag$pester_lag"
             $int.description | Should -Be $null
-            $int.type | Should -Be $null
+            if ($DefaultArubaCXConnection.version.minor -ge "10") {
+                $int.type | Should -Be "lag"
+            }
+            else {
+                $int.type | Should -Be $null
+            }
             $int.bond_status | Should -Be -Not $null
             $int.admin | Should -Be "up"
             $int.ip4_address | Should -Be $null
