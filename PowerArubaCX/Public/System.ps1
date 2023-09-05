@@ -89,6 +89,11 @@ function Set-ArubaCXSystem {
         Configure Timezone
 
         .EXAMPLE
+        Set-ArubaCXSystem -contact Power -description Aruba -location CX
+
+        Configure System Contact, Description and Location
+
+        .EXAMPLE
         $system = Get-ArubaCXSystem -selector writable
         PS >$system.usb_disable = $true
         PS > $system | Set-ArubaCXSystem -use_pipeline
