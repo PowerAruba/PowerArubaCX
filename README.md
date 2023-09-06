@@ -38,7 +38,7 @@ For example, you can manage Vlans with the following commands:
 
 # Requirements
 
-- Powershell 6 (Core) or 5 (If possible get the latest version)
+- Powershell 7 (Core) or 5 (If possible get the latest version)
 - An ArubaCX Switch (with firmware >= 10.08.xx) and REST API enable
 
 # Instructions
