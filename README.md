@@ -1,5 +1,28 @@
 # PowerArubaCX
 
+<p align="center">
+    <a href="https://www.powershellgallery.com/packages/PowerArubaCX/" alt="PowerShell Gallery Version">
+        <img src="https://img.shields.io/powershellgallery/v/PowerArubaCX.svg" /></a>
+    <a href="https://www.powershellgallery.com/packages/PowerArubaCX/" alt="PS Gallery Downloads">
+        <img src="https://img.shields.io/powershellgallery/dt/PowerArubaCX.svg" /></a>
+    <!--
+    <a href="https://www.powershellgallery.com/packages/PowerArubaCX/" alt="PS Platform">
+        <img src="https://img.shields.io/powershellgallery/p/PowerArubaCX.svg" /></a>
+    -->
+</p>
+<p align="center">
+    <a href="https://github.com/PowerAruba/PowerArubaCX/graphs/commit-activity" alt="GitHub Last Commit">
+        <img src="https://img.shields.io/github/last-commit/PowerAruba/PowerArubaCX/master.svg" /></a>
+    <a href="https://raw.githubusercontent.com/PowerAruba/PowerArubaCX/master/LICENSE" alt="GitHub License">
+        <img src="https://img.shields.io/github/license/PowerAruba/PowerArubaCX.svg" /></a>
+    <a href="https://github.com/PowerAruba/PowerArubaCX/graphs/contributors" alt="GitHub Contributors">
+        <img src="https://img.shields.io/github/contributors/PowerAruba/PowerArubaCX.svg"/></a>
+</p>
+<p align="center">
+    <a href="https://twitter.com/PowerAruba" alt="Twitter">
+            <img src="https://img.shields.io/twitter/follow/PowerAruba.svg?style=social"/></a>
+</p>
+
 This is a Powershell module for configure an ArubaCX Switch.
 
 <p align="center">
