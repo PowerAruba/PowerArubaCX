@@ -40,9 +40,9 @@ function Invoke-ArubaCXRestMethod {
       Invoke-RestMethod with ArubaCX connection for get rest/vX/system with display only attributes hostname and dns_servers
 
       .EXAMPLE
-      Invoke-ArubaCXRestMethod -method "get" -uri "rest/v10.04/system" -noapiversion
+      Invoke-ArubaCXRestMethod -method "get" -uri "rest/v10.08/system" -noapiversion
 
-      Invoke-RestMethod with ArubaCX connection for get rest/v10.04/system (need to specify full uri with rest/vX)
+      Invoke-RestMethod with ArubaCX connection for get rest/v10.08/system (need to specify full uri with rest/vX)
     #>
 
     [CmdletBinding(DefaultParametersetname = "default")]

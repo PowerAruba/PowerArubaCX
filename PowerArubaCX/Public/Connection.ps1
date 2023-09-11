@@ -92,8 +92,22 @@ function Connect-ArubaCX {
             }
         }
 
+        $url = "https://${Server}:${Port}/rest"
+        try {
+            if ("Desktop" -eq $PSVersionTable.PsEdition) {
+                $rest = Invoke-RestMethod $url -Method "get" @invokeParams
+            }
+            else {
+                $rest = Invoke-RestMethod $url -Method "get" @invokeParams -SkipCertificateCheck
+            }
+        }
+        catch {
+            throw "Unsupported release Need to use ArubaCX >= 10.06"
+        }
+        $api_version = $rest.latest.version
+
         $postParams = @{username = $Credential.username; password = $Credential.GetNetworkCredential().Password }
-        $url = "https://${Server}:${Port}/rest/v1/login"
+        $url = "https://${Server}:${Port}/rest/${api_version}/login"
         try {
             Invoke-RestMethod $url -Method POST -Body $postParams -SessionVariable arubacx @invokeParams | Out-Null
         }
@@ -102,18 +116,10 @@ function Connect-ArubaCX {
             throw "Unable to connect"
         }
 
-        $url = "https://${Server}:${Port}/rest"
-        try {
-            $rest = Invoke-RestMethod $url -Method "get" -WebSession $arubacx @invokeParams
-        }
-        catch {
-            throw "Unsupported release Need to use ArubaCX >= 10.04"
-        }
-
         $connection.server = $server
         $connection.session = $arubacx
         $connection.invokeParams = $invokeParams
-        $connection.api_version = $rest.latest.version
+        $connection.api_version = $api_version
         $current_version = (Get-ArubaCXFirmware -connection $connection).current_version.split(".")
         $connection.version = [version]"$($current_version[1]).$($current_version[2]).$($current_version[3])"
         $connection.platform_name = (Get-ArubaCXSystem -attributes platform_name -connection $connection).platform_name

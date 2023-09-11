@@ -17,7 +17,7 @@ Describe "Connect to a switch (using HTTPS)" {
         $DefaultArubaCXConnection.api_version | Should -Not -BeNullOrEmpty
         $DefaultArubaCXConnection.version | Should -Not -BeNullOrEmpty
         $DefaultArubaCXConnection.version.major | Should -Be "10"
-        $DefaultArubaCXConnection.version.minor | Should -BeIn (4..11)
+        $DefaultArubaCXConnection.version.minor | Should -BeIn (6..12)
         $DefaultArubaCXConnection.version.revision | Should -Not -BeNullOrEmpty
     }
     It "Disconnect to a switch (using HTTPS) and check global variable" {
@@ -42,12 +42,12 @@ Describe "Connect to a switch (using multi connection)" {
         $cx.api_version | Should -Not -BeNullOrEmpty
         $cx.version | Should -Not -BeNullOrEmpty
         $cx.version.major | Should -Be "10"
-        $cx.version.minor | Should -BeIn (4..11)
+        $cx.version.minor | Should -BeIn (6..12)
         $cx.version.revision | Should -Not -BeNullOrEmpty
     }
 
     It "Throw when try to use Invoke-ArubaCPRestMethod and not connected" {
-        { Invoke-ArubaCXRestMethod -uri "rest/v1/system" } | Should -Throw "Not Connected. Connect to the Switch with Connect-ArubaCX"
+        { Invoke-ArubaCXRestMethod -uri "rest/v10.08/system" } | Should -Throw "Not Connected. Connect to the Switch with Connect-ArubaCX"
     }
 
     Context "Use Multi connection for call some (Get) cmdlet (Vlan, System...)" {
