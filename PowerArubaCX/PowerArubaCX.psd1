@@ -12,7 +12,7 @@
     RootModule        = 'PowerArubaCX.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '0.5.0'
+    ModuleVersion     = '0.6.0'
 
     # ID used to uniquely identify this module
     GUID              = '44c73bcd-17c0-5d37-c0bd-16b5b41d621a'
