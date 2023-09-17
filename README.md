@@ -29,7 +29,7 @@ This is a Powershell module for configure an ArubaCX Switch.
 <img src="https://raw.githubusercontent.com/PowerAruba/PowerArubaCX/master/Medias/PowerArubaCX.png" width="250" height="250" />
 </p>
 
-With this module (version 0.5.0) you can manage:
+With this module (version 0.6.0) you can manage:
 
 - [Firmware](#firmware) (Get)
 - [Interfaces](#interface) (Add/Get/Set/Remove [LAG](#interface-lag), [Loopback](#interface-loopback), [Vlans](#interface-vlans))
