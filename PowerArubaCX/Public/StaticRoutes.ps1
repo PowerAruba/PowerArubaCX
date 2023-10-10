@@ -1,0 +1,251 @@
+#
+# Copyright 2020, Alexis La Goutte <alexis dot lagoutte at gmail dot com>
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+function Add-ArubaCXStaticRoutes {
+
+    <#
+        .SYNOPSIS
+        Add Aruba CX Static Route
+
+        .DESCRIPTION
+        Add Static Route (address_family, prefix, static_nexthops, type)
+
+        .EXAMPLE
+        Add-ArubaCXStaticRoutes -address_family ipv4 -prefix_ip4 192.0.2.0 -prefix_ip4_mask 24 -type forward
+
+        Add Static Route type forward for network 192.0.2.0/24 (on default vrf)
+
+        .EXAMPLE
+        Add-ArubaCXStaticRoutes -address_family ipv4 -prefix_ip4 192.0.2.0 -prefix_ip4_mask 24 -type blackhole -vrf MyVrf
+
+        Add Static Route type blackhole for network 192.0.2.0/24 on MyVRF
+
+        .EXAMPLE
+        Get-ArubaCXVrf MyVRF | Add-ArubaCXStaticRoutes -address_family ipv4 -prefix_ip4 192.0.2.0 -prefix_ip4_mask 24 -type reject
+
+        Add Static Route type reject for network 192.0.2.0/24 on MyVRF (using pipeline)
+    #>
+    Param(
+        [Parameter (Mandatory = $false, ValueFromPipeline = $true)]
+        [ValidateScript( { Confirm-ArubaCXVrfs $_ })]
+        [psobject]$vrf_pp,
+        [Parameter(Mandatory = $false)]
+        [string]$vrf = "default",
+        [Parameter (Mandatory = $true)]
+        [ValidateSet('ipv4', IgnoreCase = $false)]
+        [string]$address_family = "ipv4",
+        [Parameter (Mandatory = $true)]
+        [ipaddress]$prefix_ip4,
+        [Parameter (Mandatory = $true)]
+        [ValidateRange(0, 32)]
+        [int]$prefix_ip4_mask,
+        [Parameter (Mandatory = $true)]
+        [ValidateSet('forward', 'reject', 'blackhole')]
+        [string]$type,
+        [Parameter (Mandatory = $False)]
+        [ValidateNotNullOrEmpty()]
+        [PSObject]$connection = $DefaultArubaCXConnection
+    )
+
+    Begin {
+    }
+
+    Process {
+
+        #get vrf name from vrf_pp ps object (based by pipeline)
+        if ($vrf_pp) {
+            $vrf = $vrf_pp.name
+        }
+
+        if ( -not ($prefix_ip4.AddressFamily -eq "InterNetwork" )) {
+            Throw "You need to specify a IPv4 Address"
+        }
+        $prefix = $prefix_ip4.ToString() + "/" + $prefix_ip4_mask
+
+        $uri = "system/vrfs/$vrf/static_routes"
+
+        $_sr = new-Object -TypeName PSObject
+
+        $_sr | add-member -name "address_family" -membertype NoteProperty -Value $address_family
+
+        $_sr | add-member -name "prefix" -membertype NoteProperty -Value $prefix
+
+        $_sr | add-member -name "type" -membertype NoteProperty -Value $type
+
+        $_sr | add-member -name "vrf" -membertype NoteProperty -Value ("/rest/" + $($connection.version) + "/system/vrfs/" + $vrf)
+
+        $response = Invoke-ArubaCXRestMethod -uri $uri -method 'POST' -body $_sr -connection $connection
+        $response
+
+        Get-ArubaCXStaticRoutes -vrf $vrf -prefix $prefix -connection $connection
+    }
+
+    End {
+    }
+}
+
+function Get-ArubaCXStaticRoutes {
+
+    <#
+        .SYNOPSIS
+        Get list of all Aruba CX Routes
+
+        .DESCRIPTION
+        Get list of all Aruba CX Static Route (address_family, prefix, static_nexthops, type)
+
+        .EXAMPLE
+        Get-ArubaCXStaticRoutes
+
+        Get list of all Static Routes information (address_family, prefix, static_nexthops, type)
+
+        .EXAMPLE
+        Get-ArubaCXStaticRoutes -prefix 192.0.2.0/24
+
+        Get Static Route information of prefix 192.0.2.0/24
+
+        .EXAMPLE
+        Get-ArubaCXVrfs -vrf MyVRF | Get-ArubaCXStaticRoutes
+
+        Get Static Route information from VRF named MyVRF (using pipeline)
+
+        .EXAMPLE
+        Get-ArubaCXStaticRoutes -vrf MyVRF
+
+        Get Static Route information from VRF named MyVRF
+    #>
+
+    [CmdletBinding(DefaultParametersetname = "Default")]
+    Param(
+        [Parameter (Mandatory = $false, ParameterSetName = "prefix", position = "1")]
+        [string]$prefix,
+        [Parameter (Mandatory = $false, ValueFromPipeline = $true)]
+        [ValidateScript( { Confirm-ArubaCXVrfs $_ })]
+        [psobject]$vrf_pp,
+        [Parameter(Mandatory = $false)]
+        [string]$vrf = "default",
+        [Parameter(Mandatory = $false)]
+        [ValidateRange(1, 4)]
+        [Int]$depth,
+        [Parameter(Mandatory = $false)]
+        [ValidateSet("configuration", "status", "statistics", "writable")]
+        [String]$selector,
+        [Parameter(Mandatory = $false)]
+        [String[]]$attributes,
+        [Parameter(Mandatory = $false)]
+        [switch]$vsx_peer,
+        [Parameter (Mandatory = $False)]
+        [ValidateNotNullOrEmpty()]
+        [PSObject]$connection = $DefaultArubaCXConnection
+    )
+
+    Begin {
+    }
+
+    Process {
+
+        #get vrf name from vrf_pp ps object (based by pipeline)
+        if ($vrf_pp) {
+            $vrf = $vrf_pp.name
+        }
+
+        $invokeParams = @{ }
+        if ( $PsBoundParameters.ContainsKey('depth') ) {
+            $invokeParams.add( 'depth', $depth )
+        }
+        if ( $PsBoundParameters.ContainsKey('selector') ) {
+            $invokeParams.add( 'selector', $selector )
+        }
+        if ( $PsBoundParameters.ContainsKey('attributes') ) {
+            $invokeParams.add( 'attributes', $attributes )
+        }
+        if ( $PsBoundParameters.ContainsKey('vsx_peer') ) {
+            $invokeParams.add( 'vsx_peer', $true )
+        }
+
+        $uri = "system/vrfs/$vrf/static_routes"
+
+        # you can directly filter by prefix
+        if ( $PsBoundParameters.ContainsKey('prefix') ) {
+            #replace / by %2F
+            $prefix = $prefix -replace '/', '%2F'
+            $uri += "/$prefix"
+        }
+
+        $response = Invoke-ArubaCXRestMethod -uri $uri -method 'GET' -connection $connection @invokeParams
+
+        #Add vrf parameter when use prefix (more easy to remove and also for get vrf source...)
+        if ( $PsBoundParameters.ContainsKey('prefix')  ) {
+            $response | add-member -name "vrf" -membertype NoteProperty -Value $vrf
+        }
+
+        $response
+    }
+
+    End {
+    }
+}
+
+function Remove-ArubaCXStaticRoutes {
+
+    <#
+        .SYNOPSIS
+        Remove a Static Route on Aruba CX Switch
+
+        .DESCRIPTION
+        Remove a Static Route on Aruba CX Switch
+
+        .EXAMPLE
+        $sr = Get-ArubaCXStaticRoutes -prefix 192.0.2.0/24
+        PS C:\>$sr | Remove-ArubaCXStaticRoutes
+
+        Remove Static Route with prefix 192.0.2.0/24 (on default vrf)
+
+        .EXAMPLE
+        Remove-ArubaCXStaticRoutes -prefix 192.0.2.0/24 -confirm:$false -vrf MyVRF
+
+        Remove Static Route 192.0.2.0/24 on MyVRF with no confirmation
+    #>
+
+    [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'high')]
+    Param(
+        [Parameter (Mandatory = $true, ParameterSetName = "prefix")]
+        [string]$prefix,
+        [Parameter (Mandatory = $true, ValueFromPipeline = $true, Position = 1, ParameterSetName = "route")]
+        [ValidateScript( { Confirm-ArubaCXStaticRoutes $_ })]
+        [psobject]$sr,
+        [Parameter(Mandatory = $true, ParameterSetName = "prefix")]
+        [string]$vrf,
+        [Parameter (Mandatory = $False)]
+        [ValidateNotNullOrEmpty()]
+        [PSObject]$connection = $DefaultArubaCXConnection
+    )
+
+    Begin {
+    }
+
+    Process {
+
+        #get prefix and vrf from static route ps object
+        if ($sr) {
+            $prefix = $sr.prefix
+            $vrf = $sr.vrf
+        }
+
+        #replace / by %2F
+        $uri_prefix = $prefix -replace '/', '%2F'
+
+        $uri = "system/vrfs/$vrf/static_routes/$uri_prefix"
+
+        if ($PSCmdlet.ShouldProcess("Static Route (VRF: ${vrf})", "Remove ${prefix}")) {
+            Write-Progress -activity "Remove Static Route"
+            Invoke-ArubaCXRestMethod -method "DELETE" -uri $uri -connection $connection
+            Write-Progress -activity "Remove Static Route" -completed
+        }
+    }
+
+    End {
+    }
+}

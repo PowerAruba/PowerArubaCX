@@ -31,6 +31,34 @@ function Confirm-ArubaCXInterfaces {
     $true
 
 }
+
+function Confirm-ArubaCXStaticRoutes {
+
+    Param (
+        [Parameter (Mandatory = $true)]
+        [object]$argument
+    )
+    #Check if it looks like an Static Routes element
+
+    if ( -not ( $argument | get-member -name address_family -Membertype Properties)) {
+        throw "Element specified does not contain an address_family property."
+    }
+    if ( -not ( $argument | get-member -name prefix -Membertype Properties)) {
+        throw "Element specified does not contain a prefix property."
+    }
+    if ( -not ( $argument | get-member -name static_nexthops -Membertype Properties)) {
+        throw "Element specified does not contain a static_nexthops property."
+    }
+    if ( -not ( $argument | get-member -name type -Membertype Properties)) {
+        throw "Element specified does not contain a type property."
+    }
+    if ( -not ( $argument | get-member -name vrf -Membertype Properties)) {
+        throw "Element specified does not contain a vrf property."
+    }
+    $true
+
+}
+
 function Confirm-ArubaCXSystem {
 
     Param (

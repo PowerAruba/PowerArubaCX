@@ -72,6 +72,9 @@ Describe "Connect to a switch (using multi connection)" {
         It "Use Multi connection for call Get Vrfs" {
             { Get-ArubaCXVrfs -connection $cx } | Should -Not -Throw
         }
+        It "Use Multi connection for call Get Static Routes" {
+            { Get-ArubaCXStaticRoutes -connection $cx } | Should Not throw
+        }
     }
 
     It "Disconnect to a switch (Multi connection)" {
