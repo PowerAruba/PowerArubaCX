@@ -36,6 +36,7 @@ With this module (version 0.6.0) you can manage:
 - [LLDP Neighbor](#lldp-neighbor) (Get)
 - [System](#System) (Get/Set)
 - [Users](#Users) (Get)
+- [TACACS Server](#tacacs-server) (Add/Get/Set/Remove)
 - [Vlans](#Vlans-Management) (Add/Get/Set/Remove)
 - [VRF](#vrf) (Add/Get/Set/Remove)
 - [VM](#vm) (Deploy and Configure ArubaCX OVA (for initial setup))
@@ -770,6 +771,60 @@ For example to get system of 2 ArubaCX
 #Each cmdlet can use -connection parameter
 
 ```
+
+### TACACS Server
+
+You can create a new TACACS Server `Add-ArubaCXTacacsServer`, retrieve its information `Get-ArubaCXTacacsServer`, modify its properties `Set-ArubaCXTacacsServer`, or delete it `Remove-ArubaCXTacacsServer`.
+
+```powershell
+# Create a TACACS Server
+    Add-ArubaCXTacacsServer -address 192.2.0.1 -port 49 -auth_type pap -default_group_priority 10 -group tacacs -passkey PowerArubaCX -timeout 10 -tracking_enable -user_group_priority 10 -vrf default
+
+    address                           : 192.2.0.1
+    [...]
+    auth_type                         : pap
+    default_group_priority            : 10
+    group                             : @{tacacs=}
+    [...]
+    passkey                           : AQBapWD/wBAlSYvjgEqjBhR33D8T+fRfVUjTQNKVtSYzl5kMDAAAAM6/W76103nUuYlUQQ==
+    reachability_status               :
+    tcp_port                          : 49
+    timeout                           : 10
+    tracking_enable                   : True
+    [...]
+    user_group_priority               : 10
+
+
+# Get information about TACACS Server
+    Get-ArubaCXTacacsServer -address 192.2.0.1 -port 49 -depth 2 -attributes auth_type, default_group_priority, group, passkey, tcp_port, timeout, tracking_enable, user_group_priority | Format-Table
+
+    auth_type default_group_priority group      passkey                                                                  tcp_port timeout tracking_enable user_group_priority
+    --------- ---------------------- -----      -------                                                                  -------- ------- --------------- -------------------
+    pap                           10 @{tacacs=} AQBapWD/wBAlSYvjgEqjBhR33D8T+fRfVUjTQNKVtSYzl5kMDAAAAM6/W76103nUuYlUQQ==       49      10            True                  10
+
+# Change settings of a TACACS Server (Timeout and default group priority)
+    Get-ArubaCXTacacsServer -address 192.2.0.1 -port 49 | Set-ArubaCXTacacsServer -timeout 15 -default_group_priority 1
+
+    address                           : 192.2.0.1
+    [...]
+    auth_type                         : pap
+    default_group_priority            : 1
+    group                             : @{tacacs=}
+    [...]
+    passkey                           : AQBapWD/wBAlSYvjgEqjBhR33D8T+fRfVUjTQNKVtSYzl5kMDAAAAM6/W76103nUuYlUQQ==
+    reachability_status               :
+    tcp_port                          : 49
+    timeout                           : 15
+    tracking_enable                   : True
+    [...]
+    user_group_priority               : 10
+
+
+# Remove a TACACS Server
+    Get-ArubaCXTacacsServer -address 192.2.0.1 | Remove-ArubaCXTacacsServer
+```
+
+For configure a vlan to an interface, need to use [Set-ArubaCXInterfaces](#Interface)
 
 ### Disconnecting
 
