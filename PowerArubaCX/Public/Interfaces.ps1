@@ -71,6 +71,9 @@ function Add-ArubaCXInterfaces {
         [string]$admin,
         [Parameter(Mandatory = $false)]
         [string]$description,
+        [Parameter(Mandatory = $false, ParameterSetName = "vlan")]
+        [ValidateRange(68, 9198)]
+        [int]$ip_mtu,
         [Parameter(Mandatory = $false, ParameterSetName = "lag")]
         [switch]$routing,
         [Parameter(Mandatory = $false, ParameterSetName = "lag")]
@@ -159,6 +162,10 @@ function Add-ArubaCXInterfaces {
 
         if ( $PsBoundParameters.ContainsKey('description') ) {
             $_interface | Add-Member -name "description" -membertype NoteProperty -Value $description
+        }
+
+        if ( $PsBoundParameters.ContainsKey('ip_mtu') ) {
+            $_interface | Add-Member -name "ip_mtu" -membertype NoteProperty -Value $ip_mtu
         }
 
         if ( $PsBoundParameters.ContainsKey('routing') ) {
