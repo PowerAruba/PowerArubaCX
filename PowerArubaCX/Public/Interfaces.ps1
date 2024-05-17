@@ -631,6 +631,9 @@ function Set-ArubaCXInterfaces {
         [Parameter(Mandatory = $false)]
         [Alias('active_gateway')]
         [ipaddress[]]$vsx_virtual_ip4,
+        [Parameter (Mandatory = $false)]
+        [ValidateSet('active-gateway', IgnoreCase = $false)]
+        [string[]]$vsx_sync,
         [Parameter(Mandatory = $false)]
         [string]$vrf,
         [Parameter (Mandatory = $false)]
@@ -787,6 +790,20 @@ function Set-ArubaCXInterfaces {
                 $ag_ip4 += $ip4.ToString()
             }
             $_interface.vsx_virtual_ip4 = $ag_ip4
+        }
+
+        if ( $PsBoundParameters.ContainsKey('vsx_sync') ) {
+            $vsync = @()
+
+            foreach ($vs in $vsx_sync) {
+                if($vs -eq "active-gateway"){
+                    $vsync += "^vsx_virtual.*"
+                    $vsync += "virtual_gw_l3_src_mac_enable"
+                } else {
+                    $vsync += $vs
+                }
+            }
+            $_interface.vsx_sync = $vsync
         }
 
         if ( $PsBoundParameters.ContainsKey('vrf') ) {
