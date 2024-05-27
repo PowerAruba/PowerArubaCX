@@ -4,6 +4,68 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
+function Add-ArubaCXDHCPRelay {
+
+    <#
+        .SYNOPSIS
+        Add Aruba CX DHCP Relay
+
+        .DESCRIPTION
+        Add DHCP Relay (IP, port, vrf...)
+
+        .EXAMPLE
+        Add-ArubaCXDHCPRelay -port vlan1 -ipv4_ucast_server 192.2.0.1
+
+        Add IP DHCP relay 192.2.0.1 on port(interface) vlan1 with default vrf
+
+        .EXAMPLE
+        Add-ArubaCXDHCPRelay -port vlan2 -ipv4_ucast_server 192.2.0.1, 192.2.0.2 -vrf MyVRF
+
+        Add IP DHCP relay 192.2.0.1, 192.2.0.2 on port(interface) vlan2 with default MyVRF
+    #>
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "")]
+    Param(
+        [Parameter (Mandatory = $true)]
+        [string]$port,
+        [Parameter (Mandatory = $false)]
+        [string]$vrf = "default",
+        [Parameter (Mandatory = $true)]
+        [string[]]$ipv4_ucast_server,
+        [Parameter (Mandatory = $False)]
+        [ValidateNotNullOrEmpty()]
+        [PSObject]$connection = $DefaultArubaCXConnection
+    )
+
+    Begin {
+    }
+
+    Process {
+
+        $uri = "system/dhcp_relays"
+
+        $_dhcprelay = new-Object -TypeName PSObject
+
+        $_vrf = New-Object -TypeName PSObject
+        $vrf_uri = "/rest/" + $($connection.api_version) + "/system/vrfs/" + $vrf
+        $_vrf | Add-Member -name $vrf -membertype NoteProperty -Value $vrf_uri
+        $_dhcprelay | Add-Member -name "vrf" -membertype NoteProperty -Value $_vrf
+
+        $_port = New-Object -TypeName PSObject
+        $port_uri = "/rest/" + $($connection.api_version) + "/system/interfaces/" + $port
+        $_port | Add-Member -name $port -membertype NoteProperty -Value $port_uri
+        $_dhcprelay | Add-Member -name "port" -membertype NoteProperty -Value $_port
+
+        $_dhcprelay | Add-Member -name "ipv4_ucast_server" -membertype NoteProperty -Value @($ipv4_ucast_server)
+
+        $response = Invoke-ArubaCXRestMethod -uri $uri -method 'POST' -body $_dhcprelay -connection $connection
+        $response
+
+        Get-ArubaCXDHCPRelay -port $port -vrf $vrf -connection $connection
+    }
+
+    End {
+    }
+}
 
 function Get-ArubaCXDHCPRelay {
 
