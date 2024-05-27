@@ -154,6 +154,83 @@ function Get-ArubaCXDHCPRelay {
     }
 }
 
+function Set-ArubaCXDHCPRelay {
+
+    <#
+        .SYNOPSIS
+        Configure Aruba CX DHCP Rleay
+
+        .DESCRIPTION
+        Configure DHCP Relay (ipv4_ucast_server)
+
+        .EXAMPLE
+        Get-ArubaCXDHCPRelay -port vlan1 | Set-ArubaCXDHCPRelay -ipv4_ucast_server 192.2.0.3
+
+        Change the ipv4_ucast_server (192.2.0.3) on DHCP Relay vlan1 (vrf default)
+
+        .EXAMPLE
+        Get-ArubaCXDHCPRelay -port vlan1 | Set-ArubaCXDHCPRelay -ipv4_ucast_server 192.2.0.3, 192.2.0.4
+
+        Change the ipv4_ucast_server (192.2.0.3, 192.2.0.4) on DHCP Relay vlan2 and vrf myVRF
+
+    #>
+    [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'medium')]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "")]
+    Param(
+        [Parameter (Mandatory = $true, ParameterSetName = "portvrf")]
+        [string]$port,
+        [Parameter (Mandatory = $false, ParameterSetName = "portvrf")]
+        [string]$vrf = "default",
+        [Parameter (Mandatory = $true, ValueFromPipeline = $true, Position = 1, ParameterSetName = "dhcprelay")]
+        [ValidateScript( { Confirm-ArubaCXDHCPRelay $_ })]
+        [psobject]$dhcprelay,
+        [Parameter (Mandatory = $false)]
+        [string[]]$ipv4_ucast_server,
+        [Parameter (Mandatory = $false)]
+        [switch]$use_pipeline,
+        [Parameter (Mandatory = $False)]
+        [ValidateNotNullOrEmpty()]
+        [PSObject]$connection = $DefaultArubaCXConnection
+    )
+
+    Begin {
+    }
+
+    Process {
+
+        #get dhcprelay vrf/port from dhcprelay ps object
+        if ($dhcprelay) {
+            #Get the name of properties...
+            $port = $dhcprelay.port.psobject.properties.name
+            $vrf = $dhcprelay.vrf.psobject.properties.name
+        }
+
+        $uri = "system/dhcp_relays/${vrf},${port}"
+
+        if ($use_pipeline) {
+            $_dhcprelay = $dhcprelay
+        }
+        else {
+            $_dhcprelay = Get-ArubaCXDHCPRelay -port $port -vrf $vrf -selector writable -connection $connection
+        }
+
+        if ( $PsBoundParameters.ContainsKey('ipv4_ucast_server') ) {
+            $_dhcprelay.ipv4_ucast_server = @($ipv4_ucast_server)
+        }
+
+        if ($PSCmdlet.ShouldProcess("DHCP Relay", "Configure DHCP Relay ${port} on ${vrf}")) {
+            $response = Invoke-ArubaCXRestMethod -uri $uri -method 'PUT' -body $_dhcprelay -connection $connection
+            $response
+        }
+
+        Get-ArubaCXDHCRelay -port $port -vrf $vrf -connection $connection
+    }
+
+    End {
+    }
+}
+
+
 function Remove-ArubaCXDHCPRelay {
 
     <#
