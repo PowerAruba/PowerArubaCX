@@ -4,6 +4,27 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
+function Confirm-ArubaCXDHCPRelay {
+
+    Param (
+        [Parameter (Mandatory = $true)]
+        [object]$argument
+    )
+    #Check if it looks like an DHCP Relay element
+
+    if ( -not ( $argument | get-member -name port -Membertype Properties)) {
+        throw "Element specified does not contain a port property."
+    }
+    if ( -not ( $argument | get-member -name vrf -Membertype Properties)) {
+        throw "Element specified does not contain a vrf property."
+    }
+    if ( -not ( $argument | get-member -name ipv4_ucast_server -Membertype Properties)) {
+        throw "Element specified does not contain an ipv4_ucast_server property."
+    }
+    $true
+
+}
+
 function Confirm-ArubaCXInterfaces {
 
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "")]
