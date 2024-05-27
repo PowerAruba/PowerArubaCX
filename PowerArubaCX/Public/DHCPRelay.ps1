@@ -223,7 +223,7 @@ function Set-ArubaCXDHCPRelay {
             $response
         }
 
-        Get-ArubaCXDHCRelay -port $port -vrf $vrf -connection $connection
+        Get-ArubaCXDHCPRelay -port $port -vrf $vrf -connection $connection
     }
 
     End {
