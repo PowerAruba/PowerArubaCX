@@ -19,11 +19,24 @@ function Get-ArubaCXDHCPRelay {
 
         Get list of all DHCP Relay (IP, port, vrf...)
 
+        .EXAMPLE
+        Get-ArubaCXDHCPRelay -port vlan1
+
+        Get vlan with with port (interface) vlan 1 (and vrf default)
+
+        .EXAMPLE
+        Get-ArubaCXDHCPRelay -port vlan2 -vrf MyVrf
+
+        Get vlan with with port (interface) vlan 2 (and vrf MyVRF)
     #>
 
     [CmdletBinding(DefaultParametersetname = "Default")]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "")]
     Param(
+        [Parameter (Mandatory = $false)]
+        [string]$port,
+        [Parameter (Mandatory = $false)]
+        [string]$vrf = 'default',
         [Parameter(Mandatory = $false)]
         [ValidateRange(1, 4)]
         [Int]$depth,
@@ -64,6 +77,10 @@ function Get-ArubaCXDHCPRelay {
         }
 
         $uri = "system/dhcp_relays"
+
+        if ($PsBoundParameters.ContainsKey('port')) {
+            $uri += "/$vrf,$port"
+        }
 
         $response = Invoke-ArubaCXRestMethod -uri $uri -method 'GET' -connection $connection @invokeParams
 
