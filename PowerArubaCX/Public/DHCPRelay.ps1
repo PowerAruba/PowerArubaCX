@@ -95,9 +95,9 @@ function Get-ArubaCXDHCPRelay {
     [CmdletBinding(DefaultParametersetname = "Default")]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "")]
     Param(
-        [Parameter (Mandatory = $false)]
+        [Parameter (Mandatory = $false, ParameterSetName = "vrfport")]
         [string]$port,
-        [Parameter (Mandatory = $false)]
+        [Parameter (Mandatory = $false, ParameterSetName = "vrfport")]
         [string]$vrf = 'default',
         [Parameter(Mandatory = $false)]
         [ValidateRange(1, 4)]
