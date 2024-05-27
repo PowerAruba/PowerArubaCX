@@ -154,3 +154,63 @@ function Get-ArubaCXDHCPRelay {
     }
 }
 
+function Remove-ArubaCXDHCPRelay {
+
+    <#
+        .SYNOPSIS
+        Remove a DHCP Relay on Aruba CX Switch
+
+        .DESCRIPTION
+        Remove a DHCP Relay on Aruba CX Switch
+
+        .EXAMPLE
+        $dhcprelay = Get-ArubaCXDHCPRelay -port vlan1
+        PS C:\>$dhcprelay | Remove-ArubaCXDHCPRelay
+
+        Remove DHCP Relay configured on port/interface vlan1
+
+        .EXAMPLE
+        Remove-ArubaCXDHCPRelay -port vlan1 -vrf myVRF -confirm:$false
+
+        Remove DHCP Relay with port vlan1 and vrf myVRF  with no confirmation
+    #>
+
+    [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'high')]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "")]
+    Param(
+        [Parameter (Mandatory = $true, ParameterSetName = "portvrf")]
+        [string]$port,
+        [Parameter (Mandatory = $false, ParameterSetName = "portvrf")]
+        [string]$vrf = "default",
+        [Parameter (Mandatory = $true, ValueFromPipeline = $true, Position = 1, ParameterSetName = "dhcprelay")]
+        [ValidateScript( { Confirm-ArubaCXDHCPRelay $_ })]
+        [psobject]$dhcprelay,
+        [Parameter (Mandatory = $False)]
+        [ValidateNotNullOrEmpty()]
+        [PSObject]$connection = $DefaultArubaCXConnection
+    )
+
+    Begin {
+    }
+
+    Process {
+
+        #get dhcprelay vrf/port from dhcprelay ps object
+        if ($dhcprelay) {
+            #Get the name of properties...
+            $port = $dhcprelay.port.psobject.properties.name
+            $vrf = $dhcprelay.vrf.psobject.properties.name
+        }
+
+        $uri = "system/dhcp_relays/${vrf},${port}"
+
+        if ($PSCmdlet.ShouldProcess("DHCP Relay", "Remove DHCP Relay ${port} on ${vrf}")) {
+            Write-Progress -activity "Remove DHCP Relay"
+            Invoke-ArubaCXRestMethod -method "DELETE" -uri $uri -connection $connection
+            Write-Progress -activity "Remove DHCP Relay" -completed
+        }
+    }
+
+    End {
+    }
+}
