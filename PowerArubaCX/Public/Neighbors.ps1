@@ -8,17 +8,29 @@ function Get-ArubaCXNeighbors {
 
     <#
       .SYNOPSIS
-      Get list of Neighbors (MAC Address)
+      Get list of Neighbors (ARP Table)
 
       .DESCRIPTION
-      Get list of Neighbors (Mac Address, type, vlan...)
+      Get list of Neighbors (Mac Address, IP Address, type, vlan...)
 
       .EXAMPLE
       Get-ArubaCXNeighbors
 
-      Get Neighbors (MAC Address) information on all VRF
+      Get Neighbors (ARP Table) information on all VRF
+
+      .EXAMPLE
+      Get-ArubaCXNeighbors -vrf MyVRF
+
+      Get Neighbors (ARP Table) information on vrf MyVRF
+
+      .EXAMPLE
+      Get-ArubaCXVrfs MyVRF | Get-ArubaCXNeighbors
+
+      Get Neighbors (ARP Table) information on vrf MyVRF (using pipeline)
 
     #>
+
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "")]
     Param(
         [Parameter (Mandatory = $false, ValueFromPipeline = $true)]
         [ValidateScript( { Confirm-ArubaCXVrfs $_ })]
@@ -45,7 +57,7 @@ function Get-ArubaCXNeighbors {
 
     Process {
 
-        #get vrf name from vrf_pp ps object (based by pipeline)
+        #get vrf name from vrf_pp ps object (passed by pipeline)
         if ($vrf_pp) {
             $vrf = $vrf_pp.name
         }
