@@ -30,12 +30,13 @@ function Get-ArubaCXMACs {
 
     #>
 
+    [CmdletBinding(DefaultParametersetname = "Default")]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "")]
     Param(
-        [Parameter (Mandatory = $false, ValueFromPipeline = $true)]
+        [Parameter (Mandatory = $false, ValueFromPipeline = $true, ParameterSetName = "vlan")]
         [ValidateScript( { Confirm-ArubaCXVlans $_ })]
         [psobject]$vlan_pp,
-        [Parameter(Mandatory = $false, position = 1)]
+        [Parameter(Mandatory = $false, position = 1, ParameterSetName = "id")]
         [String]$vlan = "*",
         [Parameter(Mandatory = $false)]
         [ValidateRange(1, 4)]
