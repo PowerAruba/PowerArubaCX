@@ -55,3 +55,56 @@ function ConvertTo-ArubaCXMacAddressTable {
     }
 
 }
+
+function ConvertTo-ArubaCXARPTable {
+
+    <#
+      .SYNOPSIS
+      ConvertTo Aruba CX ARP Table
+
+      .DESCRIPTION
+      Convert ArubaCX ARP Table to more easy array (with mac, IP, vlan and port)
+
+      .EXAMPLE
+      Get-ArubaCXNeighbors -depth 2 | ConvertTo-ArubaCXARPTable
+
+      Convert ArubaCX Neighbors to ARP Table (mac, IP? vlan and port)
+    #>
+
+    Param(
+        [Parameter(Mandatory = $true, position = 1, ValueFromPipeline = $true)]
+        [PSObject]$arp
+    )
+
+    Begin {
+    }
+
+    Process {
+        $table = @()
+
+        #Get list of vrf name
+        $list_arp_vrf_name = $arp.psobject.properties.name
+
+        foreach ($arp_vrf_name in $list_arp_vrf_name) {
+            $list_arp = $arp.$arp_vrf_name
+
+            #get List of arp name (IP + Vlan...)
+            $list_arp_name = $list_arp.psobject.properties.name
+
+            foreach ($arp_name in $list_arp_name) {
+                $ipvlan = $arp.$arp_vrf_name.$arp_name
+                $table += [pscustomobject]@{
+                    "ip_address" = $ipvlan.ip_address
+                    "mac"        = $ipvlan.mac
+                    "vlan"       = $ipvlan.port.psobject.properties.name
+                    "port"       = $ipvlan.phy_port.psobject.properties.name
+                }
+            }
+            $table
+        }
+    }
+
+    End {
+    }
+
+}
