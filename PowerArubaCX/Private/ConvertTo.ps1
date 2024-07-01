@@ -98,6 +98,7 @@ function ConvertTo-ArubaCXARPTable {
                     "mac"        = $ipvlan.mac
                     "vlan"       = $ipvlan.port.psobject.properties.name
                     "port"       = $ipvlan.phy_port.psobject.properties.name
+                    "vrf"        = $arp_vrf_name
                 }
             }
         }
