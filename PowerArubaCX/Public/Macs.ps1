@@ -21,12 +21,12 @@ function Get-ArubaCXMACs {
       .EXAMPLE
       Get-ArubaCXMACs -vlan MyVlan
 
-      Get Neighbors (MAC Address Table) information on vrf MyVlan
+      Get Neighbors (MAC Address Table) information on vlan MyVlan
 
       .EXAMPLE
       Get-ArubaCXVlans MyVlan | Get-ArubaCXMACs
 
-      Get Neighbors (MAC Address Table) information on vrf MyVlan (using pipeline)
+      Get Neighbors (MAC Address Table) information on vlan MyVlan (using pipeline)
 
     #>
 
