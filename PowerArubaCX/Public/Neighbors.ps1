@@ -30,12 +30,13 @@ function Get-ArubaCXNeighbors {
 
     #>
 
+    [CmdletBinding(DefaultParametersetname = "Default")]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "")]
     Param(
-        [Parameter (Mandatory = $false, ValueFromPipeline = $true)]
+        [Parameter (Mandatory = $false, ValueFromPipeline = $true, ParameterSetName = "vrf_pp")]
         [ValidateScript( { Confirm-ArubaCXVrfs $_ })]
         [psobject]$vrf_pp,
-        [Parameter(Mandatory = $false, position = 1)]
+        [Parameter(Mandatory = $false, position = 1, ParameterSetName = "vrf")]
         [String]$vrf = "*",
         [Parameter(Mandatory = $false)]
         [ValidateRange(1, 4)]
