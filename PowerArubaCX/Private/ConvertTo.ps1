@@ -100,8 +100,8 @@ function ConvertTo-ArubaCXARPTable {
                     "port"       = $ipvlan.phy_port.psobject.properties.name
                 }
             }
-            $table
         }
+        $table
     }
 
     End {
