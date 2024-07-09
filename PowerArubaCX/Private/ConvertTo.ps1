@@ -39,11 +39,10 @@ function ConvertTo-ArubaCXMacAddressTable {
 
             #get List of modemac (Dynamic + MAC @)
             foreach ($mac_name in $list_mac_name) {
-                $modemac = $mac.$mac_vlan_name.$mac_name
                 $table += [pscustomobject]@{
-                    "mac"  = $modemac.mac_addr
+                    "mac"  = $list_mac.$mac_name.mac_addr
                     "vlan" = $mac_vlan_name
-                    "port" = $modemac.port.psobject.properties.name
+                    "port" = $list_mac.$mac_name.port.psobject.properties.name
                 }
             }
         }
